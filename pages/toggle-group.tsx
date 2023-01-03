@@ -6,6 +6,7 @@ export default function ToggleGroupPage() {
     return (
         <div className="max-w-5xl p-4 lg:p-8 mx-auto prose">
             <h1>ToggleGroup</h1>
+            <button> before</button>
             <ToggleGroup>
                 <ToggleGroupButton>
                     <Bars3BottomLeftIcon className="h-5 w-5" />
@@ -23,6 +24,7 @@ export default function ToggleGroupPage() {
                 <ToggleGroupButton className="px-3">Option 2</ToggleGroupButton>
                 <ToggleGroupButton className="px-3">Option 3</ToggleGroupButton>
             </ToggleGroup>
+            <button> after</button>
         </div>
     )
 }

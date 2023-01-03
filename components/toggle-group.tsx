@@ -9,6 +9,7 @@ import {
     useMemo,
     useState,
     useId,
+    FocusEvent,
     KeyboardEvent,
     MouseEvent,
     useRef,
@@ -20,18 +21,18 @@ const ToggleGroupContext = createContext<{
     focusedId: string | null
     select: Dispatch<SetStateAction<string | null>>
     focus: Dispatch<SetStateAction<string | null>>
+    onShiftTab: () => void
     registerNode: (id: string, element: HTMLElement) => void
     deregisterNode: (id: string) => void
-    elements: [string, HTMLElement][]
     getToggleItems: () => { id: string; element: HTMLElement }[]
 }>({
     selectedId: null,
     focusedId: null,
     select: () => {},
     focus: () => {},
+    onShiftTab: () => {},
     registerNode: () => {},
     deregisterNode: () => {},
-    elements: [],
     getToggleItems: () => [],
 })
 
@@ -44,6 +45,7 @@ export function ToggleGroup({ children }: ToggleGroupProps) {
     const [focusedId, focus] = useState<string | null>(null)
     const elements = useRef<Map<string, HTMLElement>>(new Map())
     const wrapperRef = useRef<HTMLDivElement | null>(null)
+    const [isShiftTabbing, setIsShiftTabbing] = useState(false)
 
     const getToggleItems = useCallback(() => {
         if (!wrapperRef.current || !elements.current) return []
@@ -60,6 +62,9 @@ export function ToggleGroup({ children }: ToggleGroupProps) {
             focus,
             selectedId,
             select,
+            onShiftTab: function () {
+                setIsShiftTabbing(true)
+            },
             registerNode: function (id: string, element: HTMLElement) {
                 console.log('register', id)
                 elements.current.set(id, element)
@@ -77,8 +82,9 @@ export function ToggleGroup({ children }: ToggleGroupProps) {
     return (
         <ToggleGroupContext.Provider value={value}>
             <div
-                tabIndex={0}
+                tabIndex={isShiftTabbing ? -1 : 0}
                 onFocus={e => {
+                    if (isShiftTabbing) return
                     const toggleItems = getToggleItems()
                     if (toggleItems.length === 0) return
 
@@ -92,6 +98,7 @@ export function ToggleGroup({ children }: ToggleGroupProps) {
 
                     return toggleItems[0].element.focus()
                 }}
+                onBlur={() => setIsShiftTabbing(false)}
                 ref={wrapperRef}
             >
                 {children}
@@ -108,6 +115,7 @@ const useToggleContext = function () {
         select,
         focus,
         registerNode,
+        onShiftTab,
         deregisterNode,
         getToggleItems,
     } = useContext(ToggleGroupContext)
@@ -125,14 +133,16 @@ const useToggleContext = function () {
             e.stopPropagation()
             focus(id)
         },
-        onBlur: (e: FocusEvent) => {
-            e.stopPropagation()
-        },
         onKeyDown: (e: KeyboardEvent) => {
             e.stopPropagation()
+
+            if (isHotkey('shift+tab', e)) {
+                onShiftTab()
+                return
+            }
+
             const toggleItems = getToggleItems()
             if (toggleItems.length === 0) return
-            console.log({ id })
 
             if (isHotkey('down', e) || isHotkey('right', e)) {
                 const currIndex = toggleItems.findIndex(item => item.id === id)
@@ -160,7 +170,7 @@ type ToggleGroupButtonProps = {
 }
 
 export function ToggleGroupButton({ children, className }: ToggleGroupButtonProps) {
-    const { ref, isSelected, onClick, onFocus, onBlur, onKeyDown, tabIndex } = useToggleContext()
+    const { ref, isSelected, onClick, onFocus, onKeyDown, tabIndex } = useToggleContext()
 
     return (
         <button
@@ -170,7 +180,6 @@ export function ToggleGroupButton({ children, className }: ToggleGroupButtonProp
             onFocus={onFocus}
             onKeyDown={onKeyDown}
             onClick={onClick}
-            onBlur={onBlur}
             className={clsx(
                 className,
                 'bg-slate-200 p-1 first:rounded-l last:rounded-r hover:bg-slate-300 outline-none border-2 border-transparent focus:border-slate-400',
