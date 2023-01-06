@@ -5,7 +5,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Josefin Sans', ...defaultTheme.fontFamily.sans],
+                sans: ['var(--josie-font)', ...defaultTheme.fontFamily.sans],
             },
             colors: {
                 pink: '#FE65B7',
