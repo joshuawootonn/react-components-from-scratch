@@ -7,6 +7,7 @@ import {
     useRef,
     useState,
     FocusEvent,
+    MouseEvent,
     KeyboardEvent,
     ComponentPropsWithoutRef,
 } from 'react'
@@ -114,6 +115,9 @@ export const useRovingTabindex = function (id: string) {
         useContext(RovingTabindexContext)
     return {
         currentRovingTabindexValue,
+        onMouseDown: (e: MouseEvent) => {
+            focus(id)
+        },
         onKeyDown: (e: KeyboardEvent) => {
             if (isHotkey('shift+tab', e)) {
                 onShiftTab()
