@@ -61,7 +61,7 @@ export function ToggleGroup({ value, onChange, children, ...props }: ToggleGroup
 }
 
 const useToggleContext = function (value: string) {
-    const { currentRovingTabindexValue, ...props } = useRovingTabindex(value)
+    const { currentRovingTabindexValue, ...rovingProps } = useRovingTabindex(value)
     const {
         value: currentValue,
         onChange,
@@ -69,24 +69,41 @@ const useToggleContext = function (value: string) {
         deregisterNode,
     } = useContext(ToggleGroupContext)
 
-    return {
-        ...props,
-        ref: (element: HTMLElement | null) =>
-            element != null ? registerNode(value, element) : deregisterNode(value),
-        isSelected: currentValue === value,
-        tabIndex: currentRovingTabindexValue === value ? 0 : -1,
-        onClick: (e: MouseEvent) => {
-            e.stopPropagation()
-            onChange(value)
-        },
-        onKeyDown: (e: KeyboardEvent) => {
-            e.stopPropagation()
-            if (isHotkey('space', e)) {
-                onChange(value)
-            }
-            props.onKeyDown(e)
-        },
-    }
+    return useMemo(
+        () => ({
+            isSelected: currentValue === value,
+            getToggleProps: (props: ComponentPropsWithoutRef<'button'>) => ({
+                ref: (element: HTMLElement | null) => {
+                    element != null ? registerNode(value, element) : deregisterNode(value)
+                },
+                role: 'radio',
+                ['aria-checked']: currentValue === value,
+                tabIndex: currentRovingTabindexValue === value ? 0 : -1,
+                onClick: (e: MouseEvent<HTMLButtonElement>) => {
+                    e.stopPropagation()
+                    onChange(value)
+                    props.onClick?.(e)
+                },
+                onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => {
+                    e.stopPropagation()
+                    if (isHotkey('space', e)) {
+                        onChange(value)
+                    }
+                    rovingProps.onKeyDown(e)
+                    props.onKeyDown?.(e)
+                },
+            }),
+        }),
+        [
+            currentRovingTabindexValue,
+            currentValue,
+            deregisterNode,
+            onChange,
+            registerNode,
+            rovingProps,
+            value,
+        ],
+    )
 }
 
 type ToggleGroupButtonBaseProps = {
@@ -104,19 +121,18 @@ export function ToggleGroupButton({
     className,
     ...props
 }: ToggleGroupButtonProps) {
-    const { isSelected, ...toggleProps } = useToggleContext(value)
+    const { isSelected, getToggleProps } = useToggleContext(value)
 
     return (
         <button
-            role="radio"
-            aria-checked={isSelected}
-            className={clsx(
-                className,
-                'bg-slate-200 p-1 first:rounded-l last:rounded-r hover:bg-slate-300 outline-none border-2 border-transparent focus:border-slate-400',
-                isSelected && 'bg-slate-300',
-            )}
-            {...toggleProps}
-            {...props}
+            {...getToggleProps({
+                className: clsx(
+                    className,
+                    'bg-slate-200 p-1 first:rounded-l last:rounded-r hover:bg-slate-300 outline-none border-2 border-transparent focus:border-slate-400 transition-all',
+                    isSelected && 'bg-slate-300',
+                ),
+                ...props,
+            })}
         >
             {children}
         </button>
