@@ -10,6 +10,7 @@ import {
     MouseEvent,
     KeyboardEvent,
     ComponentPropsWithoutRef,
+    useMemo,
 } from 'react'
 
 type RovingTabindexItem = {
@@ -59,12 +60,12 @@ export function RovingTabindexRoot({
     const [currentRovingTabindexValue, setCurrentRovingTabindexValue] = useState<string | null>(
         null,
     )
-    const wrapperRef = useRef<HTMLDivElement | null>(null)
+    const rootRef = useRef<HTMLDivElement | null>(null)
 
     const getOrderedItems = useCallback(() => {
-        if (!wrapperRef.current || !elementsById) return []
+        if (!rootRef.current || !elementsById) return []
         const domElements = Array.from(
-            wrapperRef.current.querySelectorAll('[data-roving-tabindex-item]'),
+            rootRef.current.querySelectorAll('[data-roving-tabindex-item]'),
         )
 
         return Array.from(elementsById)
@@ -101,7 +102,7 @@ export function RovingTabindexRoot({
                     focusFirst(candidates)
                 }}
                 onBlur={() => setIsShiftTabbing(false)}
-                ref={wrapperRef}
+                ref={rootRef}
                 {...props}
             >
                 {children}
@@ -113,40 +114,50 @@ export function RovingTabindexRoot({
 export const useRovingTabindex = function (id: string) {
     const { currentRovingTabindexValue, focus, onShiftTab, getOrderedItems } =
         useContext(RovingTabindexContext)
+
+    const getRovingTabindexProps = useCallback(
+        () => ({
+            onMouseDown: (e: MouseEvent) => {
+                focus(id)
+            },
+            onKeyDown: (e: KeyboardEvent) => {
+                if (isHotkey('shift+tab', e)) {
+                    onShiftTab()
+                    return
+                }
+
+                const orderedItems = getOrderedItems()
+                if (orderedItems.length === 0) return
+
+                if (isHotkey('down', e) || isHotkey('right', e)) {
+                    const currIndex = orderedItems.findIndex(item => item.id === id)
+                    const candidates = wrapArray(orderedItems, currIndex + 1).map(
+                        item => item.element,
+                    )
+                    focusFirst(candidates)
+                } else if (isHotkey('up', e) || isHotkey('left', e)) {
+                    const currIndex = orderedItems.findIndex(item => item.id === id)
+                    const candidates = wrapArray(orderedItems.reverse(), currIndex + 1).map(
+                        item => item.element,
+                    )
+                    focusFirst(candidates)
+                } else if (isHotkey('home', e)) {
+                    focusFirst(orderedItems.map(item => item.element))
+                } else if (isHotkey('end', e)) {
+                    focusFirst(orderedItems.map(item => item.element).reverse())
+                }
+            },
+            onFocus: (e: FocusEvent) => {
+                e.stopPropagation()
+                focus(id)
+            },
+            ['data-roving-tabindex-item']: true,
+        }),
+        [focus, getOrderedItems, id, onShiftTab],
+    )
+
     return {
         currentRovingTabindexValue,
-        onMouseDown: (e: MouseEvent) => {
-            focus(id)
-        },
-        onKeyDown: (e: KeyboardEvent) => {
-            if (isHotkey('shift+tab', e)) {
-                onShiftTab()
-                return
-            }
-
-            const orderedItems = getOrderedItems()
-            if (orderedItems.length === 0) return
-
-            if (isHotkey('down', e) || isHotkey('right', e)) {
-                const currIndex = orderedItems.findIndex(item => item.id === id)
-                const candidates = wrapArray(orderedItems, currIndex + 1).map(item => item.element)
-                focusFirst(candidates)
-            } else if (isHotkey('up', e) || isHotkey('left', e)) {
-                const currIndex = orderedItems.findIndex(item => item.id === id)
-                const candidates = wrapArray(orderedItems.reverse(), currIndex + 1).map(
-                    item => item.element,
-                )
-                focusFirst(candidates)
-            } else if (isHotkey('home', e)) {
-                focusFirst(orderedItems.map(item => item.element))
-            } else if (isHotkey('end', e)) {
-                focusFirst(orderedItems.map(item => item.element).reverse())
-            }
-        },
-        onFocus: (e: FocusEvent) => {
-            e.stopPropagation()
-            focus(id)
-        },
-        ['data-roving-tabindex-item']: true,
+        getRovingTabindexProps,
     }
 }
