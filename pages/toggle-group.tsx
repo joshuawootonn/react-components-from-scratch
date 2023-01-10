@@ -2,6 +2,7 @@ import { Bars3BottomLeftIcon, Bars3BottomRightIcon, Bars3Icon } from '@heroicons
 import { useState } from 'react'
 
 import { ToggleGroup } from '../components/toggle-group'
+import { ToggleGroup as ToggleGroupV2 } from '../components/toggle-groupv2'
 
 export default function ToggleGroupPage() {
     const [textAlignment, setTextAlignment] = useState<string | null>(null)
@@ -11,7 +12,7 @@ export default function ToggleGroupPage() {
         <div className="max-w-5xl p-4 lg:p-8 mx-auto prose prose-headings:font-700">
             <h1 className="font-sans">Toggle Group</h1>
 
-            <h2>Icon exmaple</h2>
+            <h2>Text Alignment</h2>
             <ToggleGroup.Root
                 value={textAlignment}
                 onChange={setTextAlignment}
@@ -43,6 +44,24 @@ export default function ToggleGroupPage() {
                     Apple 🍏
                 </ToggleGroup.Button>
             </ToggleGroup.Root>
+{/* 
+            <h2>What is your favorite fruit? v2</h2>
+
+            <ToggleGroupV2.Root
+                value={favoriteFruit}
+                onChange={changeFavoriteFruit}
+                aria-label="What is your favorite?"
+            >
+                <ToggleGroupV2.Button value="one" className="px-2">
+                    Strawberry 🍓
+                </ToggleGroupV2.Button>
+                <ToggleGroupV2.Button value="two" className="px-2">
+                    Banana 🍌
+                </ToggleGroupV2.Button>
+                <ToggleGroupV2.Button value="three" className="px-2">
+                    Apple 🍏
+                </ToggleGroupV2.Button>
+            </ToggleGroupV2.Root> */}
         </div>
     )
 }
