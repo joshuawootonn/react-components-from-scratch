@@ -6,46 +6,29 @@ import {
     useContext,
     useMemo,
     useState,
-    KeyboardEvent,
-    MouseEvent,
-    FocusEvent,
     ComponentPropsWithoutRef,
     useRef,
     useCallback,
 } from 'react'
 
-function wrapArray<T>(array: T[], startIndex: number) {
-    return array.map((_, index) => array[(startIndex + index) % array.length])
-}
-
-function focusFirst(candidates: HTMLElement[]) {
-    const previousFocus = document.activeElement
-    while (document.activeElement === previousFocus && candidates.length > 0) {
-        candidates.shift()?.focus()
-    }
-}
-
-type RovingTabindexItem = {
-    value: string
-    element: HTMLElement
-}
+type FocusableItem = { value: string; element: HTMLElement }
 
 const ToggleGroupContext = createContext<{
     value: string | null
     onChange: (value: string) => void
-    registerNode: (id: string, element: HTMLElement) => void
-    deregisterNode: (id: string) => void
-    currentRovingTabindexValue: string | null
-    onFocus: (id: string) => void
+    register: (id: string, element: HTMLElement) => void
+    deregister: (id: string) => void
+    focusedValue: string | null
+    setFocusedValue: (id: string) => void
     onShiftTab: () => void
-    getOrderedItems: () => RovingTabindexItem[]
+    getOrderedItems: () => FocusableItem[]
 }>({
     value: null,
     onChange: () => {},
-    registerNode: () => {},
-    deregisterNode: () => {},
-    currentRovingTabindexValue: null,
-    onFocus: () => {},
+    register: () => {},
+    deregister: () => {},
+    focusedValue: null,
+    setFocusedValue: () => {},
     onShiftTab: () => {},
     getOrderedItems: () => [],
 })
@@ -56,23 +39,30 @@ type RootBaseProps = {
     onChange: (value: string) => void
 }
 
-type RootProps = RootBaseProps & Omit<ComponentPropsWithoutRef<'div'>, keyof RootBaseProps>
+type PropsWithLabelBy = {
+    ['aria-labelledby']: string
+}
+
+type PropsWithLabel = {
+    ['aria-label']: string
+}
+
+type RootProps = (PropsWithLabel | PropsWithLabelBy) &
+    RootBaseProps &
+    Omit<ComponentPropsWithoutRef<'div'>, keyof RootBaseProps>
 
 function Root({ value, onChange, children, ...props }: RootProps) {
-    const [elements] = useState<Map<string, HTMLElement>>(new Map())
+    const elements = useRef<Map<string, HTMLElement>>(new Map())
     const [isShiftTabbing, setIsShiftTabbing] = useState(false)
-    const [currentRovingTabindexValue, setCurrentRovingTabindexValue] = useState<string | null>(
-        null,
-    )
-    const rootRef = useRef<HTMLDivElement | null>(null)
+    const [focusedValue, setFocusedValue] = useState<string | null>(value)
+    const ref = useRef<HTMLDivElement | null>(null)
 
     const getOrderedItems = useCallback(() => {
-        if (!rootRef.current || !elements) return []
-        const domElements = Array.from(
-            rootRef.current.querySelectorAll('[data-roving-tabindex-item]'),
-        )
+        if (!ref.current) return []
 
-        return Array.from(elements)
+        const domElements = Array.from(ref.current.querySelectorAll('[data-roving-tabindex-item]'))
+
+        return Array.from(elements.current)
             .sort((a, b) => domElements.indexOf(a[1]) - domElements.indexOf(b[1]))
             .map(([value, element]) => ({ value, element }))
     }, [elements])
@@ -81,44 +71,45 @@ function Root({ value, onChange, children, ...props }: RootProps) {
         () => ({
             value,
             onChange,
-            registerNode: function (id: string, element: HTMLElement) {
-                elements.set(id, element)
+            register: function (value: string, element: HTMLElement) {
+                elements.current.set(value, element)
             },
-            deregisterNode: function (id: string) {
-                elements.delete(id)
+            deregister: function (value: string) {
+                elements.current.delete(value)
             },
-            onFocus: function (id: string) {
-                setCurrentRovingTabindexValue(id)
+            setFocusedValue: function (id: string) {
+                setFocusedValue(id)
             },
             onShiftTab: function () {
                 setIsShiftTabbing(true)
             },
-            currentRovingTabindexValue,
+            focusedValue,
             getOrderedItems,
         }),
-        [currentRovingTabindexValue, elements, getOrderedItems, onChange, value],
+        [focusedValue, getOrderedItems, onChange, value],
     )
 
     return (
         <ToggleGroupContext.Provider value={providerValue}>
             <div
-                role="group"
+                role="radiogroup"
                 tabIndex={isShiftTabbing ? -1 : 0}
                 onFocus={e => {
-                    if (isShiftTabbing) return
+                    props.onFocus?.(e)
+                    if (e.target !== e.currentTarget) return
                     const orderedItems = getOrderedItems()
-                    if (orderedItems.length === 0) return
 
-                    const candidates = [
-                        elements.get(currentRovingTabindexValue ?? ''),
-                        elements.get(value ?? ''),
-                        ...orderedItems.map(i => i.element),
-                    ].filter((element): element is HTMLElement => element != null)
-
-                    focusFirst(candidates)
+                    if (value) {
+                        elements.current.get(value)?.focus()
+                    } else {
+                        orderedItems.at(0)?.element.focus()
+                    }
                 }}
-                onBlur={() => setIsShiftTabbing(false)}
-                ref={rootRef}
+                onBlur={e => {
+                    props.onBlur?.(e)
+                    setIsShiftTabbing(false)
+                }}
+                ref={ref}
                 {...props}
             >
                 {children}
@@ -140,73 +131,68 @@ function Button({ children, value, className, ...props }: ToggleGroupButtonProps
     const {
         value: selectedValue,
         onChange,
-        registerNode,
-        deregisterNode,
-        currentRovingTabindexValue,
+        register,
+        deregister,
+        focusedValue,
         onShiftTab,
+        setFocusedValue,
         getOrderedItems,
-        onFocus,
     } = useContext(ToggleGroupContext)
 
     return (
         <button
+            {...props}
             className={clsx(
                 className,
                 'bg-slate-200 p-1 first:rounded-l last:rounded-r hover:bg-slate-300 outline-none border-2 border-transparent focus:border-slate-400 transition-all',
                 selectedValue === value && 'bg-slate-300',
             )}
             ref={(element: HTMLElement | null) => {
-                element != null ? registerNode(value, element) : deregisterNode(value)
+                element != null ? register(value, element) : deregister(value)
             }}
             role="radio"
             aria-checked={selectedValue === value}
-            tabIndex={currentRovingTabindexValue === value ? 0 : -1}
+            tabIndex={focusedValue === value ? 0 : -1}
             data-roving-tabindex-item
-            onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation()
-                onChange(value)
+            onClick={e => {
                 props.onClick?.(e)
+                e.currentTarget.focus()
+                onChange(value)
             }}
-            onMouseDown={(e: MouseEvent) => {
-                onFocus(value)
-            }}
-            onKeyDown={(e: KeyboardEvent<HTMLButtonElement>) => {
-                e.stopPropagation()
-                if (isHotkey('space', e)) {
-                    onChange(value)
-                }
-
+            onKeyDown={e => {
+                props.onKeyDown?.(e)
                 if (isHotkey('shift+tab', e)) {
                     onShiftTab()
+                }
+                const items = getOrderedItems()
+                let nextItem: FocusableItem | undefined
+
+                if (isHotkey('space', e)) {
+                    onChange(value)
                     return
                 }
-
-                const orderedItems = getOrderedItems()
-                if (orderedItems.length === 0) return
-
-                if (isHotkey('down', e) || isHotkey('right', e)) {
-                    const currIndex = orderedItems.findIndex(item => item.value === value)
-                    const candidates = wrapArray(orderedItems, currIndex + 1).map(
-                        item => item.element,
-                    )
-                    focusFirst(candidates)
-                } else if (isHotkey('up', e) || isHotkey('left', e)) {
-                    const currIndex = orderedItems.findIndex(item => item.value === value)
-                    const candidates = wrapArray(orderedItems.reverse(), currIndex + 1).map(
-                        item => item.element,
-                    )
-                    focusFirst(candidates)
+                if (isHotkey(['down', 'right'], e)) {
+                    const currIndex = items.findIndex(item => item.value === value)
+                    if (currIndex === -1) nextItem = items.shift()
+                    nextItem = currIndex === items.length - 1 ? items[0] : items[currIndex + 1]
+                } else if (isHotkey(['up', 'left'], e)) {
+                    const currIndex = items.findIndex(item => item.value === value)
+                    if (currIndex === -1) nextItem = items.shift()
+                    nextItem = currIndex === 0 ? items[items.length - 1] : items[currIndex - 1]
                 } else if (isHotkey('home', e)) {
-                    focusFirst(orderedItems.map(item => item.element))
+                    nextItem = items.shift()
                 } else if (isHotkey('end', e)) {
-                    focusFirst(orderedItems.map(item => item.element).reverse())
+                    nextItem = items.reverse().shift()
                 }
 
-                props.onKeyDown?.(e)
+                if (nextItem) {
+                    nextItem.element.focus()
+                    onChange(nextItem.value)
+                }
             }}
-            onFocus={(e: FocusEvent<HTMLButtonElement>) => {
-                e.stopPropagation()
-                onFocus(value)
+            onFocus={e => {
+                props.onFocus?.(e)
+                return setFocusedValue(value)
             }}
         >
             {children}
