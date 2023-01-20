@@ -52,16 +52,22 @@ export default function ToggleGroupPage() {
 
             <fieldset className="flex flex-row items-center space-x-2">
                 <div className="flex justify-center space-x-1">
-                    <input type="radio" id="strawberry" name="drone" value="strawberry" checked />
-                    <label for="strawberry">Strawberry 🍓</label>
+                    <input
+                        type="radio"
+                        id="strawberry"
+                        name="strawberry"
+                        value="strawberry"
+                        checked
+                    />
+                    <label htmlFor="strawberry">Strawberry 🍓</label>
                 </div>
                 <div className="flex justify-center space-x-1">
-                    <input type="radio" id="banana" name="drone" value="banana" checked />
-                    <label for="banana">Banana 🍌</label>
+                    <input type="radio" id="banana" name="banana" value="banana" checked />
+                    <label htmlFor="banana">Banana 🍌</label>
                 </div>
                 <div className="flex justify-center space-x-1">
-                    <input type="radio" id="apple" name="drone" value="apple" checked />
-                    <label for="apple">Apple 🍏</label>
+                    <input type="radio" id="apple" name="apple" value="apple" checked />
+                    <label htmlFor="apple">Apple 🍏</label>
                 </div>
             </fieldset>
 
