@@ -1,7 +1,8 @@
 import { Bars3BottomLeftIcon, Bars3BottomRightIcon, Bars3Icon } from '@heroicons/react/24/outline'
+import Link from 'next/link'
 import { useState } from 'react'
 
-import { ToggleGroup } from '../components/toggle-group'
+import { ToggleGroup } from '../components/toggle-group/toggle-group'
 
 export default function ToggleGroupPage() {
     const [textAlignment, setTextAlignment] = useState<string | null>(null)
@@ -9,7 +10,10 @@ export default function ToggleGroupPage() {
 
     return (
         <div className="max-w-5xl p-4 lg:p-8 mx-auto prose prose-headings:font-700 ">
-            <h1 className="font-sans">Toggle Group</h1>
+            <div className="flex flex-row justify-between items-start">
+                <h1 className="font-sans">Toggle Group</h1>
+                <Link href="/">Back to the full list of components</Link>
+            </div>
 
             <h2>Text Alignment</h2>
             <ToggleGroup.Root

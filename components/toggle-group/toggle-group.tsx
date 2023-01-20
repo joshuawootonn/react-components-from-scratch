@@ -11,7 +11,7 @@ import {
     useCallback,
 } from 'react'
 
-type FocusableItem = { value: string; element: HTMLElement }
+type Item = { value: string; element: HTMLElement }
 
 const ToggleGroupContext = createContext<{
     value: string | null
@@ -21,7 +21,7 @@ const ToggleGroupContext = createContext<{
     focusedValue: string | null
     setFocusedValue: (id: string) => void
     onShiftTab: () => void
-    getOrderedItems: () => FocusableItem[]
+    getOrderedItems: () => Item[]
 }>({
     value: null,
     onChange: () => {},
@@ -165,24 +165,14 @@ function Button({ children, value, className, ...props }: ToggleGroupButtonProps
                     onShiftTab()
                 }
                 const items = getOrderedItems()
-                let nextItem: FocusableItem | undefined
-
-                if (isHotkey('space', e)) {
-                    onChange(value)
-                    return
-                }
-                if (isHotkey(['down', 'right'], e)) {
-                    const currIndex = items.findIndex(item => item.value === value)
-                    if (currIndex === -1) nextItem = items.shift()
+                let nextItem: Item | undefined
+                const currIndex = items.findIndex(item => item.value === value)
+                if (currIndex === -1) {
+                    nextItem = items.shift()
+                } else if (isHotkey(['down', 'right'], e)) {
                     nextItem = currIndex === items.length - 1 ? items[0] : items[currIndex + 1]
                 } else if (isHotkey(['up', 'left'], e)) {
-                    const currIndex = items.findIndex(item => item.value === value)
-                    if (currIndex === -1) nextItem = items.shift()
                     nextItem = currIndex === 0 ? items[items.length - 1] : items[currIndex - 1]
-                } else if (isHotkey('home', e)) {
-                    nextItem = items.shift()
-                } else if (isHotkey('end', e)) {
-                    nextItem = items.reverse().shift()
                 }
 
                 if (nextItem) {
@@ -192,11 +182,12 @@ function Button({ children, value, className, ...props }: ToggleGroupButtonProps
             }}
             onFocus={e => {
                 props.onFocus?.(e)
-                return setFocusedValue(value)
+                setFocusedValue(value)
             }}
         >
             {children}
         </button>
     )
 }
+
 export const ToggleGroup = { Root, Button }
