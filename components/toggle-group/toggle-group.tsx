@@ -161,6 +161,9 @@ function Button({ children, value, className, ...props }: ToggleGroupButtonProps
             }}
             onKeyDown={e => {
                 props.onKeyDown?.(e)
+                if (isHotkey(['up', 'down'])) {
+                    e.preventDefault()
+                }
                 if (isHotkey('shift+tab', e)) {
                     onShiftTab()
                 }

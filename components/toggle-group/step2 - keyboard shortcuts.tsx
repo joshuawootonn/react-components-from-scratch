@@ -119,6 +119,9 @@ function Button({ children, value, className, ...props }: ToggleGroupButtonProps
             }}
             onKeyDown={e => {
                 props.onKeyDown?.(e)
+                if (isHotkey(['up', 'down'])) {
+                    e.preventDefault()
+                }
                 const items = getOrderedItems()
                 let nextItem: Item | undefined
                 const currIndex = items.findIndex(item => item.value === value)
