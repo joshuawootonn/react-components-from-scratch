@@ -40,6 +40,9 @@ export default function Home() {
                     <li>
                         <Link href="/toggle-group">Toggle Group &#x2197;</Link>
                     </li>
+                    <li>
+                        <Link href="/treeview">Treeview (wip) &#x2197;</Link>
+                    </li>
                 </ol>
             </div>
         </>
