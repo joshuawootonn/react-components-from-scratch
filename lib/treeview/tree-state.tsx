@@ -7,23 +7,16 @@ export type TreeNodeMetadata = {
 
 export type TreeState = {
     children: ChainableMap<string, string[]>
-
     isOpen: ChainableMap<string, boolean>
     metadata: ChainableMap<string, TreeNodeMetadata>
-
     focusableId?: string | null
-    focusedId?: string | null
     selectedId?: string | null
-    copiedId?: string | null
 }
 
 export enum TreeActionTypes {
     REGISTER = 'REGISTER',
     DEREGISTER = 'DEREGISTER',
-    FOCUS = 'FOCUS',
-    BLUR = 'BLUR',
     SELECT = 'SELECT',
-    UNSELECT = 'UNSELECT',
     SET_FOCUSABLE = 'SET_FOCUSABLE',
     OPEN = 'OPEN',
     CLOSE = 'CLOSE',
@@ -36,10 +29,7 @@ export type TreeActions =
           element: HTMLElement
       }
     | { type: TreeActionTypes.DEREGISTER; id: string }
-    | { type: TreeActionTypes.FOCUS; id: string }
-    | { type: TreeActionTypes.BLUR; id: string }
     | { type: TreeActionTypes.SELECT; id: string }
-    | { type: TreeActionTypes.UNSELECT; id: string }
     | { type: TreeActionTypes.SET_FOCUSABLE; id: string }
     | {
           type: TreeActionTypes.OPEN
@@ -54,18 +44,6 @@ export const TREE_ID = 'tree'
 
 export function treeReducer(state: TreeState, action: TreeActions): TreeState {
     switch (action.type) {
-        case TreeActionTypes.FOCUS:
-            return {
-                ...state,
-                focusedId: action.id,
-            }
-
-        case TreeActionTypes.BLUR:
-            return {
-                ...state,
-                focusedId: state.focusedId === action.id ? null : state.focusedId,
-            }
-
         case TreeActionTypes.SET_FOCUSABLE:
             return {
                 ...state,
@@ -88,12 +66,6 @@ export function treeReducer(state: TreeState, action: TreeActions): TreeState {
             return {
                 ...state,
                 selectedId: action.id,
-            }
-
-        case TreeActionTypes.UNSELECT:
-            return {
-                ...state,
-                selectedId: null,
             }
 
         default:

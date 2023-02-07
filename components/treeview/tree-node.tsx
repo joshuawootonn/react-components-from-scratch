@@ -9,24 +9,28 @@ type TreeNodeProps = {
     depth?: number
 }
 
-export function TreeNode({ id, depth = 0 }: TreeNodeProps) {
-    const { isOpen, isFocused, isSelected, getTreeNodeProps, treeGroupProps, children, metadata } =
-        useTreeNode(id)
+export function TreeNode({ id }: TreeNodeProps) {
+    const {
+        isOpen,
+        isFocusable,
+        isSelected,
+        getTreeNodeProps,
+        treeGroupProps,
+        children,
+        metadata,
+    } = useTreeNode(id)
 
     return (
         <li
-            className={classNames(
-                'relative cursor-pointer select-none flex flex-col focus:outline-none',
-            )}
-            {...getTreeNodeProps()}
-            data-tree-lad
+            {...getTreeNodeProps({
+                className:
+                    'relative cursor-pointer select-none flex flex-col focus:outline-none group',
+            })}
         >
             <div
                 className={classNames(
-                    'group flex flex-row items-center border-[1.5px] rounded-sm space-x-2',
-                    isFocused
-                        ? 'border-slate-400 focus-within:border-transparent'
-                        : 'border-transparent',
+                    'group flex flex-row items-center border-[1.5px] border-transparent rounded-sm space-x-2',
+                    isFocusable && 'group-focus:border-slate-400 focus-within:border-transparent',
                     isSelected ? 'bg-slate-200' : 'bg-transparent',
                 )}
             >
@@ -114,10 +118,9 @@ export function TreeNode({ id, depth = 0 }: TreeNodeProps) {
                         }}
                         className="pl-4"
                     >
-                        {isOpen &&
-                            children?.map(childNodeId => {
-                                return <TreeNode key={id + childNodeId} id={childNodeId} />
-                            })}
+                        {children?.map(childNodeId => {
+                            return <TreeNode key={id + childNodeId} id={childNodeId} />
+                        })}
                     </motion.ul>
                 )}
             </AnimatePresence>

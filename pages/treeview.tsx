@@ -14,17 +14,20 @@ export default function ToggleGroupPage() {
                 This treeview is currently marked as wip as I write the related post explaining it.
                 But the code is really there so check it out if you need to do something similar.
             </p>
-            <div className="w-[300px] h-[400px] space-y-8 flex flex-col not-prose">
-                <TreeViewProvider initialTree={initialValue} label="File manager">
-                    {({ treeProps }) => (
-                        <ul data-root-lad {...treeProps} className="h-full overflow-auto">
-                            {initialValue.map(({ id }) => (
-                                <TreeNode id={id} key={id} />
-                            ))}
-                        </ul>
-                    )}
-                </TreeViewProvider>
-            </div>
+            <h2>Regular tree</h2>
+            <TreeViewProvider
+                initialTree={initialValue}
+                label="File manager"
+                className="w-[300px] h-[400px] space-y-8 flex flex-col not-prose"
+            >
+                {({ treeProps }) => (
+                    <ul {...treeProps} className="h-full overflow-auto">
+                        {initialValue.map(({ id }) => (
+                            <TreeNode id={id} key={id} />
+                        ))}
+                    </ul>
+                )}
+            </TreeViewProvider>
         </div>
     )
 }

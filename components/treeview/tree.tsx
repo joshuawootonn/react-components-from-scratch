@@ -1,3 +1,4 @@
+import { RovingTabindexRoot } from 'components/roving-tabindex'
 import { TreeViewProvider, initialValue } from 'lib/treeview'
 
 import { TreeNode } from './tree-node'
