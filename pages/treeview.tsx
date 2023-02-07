@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { TreeNode } from 'components/treeview/tree-node'
-import { initialValue, TreeViewProvider } from 'lib/treeview'
+import { initialValue, longInitialValues, TreeViewProvider } from 'lib/treeview'
 
 export default function ToggleGroupPage() {
     return (
@@ -23,6 +23,20 @@ export default function ToggleGroupPage() {
                 {({ treeProps }) => (
                     <ul {...treeProps} className="h-full overflow-auto">
                         {initialValue.map(({ id }) => (
+                            <TreeNode id={id} key={id} />
+                        ))}
+                    </ul>
+                )}
+            </TreeViewProvider>
+            <h2>Really big tree</h2>
+            <TreeViewProvider
+                initialTree={longInitialValues}
+                label="File manager"
+                className="w-[300px] max-h-[400px] space-y-8 flex flex-col not-prose"
+            >
+                {({ treeProps, rootNodes }) => (
+                    <ul {...treeProps} className="h-full overflow-auto">
+                        {rootNodes.map(id => (
                             <TreeNode id={id} key={id} />
                         ))}
                     </ul>
