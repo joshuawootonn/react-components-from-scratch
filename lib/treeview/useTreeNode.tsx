@@ -87,11 +87,7 @@ export function useTreeNode<T extends ElementType>(
             ['aria-expanded']: metadata.isFolder && isOpen,
             ['aria-selected']: state.selectedId === id,
             role: 'treeitem',
-            tabIndex:
-                state.focusableId === id ||
-                (state.focusableId == null && getFirstFocusable(getOrderedItems()) === id)
-                    ? 0
-                    : -1,
+            tabIndex: state.focusableId === id ? 0 : -1,
             onClick: function (event: MouseEvent) {
                 event.stopPropagation()
                 props.onClick?.(event)
