@@ -1,10 +1,9 @@
-import isHotkey, { toKeyCode, toKeyName } from 'is-hotkey'
+import isHotkey from 'is-hotkey'
 import {
     useContext,
     FocusEvent,
     MouseEvent,
     KeyboardEvent,
-    useCallback,
     ComponentPropsWithoutRef,
     ElementType,
 } from 'react'
@@ -87,11 +86,11 @@ export function useTreeNode<T extends ElementType>(
             ['aria-expanded']: metadata.isFolder && isOpen,
             ['aria-selected']: state.selectedId === id,
             role: 'treeitem',
-            tabIndex: state.focusableId === id ? 0 : -1,
-            onClick: function (event: MouseEvent) {
-                event.stopPropagation()
-                props.onClick?.(event)
-                if (event.button === 0) {
+            tabIndex: currentRovingTabindexValue === id ? 0 : -1,
+            onClick: function (e: MouseEvent) {
+                e.stopPropagation()
+                props.onClick?.(e)
+                if (e.button === 0) {
                     if (metadata.isFolder) {
                         isOpen
                             ? dispatch({ type: TreeActionTypes.CLOSE, id })
@@ -100,61 +99,51 @@ export function useTreeNode<T extends ElementType>(
                     dispatch({ type: TreeActionTypes.SELECT, id })
                 }
             },
-            onMouseDown: function (event: MouseEvent) {
-                props.onMouseDown?.(event)
-                rovingProps.onMouseDown(event)
-            },
-            onKeyDown: function (event: KeyboardEvent) {
-                if (event.target !== event.currentTarget) return
-                props.onKeyDown?.(event)
-                rovingProps.onKeyDown(event)
+            onKeyDown: function (e: KeyboardEvent) {
+                e.stopPropagation()
+                props.onKeyDown?.(e)
+                rovingProps.onKeyDown(e)
 
                 let nextIdToFocus: string | null = null
                 const items = getOrderedItems()
 
-                if (isHotkey('up', event)) {
-                    event.preventDefault()
+                if (isHotkey('up', e)) {
+                    e.preventDefault()
                     nextIdToFocus = getPrevFocusable(items, id)
-                } else if (isHotkey('down', event)) {
-                    event.preventDefault()
+                } else if (isHotkey('down', e)) {
+                    e.preventDefault()
                     nextIdToFocus = getNextFocusable(items, id)
-                } else if (isHotkey('left', event)) {
+                } else if (isHotkey('left', e)) {
                     if (isOpen && metadata.isFolder) {
                         dispatch({ type: TreeActionTypes.CLOSE, id })
                     } else {
                         nextIdToFocus = getPrevFocusable(items, id)
                     }
-                } else if (isHotkey('right', event)) {
+                } else if (isHotkey('right', e)) {
                     if (isOpen && metadata.isFolder) {
                         nextIdToFocus = getNextFocusable(items, id)
                     } else {
                         dispatch({ type: TreeActionTypes.OPEN, id })
                     }
-                } else if (isHotkey('home', event)) {
+                } else if (isHotkey('home', e)) {
                     nextIdToFocus = getFirstFocusable(items)
-                } else if (isHotkey('end', event)) {
+                } else if (isHotkey('end', e)) {
                     nextIdToFocus = getLastFocusable(items)
-                } else if (isHotkey('space', event)) {
-                    event.preventDefault()
+                } else if (isHotkey('space', e)) {
+                    e.preventDefault()
                     dispatch({ type: TreeActionTypes.SELECT, id })
                     if (metadata.isFolder) {
                         isOpen
                             ? dispatch({ type: TreeActionTypes.CLOSE, id })
                             : dispatch({ type: TreeActionTypes.OPEN, id })
                     }
-                } else if (/^[a-z]$/i.test(event.key)) {
-                    nextIdToFocus = getNextByTypeahead(state, items, id, event.key)
+                } else if (/^[a-z]$/i.test(e.key)) {
+                    nextIdToFocus = getNextByTypeahead(state, items, id, e.key)
                 }
 
                 if (nextIdToFocus != null) {
                     elements.current.get(nextIdToFocus)?.focus()
                 }
-            },
-            onFocus: function (event: FocusEvent) {
-                if (event.target !== event.currentTarget) return
-                props.onFocus?.(event)
-                rovingProps.onFocus(event)
-                dispatch({ type: TreeActionTypes.SET_FOCUSABLE, id })
             },
         }),
         treeGroupProps: {

@@ -51,7 +51,7 @@ export function TreeViewProvider({
     return (
         <TreeViewContext.Provider value={{ dispatch, elements, state }}>
             <RovingTabindexRoot
-                active={state.focusableId ?? null}
+                active={state.selectedId ?? null}
                 elementsById={elements.current}
                 className={className}
             >

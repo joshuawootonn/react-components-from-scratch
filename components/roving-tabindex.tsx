@@ -142,15 +142,18 @@ export const useRovingTabindex = function (id: string) {
             currentRovingTabindexValue,
             rovingProps: {
                 onMouseDown: (e: MouseEvent) => {
+                    if (e.target !== e.currentTarget) return
                     focus(id)
                 },
                 onKeyDown: (e: KeyboardEvent) => {
+                    if (e.target !== e.currentTarget) return
                     if (isHotkey('shift+tab', e)) {
                         onShiftTab()
                         return
                     }
                 },
                 onFocus: (e: FocusEvent) => {
+                    if (e.target !== e.currentTarget) return
                     focus(id)
                 },
                 ['data-roving-tabindex-item']: true,

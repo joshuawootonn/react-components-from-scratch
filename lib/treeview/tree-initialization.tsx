@@ -47,8 +47,6 @@ export function getInitialTreeState(rootNodes: TreeNodeType[]): TreeState {
         isOpen: new ChainableMap<string, boolean>([[TREE_ID, true]]),
         metadata: new ChainableMap<string, TreeNodeMetadata>(getInitialMetadata(rootNodes)),
         children: new ChainableMap<string, string[]>(getInitialChildren(rootNodes)),
-        focusableId: rootNodes.at(0)?.id,
-        focusedId: null,
         selectedId: null,
     }
 }

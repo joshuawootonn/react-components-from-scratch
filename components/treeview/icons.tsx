@@ -12,7 +12,7 @@ export function Folder({ isExpanded, className }: Props) {
                 viewBox="0 0 24 24"
                 strokeWidth="1.6"
                 stroke="currentColor"
-                className={classNames('h-3.5 w-3.5', className)}
+                className={classNames(className)}
             >
                 <path
                     strokeLinecap="round"
@@ -30,7 +30,7 @@ export function Folder({ isExpanded, className }: Props) {
             viewBox="0 0 24 24"
             strokeWidth="1.6"
             stroke="currentColor"
-            className={classNames('h-3.5 w-3.5', className)}
+            className={classNames(className)}
         >
             <path
                 strokeLinecap="round"
@@ -49,7 +49,7 @@ export function File({ className }: Props) {
             viewBox="0 0 24 24"
             strokeWidth="1.6"
             stroke="currentColor"
-            className={classNames('h-3.5 w-3.5', className)}
+            className={classNames(className)}
         >
             <path
                 strokeLinecap="round"
@@ -68,7 +68,7 @@ export function Arrow({ isExpanded, className }: Props) {
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className={classNames('h-3.5 w-3.5 origin-center', className)}
+            className={classNames('origin-center', className)}
             initial={false}
             animate={{ rotate: isExpanded ? 90 : 0 }}
             style={{ originX: '8px', originY: '8px' }}
@@ -90,7 +90,7 @@ export function Ellipse({ className }: Props) {
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className={classNames('h-3.5 w-3.5 origin-center', className)}
+            className={classNames('origin-center', className)}
         >
             <path
                 strokeLinecap="round"

@@ -9,7 +9,6 @@ export type TreeState = {
     children: ChainableMap<string, string[]>
     isOpen: ChainableMap<string, boolean>
     metadata: ChainableMap<string, TreeNodeMetadata>
-    focusableId?: string | null
     selectedId?: string | null
 }
 
@@ -17,7 +16,6 @@ export enum TreeActionTypes {
     REGISTER = 'REGISTER',
     DEREGISTER = 'DEREGISTER',
     SELECT = 'SELECT',
-    SET_FOCUSABLE = 'SET_FOCUSABLE',
     OPEN = 'OPEN',
     CLOSE = 'CLOSE',
 }
@@ -30,7 +28,6 @@ export type TreeActions =
       }
     | { type: TreeActionTypes.DEREGISTER; id: string }
     | { type: TreeActionTypes.SELECT; id: string }
-    | { type: TreeActionTypes.SET_FOCUSABLE; id: string }
     | {
           type: TreeActionTypes.OPEN
           id: string
@@ -44,12 +41,6 @@ export const TREE_ID = 'tree'
 
 export function treeReducer(state: TreeState, action: TreeActions): TreeState {
     switch (action.type) {
-        case TreeActionTypes.SET_FOCUSABLE:
-            return {
-                ...state,
-                focusableId: action.id,
-            }
-
         case TreeActionTypes.OPEN:
             return {
                 ...state,
