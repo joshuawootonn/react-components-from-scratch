@@ -20,10 +20,6 @@ type RovingTabindexItem = {
     element: HTMLElement
 }
 
-function wrapArray<T>(array: T[], startIndex: number) {
-    return array.map((_, index) => array[(startIndex + index) % array.length])
-}
-
 function focusFirst(candidates: HTMLElement[]) {
     const previousFocus = document.activeElement
     while (document.activeElement === previousFocus && candidates.length > 0) {
@@ -75,19 +71,27 @@ export function RovingTabindexRoot({
             .map(([id, element]) => ({ id, element }))
     }, [elementsById])
 
+    const value = useMemo(
+        () => ({
+            focus: function (id: string) {
+                setCurrentRovingTabindexValue(id)
+            },
+            onShiftTab: function () {
+                setIsShiftTabbing(true)
+            },
+            currentRovingTabindexValue,
+            getOrderedItems,
+        }),
+        [
+            currentRovingTabindexValue,
+            getOrderedItems,
+            setCurrentRovingTabindexValue,
+            setIsShiftTabbing,
+        ],
+    )
+
     return (
-        <RovingTabindexContext.Provider
-            value={{
-                focus: function (id: string) {
-                    setCurrentRovingTabindexValue(id)
-                },
-                onShiftTab: function () {
-                    setIsShiftTabbing(true)
-                },
-                currentRovingTabindexValue,
-                getOrderedItems,
-            }}
-        >
+        <RovingTabindexContext.Provider value={value}>
             <div
                 tabIndex={isShiftTabbing ? -1 : 0}
                 onFocus={e => {
@@ -116,20 +120,20 @@ export function RovingTabindexRoot({
 
 export function getNextFocusable(orderedItems: RovingTabindexItem[], id: string): string {
     const currIndex = orderedItems.findIndex(item => item.id === id)
-    return wrapArray(orderedItems, currIndex + 1).shift()?.id ?? id
+    return orderedItems.at(currIndex === orderedItems.length ? 0 : currIndex + 1)?.id ?? id
 }
 
 export function getPrevFocusable(orderedItems: RovingTabindexItem[], id: string): string {
-    const currIndex = orderedItems.reverse().findIndex(item => item.id === id)
-    return wrapArray(orderedItems, currIndex + 1).shift()?.id ?? id
+    const currIndex = orderedItems.findIndex(item => item.id === id)
+    return orderedItems.at(currIndex === 0 ? -1 : currIndex - 1)?.id ?? id
 }
 
 export function getFirstFocusable(orderedItems: RovingTabindexItem[]): string {
-    return orderedItems.shift()?.id ?? ''
+    return orderedItems.at(0)?.id ?? ''
 }
 
 export function getLastFocusable(orderedItems: RovingTabindexItem[]): string {
-    return orderedItems.reverse().shift()?.id ?? ''
+    return orderedItems.at(-1)?.id ?? ''
 }
 
 export const useRovingTabindex = function (id: string) {

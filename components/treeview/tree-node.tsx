@@ -9,15 +9,15 @@ type TreeNodeProps = {
     depth?: number
 }
 
-export function TreeNode({ id }: TreeNodeProps) {
+export const TreeNode = function TreeNode({ id }: TreeNodeProps) {
     const {
         isOpen,
         isFocusable,
         isSelected,
         getTreeNodeProps,
         treeGroupProps,
-        children,
         metadata,
+        children,
     } = useTreeNode(id)
 
     return (
@@ -48,7 +48,7 @@ export function TreeNode({ id }: TreeNodeProps) {
                     {metadata.name}
                 </span>
             </div>
-            {isOpen && (
+            {isOpen && children && (
                 <motion.ul {...treeGroupProps} key={id + 'ul'} className="pl-2">
                     {children.map(childNodeId => {
                         return <TreeNode key={id + childNodeId} id={childNodeId} />

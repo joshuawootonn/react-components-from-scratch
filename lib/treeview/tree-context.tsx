@@ -1,4 +1,4 @@
-import React, { Dispatch, MutableRefObject, ReactNode, useReducer, useRef } from 'react'
+import React, { Dispatch, MutableRefObject, ReactNode, useMemo, useReducer, useRef } from 'react'
 
 import { RovingTabindexRoot } from 'components/roving-tabindex'
 import { ChainableMap } from 'lib/utils/ChainableMap'
@@ -48,24 +48,31 @@ export function TreeViewProvider({
     const elements = useRef<ChainableMap<string, HTMLElement>>(new ChainableMap())
     const [state, dispatch] = useReducer(treeReducer, getInitialTreeState(initialTree))
 
+    const value = useMemo(() => ({ dispatch, elements, state }), [state])
+
+    const renderValue = useMemo(
+        () => ({
+            treeProps: {
+                role: 'tree' as const,
+                'aria-label': label,
+                'aria-multi-selectable': 'false' as const,
+            },
+            rootNodes: state.children.get(TREE_ID) ?? [],
+            dispatch,
+            elements,
+            state,
+        }),
+        [label, state],
+    )
+
     return (
-        <TreeViewContext.Provider value={{ dispatch, elements, state }}>
+        <TreeViewContext.Provider value={value}>
             <RovingTabindexRoot
+                className={className}
                 active={state.selectedId ?? null}
                 elementsById={elements.current}
-                className={className}
             >
-                {children({
-                    treeProps: {
-                        role: 'tree',
-                        'aria-label': label,
-                        'aria-multi-selectable': 'false',
-                    },
-                    rootNodes: state.children.get(TREE_ID) ?? [],
-                    dispatch,
-                    elements,
-                    state,
-                })}
+                {children(renderValue)}
             </RovingTabindexRoot>
         </TreeViewContext.Provider>
     )
