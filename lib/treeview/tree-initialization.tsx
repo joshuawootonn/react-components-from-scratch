@@ -11,6 +11,7 @@ function traverseForInitialMetadata(node: TreeNodeType): [string, TreeNodeMetada
             {
                 name: node.name,
                 isFolder: (node.children?.length ?? 0) > 0,
+                icon: node.icon ?? null,
             },
         ],
         ...(node?.children?.flatMap(traverseForInitialMetadata) ?? []),
@@ -19,7 +20,7 @@ function traverseForInitialMetadata(node: TreeNodeType): [string, TreeNodeMetada
 
 export function getInitialMetadata(rootNodes: TreeNodeType[]): [string, TreeNodeMetadata][] {
     return [
-        [TREE_ID, { name: '', isFolder: true }],
+        [TREE_ID, { name: '', isFolder: true, icon: null }],
         ...rootNodes.flatMap(traverseForInitialMetadata),
     ]
 }

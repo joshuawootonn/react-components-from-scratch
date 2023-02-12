@@ -1,6 +1,10 @@
 import Link from 'next/link'
 
 import { Treeview } from 'components/treeview'
+import {
+    AppleTreeview,
+    initialValue as appleInitialValues,
+} from 'components/treeview/examples/apple-sidebar'
 import { initialValue, longInitialValues } from 'lib/treeview'
 
 export default function ToggleGroupPage() {
@@ -28,7 +32,18 @@ export default function ToggleGroupPage() {
                 ))}
             </Treeview.Root>
 
-         
+            <h2>Apple sidebar</h2>
+
+            <AppleTreeview.Root
+                value={appleInitialValues}
+                label="Sidebar"
+                className="w-[300px] h-[400px] flex flex-col not-prose"
+            >
+                {appleInitialValues.map(node => (
+                    <AppleTreeview.Node node={node} key={node.id} />
+                ))}
+            </AppleTreeview.Root>
+
             <h2>Really big tree</h2>
 
             <Treeview.Root

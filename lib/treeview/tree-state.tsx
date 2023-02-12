@@ -1,8 +1,10 @@
 import { ChainableMap } from 'lib/utils'
+import { ReactNode } from 'react'
 
 export type TreeNodeMetadata = {
     isFolder: boolean
     name: string
+    icon: ReactNode | null
 }
 
 export type TreeState = {

@@ -72,6 +72,7 @@ export function useTreeNode<T extends ElementType>(
         const metadata = state.metadata.get(id) ?? {
             name: 'Untitled',
             isFolder: false,
+            icon: null,
         }
 
         return {
