@@ -14,6 +14,7 @@ import {
     getFirstFocusable,
     getLastFocusable,
     getNextFocusable,
+    getParentFocusable,
     getPrevFocusable,
     useRovingTabindex,
 } from 'components/roving-tabindex'
@@ -125,7 +126,7 @@ export function useTreeNode<T extends ElementType>(
                         if (isOpen && metadata.isFolder) {
                             dispatch({ type: TreeActionTypes.CLOSE, id })
                         } else {
-                            nextIdToFocus = getPrevFocusable(items, id)
+                            nextIdToFocus = getParentFocusable(items, id)
                         }
                     } else if (isHotkey('right', e)) {
                         if (isOpen && metadata.isFolder) {
