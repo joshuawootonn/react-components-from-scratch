@@ -6,7 +6,6 @@ export type TreeNodeMetadata = {
 }
 
 export type TreeState = {
-    children: ChainableMap<string, string[]>
     isOpen: ChainableMap<string, boolean>
     metadata: ChainableMap<string, TreeNodeMetadata>
     selectedId?: string | null

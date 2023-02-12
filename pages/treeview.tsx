@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
-import { TreeNode } from 'components/treeview/tree-node'
-import { initialValue, longInitialValues, TreeViewProvider } from 'lib/treeview'
+import { Treeview } from 'components/treeview'
+import { initialValue, longInitialValues } from 'lib/treeview'
 
 export default function ToggleGroupPage() {
     return (
@@ -15,33 +15,33 @@ export default function ToggleGroupPage() {
                 But the code is really there so check it out if you need to do something similar.
             </p>
             <h2>Regular tree</h2>
-            <TreeViewProvider
-                initialTree={initialValue}
+
+            <Treeview.Root
+                value={initialValue}
                 label="File manager"
-                className="w-[300px] h-[400px] space-y-8 flex flex-col not-prose"
+                className="w-[300px] h-[400px] flex flex-col not-prose"
             >
-                {({ treeProps }) => (
-                    <ul {...treeProps} className="h-full overflow-auto">
-                        {initialValue.map(({ id }) => (
-                            <TreeNode id={id} key={id} />
-                        ))}
-                    </ul>
-                )}
-            </TreeViewProvider>
+                {initialValue.map(node => (
+                    <Treeview.Node id={node.id} key={node.id}>
+                        {node.children}
+                    </Treeview.Node>
+                ))}
+            </Treeview.Root>
+
+         
             <h2>Really big tree</h2>
-            <TreeViewProvider
-                initialTree={longInitialValues}
+
+            <Treeview.Root
+                value={longInitialValues}
                 label="File manager"
-                className="w-[300px] max-h-[400px] space-y-8 flex flex-col not-prose"
+                className="w-[300px] h-[400px] flex flex-col not-prose"
             >
-                {({ treeProps, rootNodes }) => (
-                    <ul {...treeProps} className="h-full overflow-auto">
-                        {rootNodes.map(id => (
-                            <TreeNode id={id} key={id} />
-                        ))}
-                    </ul>
-                )}
-            </TreeViewProvider>
+                {longInitialValues.map(node => (
+                    <Treeview.Node id={node.id} key={node.id}>
+                        {node.children}
+                    </Treeview.Node>
+                ))}
+            </Treeview.Root>
         </div>
     )
 }

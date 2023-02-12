@@ -36,7 +36,6 @@ export function useTreeNode<T extends ElementType>(
     close: () => void
     isFocusable: boolean
     isSelected: boolean
-    children: string[]
     metadata: TreeNodeMetadata
     getTreeNodeProps: (props: ComponentPropsWithoutRef<T>) => {
         ref: (current: HTMLElement | null) => void
@@ -74,12 +73,10 @@ export function useTreeNode<T extends ElementType>(
             name: 'Untitled',
             isFolder: false,
         }
-        const children = state.children.get(id) ?? []
 
         return {
             isOpen,
             metadata,
-            children,
             isFocusable: currentRovingTabindexValue === id,
             isSelected: state.selectedId === id,
             open: function () {

@@ -1,24 +1,19 @@
 import classNames from 'clsx'
-import { motion } from 'framer-motion'
+import { memo, ReactNode } from 'react'
 
 import { Folder, File, Arrow } from 'components/treeview/icons'
 import { useTreeNode } from 'lib/treeview'
+import { TreeNodeType, TreeviewProvider } from 'lib/treeview'
 
-type TreeNodeProps = {
+type NodeProps = {
     id: string
+    children?: TreeNodeType[]
     depth?: number
 }
 
-export const TreeNode = function TreeNode({ id }: TreeNodeProps) {
-    const {
-        isOpen,
-        isFocusable,
-        isSelected,
-        getTreeNodeProps,
-        treeGroupProps,
-        metadata,
-        children,
-    } = useTreeNode(id)
+export const Node = memo(function TreeNode({ id, children }: NodeProps) {
+    const { isOpen, isFocusable, isSelected, getTreeNodeProps, treeGroupProps, metadata } =
+        useTreeNode(id)
 
     return (
         <li
@@ -49,12 +44,35 @@ export const TreeNode = function TreeNode({ id }: TreeNodeProps) {
                 </span>
             </div>
             {isOpen && children && (
-                <motion.ul {...treeGroupProps} key={id + 'ul'} className="pl-2">
-                    {children.map(childNodeId => {
-                        return <TreeNode key={id + childNodeId} id={childNodeId} />
-                    })}
-                </motion.ul>
+                <ul {...treeGroupProps} className="pl-2">
+                    {children.map(node => (
+                        <Treeview.Node id={node.id} key={node.id}>
+                            {node.children}
+                        </Treeview.Node>
+                    ))}
+                </ul>
             )}
         </li>
     )
+})
+
+type RootProps = {
+    value: TreeNodeType[]
+    label: string
+    className?: string
+    children?: ReactNode | ReactNode[]
 }
+
+export const Root = function TreeRoot({ value, className, children, ...props }: RootProps) {
+    return (
+        <TreeviewProvider
+            {...props}
+            className={classNames(className, 'h-full overflow-auto')}
+            value={value}
+        >
+            {children}
+        </TreeviewProvider>
+    )
+}
+
+export const Treeview = { Root, Node }

@@ -11,6 +11,7 @@ import {
     KeyboardEvent,
     ComponentPropsWithoutRef,
     useMemo,
+    ElementType,
 } from 'react'
 
 import { ChainableMap } from 'lib/utils'
@@ -39,24 +40,27 @@ const RovingTabindexContext = createContext<{
     getOrderedItems: () => [],
 })
 
-type RovingTabindexRootBaseProps = {
+type RovingTabindexRootBaseProps<T> = {
     children: ReactNode | ReactNode[]
     active: string | null
     elementsById: ChainableMap<string, HTMLElement>
+    as?: T
 }
 
-type RovingTabindexRootProps = RovingTabindexRootBaseProps &
-    Omit<ComponentPropsWithoutRef<'div'>, keyof RovingTabindexRootBaseProps>
+type RovingTabindexRootProps<T extends ElementType> = RovingTabindexRootBaseProps<T> &
+    Omit<ComponentPropsWithoutRef<T>, keyof RovingTabindexRootBaseProps<T>>
 
 const NODE_SELECTOR = 'data-roving-tabindex-item'
 const ROOT_SELECTOR = 'data-roving-tabindex-root'
 
-export function RovingTabindexRoot({
+export function RovingTabindexRoot<T extends ElementType = 'div'>({
     children,
     active,
     elementsById,
+    as,
     ...props
-}: RovingTabindexRootProps) {
+}: RovingTabindexRootProps<T>) {
+    const Component = as || 'div'
     const [isShiftTabbing, setIsShiftTabbing] = useState(false)
     const [currentRovingTabindexValue, setCurrentRovingTabindexValue] = useState<string | null>(
         null,
@@ -93,7 +97,7 @@ export function RovingTabindexRoot({
 
     return (
         <RovingTabindexContext.Provider value={value}>
-            <div
+            <Component
                 {...{ [ROOT_SELECTOR]: true }}
                 tabIndex={isShiftTabbing ? -1 : 0}
                 onFocus={e => {
@@ -115,7 +119,7 @@ export function RovingTabindexRoot({
                 {...props}
             >
                 {children}
-            </div>
+            </Component>
         </RovingTabindexContext.Provider>
     )
 }
