@@ -16,6 +16,7 @@ import {
     getNextFocusable,
     getParentFocusable,
     getPrevFocusable,
+    NOT_FOCUSABLE_SELECTOR,
     useRovingTabindex,
 } from 'components/roving-tabindex'
 
@@ -89,6 +90,7 @@ export function useTreeNode<T extends ElementType>(
             getTreeNodeProps: (props: ComponentPropsWithoutRef<T>) => ({
                 ...props,
                 ...rovingProps,
+                [NOT_FOCUSABLE_SELECTOR]: !isOpen,
                 ref,
                 ['aria-expanded']: metadata.isFolder && isOpen,
                 ['aria-selected']: state.selectedId === id,

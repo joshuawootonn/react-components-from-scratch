@@ -50,9 +50,9 @@ type RovingTabindexRootBaseProps<T> = {
 type RovingTabindexRootProps<T extends ElementType> = RovingTabindexRootBaseProps<T> &
     Omit<ComponentPropsWithoutRef<T>, keyof RovingTabindexRootBaseProps<T>>
 
-const NODE_SELECTOR = 'data-roving-tabindex-item'
+const NODE_SELECTOR = 'data-roving-tabindex-node'
 const ROOT_SELECTOR = 'data-roving-tabindex-root'
-
+export const NOT_FOCUSABLE_SELECTOR = 'data-roving-tabindex-not-focusable'
 export function RovingTabindexRoot<T extends ElementType = 'div'>({
     children,
     active,
@@ -69,7 +69,11 @@ export function RovingTabindexRoot<T extends ElementType = 'div'>({
 
     const getOrderedItems = useCallback(() => {
         if (!rootRef.current || !elementsById) return []
-        const domElements = Array.from(rootRef.current.querySelectorAll(`[${NODE_SELECTOR}]`))
+        const domElements = Array.from(
+            rootRef.current.querySelectorAll(
+                `:where([${NODE_SELECTOR}=true]):not(:where([${NOT_FOCUSABLE_SELECTOR}=true] *))`,
+            ),
+        )
 
         return Array.from(elementsById.toMap())
             .sort((a, b) => domElements.indexOf(a[1]) - domElements.indexOf(b[1]))
