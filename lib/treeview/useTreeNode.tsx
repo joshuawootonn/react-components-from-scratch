@@ -135,8 +135,10 @@ export function useTreeNode<T extends ElementType>(
                             dispatch({ type: TreeActionTypes.OPEN, id })
                         }
                     } else if (isHotkey('home', e)) {
+                        e.preventDefault()
                         nextIdToFocus = getFirstFocusable(items)
                     } else if (isHotkey('end', e)) {
+                        e.preventDefault()
                         nextIdToFocus = getLastFocusable(items)
                     } else if (isHotkey('space', e)) {
                         e.preventDefault()
