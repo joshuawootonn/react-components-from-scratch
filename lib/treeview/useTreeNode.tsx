@@ -31,6 +31,11 @@ export type Item = {
 
 export function useTreeNode<T extends ElementType>(
     id: string,
+    options: {
+        selectionType: 'followFocus' | 'distinct'
+    } = {
+        selectionType: 'followFocus',
+    },
 ): {
     isOpen: boolean
     open: () => void
@@ -44,7 +49,6 @@ export function useTreeNode<T extends ElementType>(
         ['aria-expanded']: boolean
         ['aria-selected']: boolean
         role: 'treeitem'
-        onMouseDown: (event: MouseEvent) => void
         onClick: (event: MouseEvent) => void
         onKeyDown: (event: KeyboardEvent) => void
         onFocus: (event: FocusEvent) => void
@@ -99,12 +103,14 @@ export function useTreeNode<T extends ElementType>(
                 onClick: function (e: MouseEvent) {
                     e.stopPropagation()
                     props.onClick?.(e)
+                    rovingProps.onClick(e)
                     if (e.button === 0) {
                         if (metadata.isFolder) {
                             isOpen
                                 ? dispatch({ type: TreeActionTypes.CLOSE, id })
                                 : dispatch({ type: TreeActionTypes.OPEN, id })
                         }
+
                         dispatch({ type: TreeActionTypes.SELECT, id })
                     }
                 },
@@ -154,6 +160,8 @@ export function useTreeNode<T extends ElementType>(
 
                     if (nextIdToFocus != null) {
                         elements.current.get(nextIdToFocus)?.focus()
+                        options.selectionType === 'followFocus' &&
+                            dispatch({ type: TreeActionTypes.SELECT, id: nextIdToFocus })
                     }
                 },
             }),
@@ -167,6 +175,7 @@ export function useTreeNode<T extends ElementType>(
         elements,
         getOrderedItems,
         id,
+        options.selectionType,
         ref,
         rovingProps,
         state,

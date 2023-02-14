@@ -173,7 +173,7 @@ export const useRovingTabindex = function (id: string) {
             getOrderedItems,
             currentRovingTabindexValue,
             rovingProps: {
-                onMouseDown: (e: MouseEvent) => {
+                onClick: (e: MouseEvent) => {
                     if (e.target !== e.currentTarget) return
                     focus(id)
                 },

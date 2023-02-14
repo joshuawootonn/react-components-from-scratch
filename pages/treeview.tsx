@@ -1,10 +1,7 @@
 import Link from 'next/link'
 
 import { Treeview } from 'components/treeview'
-import {
-    AppleTreeview,
-    initialValue as appleInitialValues,
-} from 'components/treeview/examples/apple-sidebar'
+import { AppleTreeview, appleInitialValues } from 'components/treeview/examples'
 import { initialValue, longInitialValues } from 'lib/treeview'
 
 export default function ToggleGroupPage() {
@@ -40,7 +37,9 @@ export default function ToggleGroupPage() {
                 className="w-[300px] h-[400px] flex flex-col not-prose"
             >
                 {appleInitialValues.map(node => (
-                    <AppleTreeview.Node node={node} key={node.id} />
+                    <AppleTreeview.Node id={node.id} key={node.id}>
+                        {node.children}
+                    </AppleTreeview.Node>
                 ))}
             </AppleTreeview.Root>
 
