@@ -14,7 +14,7 @@ type NodeProps = {
 
 export const Node = memo(function TreeNode({ id, children }: NodeProps) {
     const { isOpen, isFocusable, isSelected, getTreeNodeProps, treeGroupProps, metadata } =
-        useTreeNode(id)
+        useTreeNode(id, { selectionType: 'distinct' })
 
     return (
         <li
@@ -51,32 +51,7 @@ export const Node = memo(function TreeNode({ id, children }: NodeProps) {
                         {metadata.name}
                     </span>
                 </div>
-                <AnimatePresence initial={false}>
-                    {isOpen && (
-                        <motion.svg
-                            viewBox="0 0 3 60"
-                            fill="none"
-                            preserveAspectRatio="none"
-                            width={2}
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="absolute top-[30px] h-[calc(100%-36px)] bottom-0 left-2.5 transform -translate-x-1/2 stroke-slate-200 z-[-1]"
-                            key={id + 'line'}
-                            stroke="currentColor"
-                            exit={{
-                                height: 0,
-                            }}
-                        >
-                            <motion.line
-                                strokeLinecap="round"
-                                x1="1"
-                                x2="1"
-                                y1="1"
-                                y2="59"
-                                strokeWidth={2}
-                            />
-                        </motion.svg>
-                    )}
-                </AnimatePresence>
+
                 <AnimatePresence initial={false}>
                     {children && isOpen && (
                         <motion.ul
@@ -113,6 +88,25 @@ export const Node = memo(function TreeNode({ id, children }: NodeProps) {
                             {...treeGroupProps}
                             className={classNames('pl-4')}
                         >
+                            <motion.svg
+                                viewBox="0 0 3 60"
+                                fill="none"
+                                preserveAspectRatio="none"
+                                width={2}
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="absolute top-[31px] h-[calc(100%-36px)] bottom-0 left-2.5 transform -translate-x-1/2 stroke-slate-200 z-[-1]"
+                                key={id + 'line'}
+                                stroke="currentColor"
+                            >
+                                <motion.line
+                                    strokeLinecap="round"
+                                    x1="1"
+                                    x2="1"
+                                    y1="1"
+                                    y2="59"
+                                    strokeWidth={2}
+                                />
+                            </motion.svg>
                             {children.map(node => (
                                 <Treeview.Node id={node.id} key={node.id}>
                                     {node.children}
