@@ -1,1 +1,1 @@
-export * from './ChainableMap'
+export * from './chainable-map'

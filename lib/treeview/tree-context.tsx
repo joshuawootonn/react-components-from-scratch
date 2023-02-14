@@ -1,7 +1,7 @@
 import React, { Dispatch, MutableRefObject, ReactNode, useMemo, useReducer, useRef } from 'react'
 
 import { RovingTabindexRoot } from 'components/roving-tabindex'
-import { ChainableMap } from 'lib/utils/ChainableMap'
+import { ChainableMap } from 'lib/utils/chainable-map'
 
 import { TreeNodeType } from './initialValue'
 import { getInitialTreeState } from './tree-initialization'
