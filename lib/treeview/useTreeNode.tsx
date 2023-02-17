@@ -149,11 +149,6 @@ export function useTreeNode<T extends ElementType>(
                     } else if (isHotkey('space', e)) {
                         e.preventDefault()
                         dispatch({ type: TreeActionTypes.SELECT, id })
-                        if (metadata.isFolder) {
-                            isOpen
-                                ? dispatch({ type: TreeActionTypes.CLOSE, id })
-                                : dispatch({ type: TreeActionTypes.OPEN, id })
-                        }
                     } else if (/^[a-z]$/i.test(e.key)) {
                         nextIdToFocus = getNextByTypeahead(state, items, id, e.key)
                     }
