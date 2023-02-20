@@ -37,7 +37,7 @@ export const Node = memo(function TreeNode({ node }: NodeProps) {
             >
                 <div
                     className={classNames(
-                        'group flex flex-row items-center border-[1.5px] border-transparent rounded-sm space-x-2',
+                        'group flex flex-row items-center border-[1.5px] border-transparent rounded-sm space-x-2 px-1',
                         isFocusable &&
                             'group-focus:border-slate-400 focus-within:border-transparent',
                         isSelected ? 'bg-slate-200' : 'bg-transparent',

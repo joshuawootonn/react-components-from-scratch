@@ -57,7 +57,8 @@ export function useTreeNode<T extends ElementType>(
         role: 'group'
     }
 } {
-    const { state, dispatch, elements } = useContext<TreeViewContextType>(TreeViewContext)
+    const { open, selectedId, selectId, dispatch, elements } =
+        useContext<TreeViewContextType>(TreeViewContext)
 
     const { currentRovingTabindexValue, getOrderedItems, rovingProps } = useRovingTabindex(id)
 
@@ -73,12 +74,12 @@ export function useTreeNode<T extends ElementType>(
     )
 
     return useMemo(() => {
-        const isOpen = state.isOpen.get(id) ?? false
+        const isOpen = open.get(id) ?? false
 
         return {
             isOpen,
             isFocusable: currentRovingTabindexValue === id,
-            isSelected: state.selectedId === id,
+            isSelected: selectedId === id,
             open: function () {
                 dispatch({ type: TreeActionTypes.OPEN, id })
             },
@@ -91,7 +92,7 @@ export function useTreeNode<T extends ElementType>(
                 [NOT_FOCUSABLE_SELECTOR]: !isOpen,
                 ref,
                 ['aria-expanded']: isOpen,
-                ['aria-selected']: state.selectedId === id,
+                ['aria-selected']: selectedId === id,
                 role: 'treeitem',
                 tabIndex: currentRovingTabindexValue === id ? 0 : -1,
                 onClick: function (e: MouseEvent) {
@@ -104,8 +105,7 @@ export function useTreeNode<T extends ElementType>(
                                 ? dispatch({ type: TreeActionTypes.CLOSE, id })
                                 : dispatch({ type: TreeActionTypes.OPEN, id })
                         }
-
-                        dispatch({ type: TreeActionTypes.SELECT, id })
+                        selectId(id)
                     }
                 },
                 onKeyDown: function (e: KeyboardEvent) {
@@ -142,15 +142,14 @@ export function useTreeNode<T extends ElementType>(
                         nextIdToFocus = getLastFocusable(items)
                     } else if (isHotkey('space', e)) {
                         e.preventDefault()
-                        dispatch({ type: TreeActionTypes.SELECT, id })
+                        selectId(id)
                     } else if (/^[a-z]$/i.test(e.key)) {
                         nextIdToFocus = getNextFocusableByTypeahead(items, id, e.key)
                     }
 
                     if (nextIdToFocus != null) {
                         elements.current.get(nextIdToFocus)?.focus()
-                        options.selectionType === 'followFocus' &&
-                            dispatch({ type: TreeActionTypes.SELECT, id: nextIdToFocus })
+                        options.selectionType === 'followFocus' && selectId(nextIdToFocus)
                     }
                 },
             }),
@@ -164,10 +163,12 @@ export function useTreeNode<T extends ElementType>(
         elements,
         getOrderedItems,
         id,
+        open,
         options.isFolder,
         options.selectionType,
         ref,
         rovingProps,
-        state,
+        selectId,
+        selectedId,
     ])
 }

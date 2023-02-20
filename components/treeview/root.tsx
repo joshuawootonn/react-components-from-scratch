@@ -1,31 +1,38 @@
-import React, { ReactNode, useRef, useReducer, useEffect, useMemo } from 'react'
+import React, { ReactNode, useRef, useReducer, useEffect, useMemo, useCallback } from 'react'
 
 import { RovingTabindexRoot } from 'components/roving-tabindex'
-import { getInitialTreeState, treeReducer, TreeViewContext } from 'lib/treeview'
+import { treeReducer, TreeViewContext } from 'lib/treeview'
 import { ChainableMap } from 'lib/utils'
 
 type TreeViewProviderProps = {
     children: ReactNode | ReactNode[]
     label: string
     className?: string
-    onChange?: (id: string | null) => void
+    value: string | null
+    onChange: (id: string | null) => void
 }
 
-export function Root({ children, onChange, label, className }: TreeViewProviderProps) {
+export function Root({ children, onChange, value, label, className }: TreeViewProviderProps) {
     const elements = useRef<ChainableMap<string, HTMLElement>>(new ChainableMap())
-    const [state, dispatch] = useReducer(treeReducer, getInitialTreeState())
+    const [open, dispatch] = useReducer(treeReducer, new ChainableMap<string, boolean>())
 
-    useEffect(() => {
-        onChange?.(state.selectedId ?? null)
-    }, [onChange, state.selectedId])
+    const selectId = useCallback(
+        (selectedId: string | null) => {
+            onChange(selectedId)
+        },
+        [onChange],
+    )
 
-    const providerValue = useMemo(() => ({ dispatch, elements, state }), [state])
+    const providerValue = useMemo(
+        () => ({ dispatch, elements, open, selectId, selectedId: value }),
+        [open, selectId, value],
+    )
 
     return (
         <TreeViewContext.Provider value={providerValue}>
             <RovingTabindexRoot
                 className={className}
-                active={state.selectedId ?? null}
+                active={providerValue.selectedId ?? null}
                 elementsById={elements.current}
                 as="ul"
                 aria-label={label}
