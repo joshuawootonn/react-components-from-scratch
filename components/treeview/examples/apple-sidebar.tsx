@@ -17,7 +17,7 @@ type NodeProps = {
 export const Node = memo(function TreeNode({ node, depth }: NodeProps) {
     const { isOpen, isFocusable, isSelected, getTreeNodeProps, treeGroupProps } = useTreeNode(
         node.id,
-        { selectionType: 'followFocus', isFolder: Boolean(node.children) },
+        { selectionType: 'followFocus', isFolder: Boolean(node.children?.length) },
     )
 
     return (
@@ -30,7 +30,7 @@ export const Node = memo(function TreeNode({ node, depth }: NodeProps) {
             >
                 <div
                     className={classNames(
-                        'text-[#E0E0E0] group flex flex-row items-center justify-start border-[1.5px] border-transparent rounded-[7px] space-x-1 h-6 ',
+                        'text-[#E0E0E0] group flex flex-row items-center justify-start border-[1.5px] border-transparent py-1 rounded-[7px] space-x-1',
                         isFocusable &&
                             'group-focus-visible:bg-[#3478F7] focus-within:border-transparent',
                         isSelected ? 'bg-[#3478F7] ' : 'bg-transparent',
@@ -68,7 +68,7 @@ export const Node = memo(function TreeNode({ node, depth }: NodeProps) {
                         </>
                     )}
 
-                    <span className="font-['Source_Sans_Pro'] font-medium leading-none text-ellipsis whitespace-nowrap overflow-hidden flex-grow">
+                    <span className="font-['Source_Sans_Pro'] font-medium leading-tight text-ellipsis whitespace-nowrap overflow-hidden flex-grow">
                         {node.name}
                     </span>
                 </div>
@@ -100,7 +100,7 @@ export const Node = memo(function TreeNode({ node, depth }: NodeProps) {
                         }}
                         transition={{ duration: 1 }}
                         {...treeGroupProps}
-                        className="flex flex-col justify-end overflow-hidden"
+                        className="flex flex-col justify-end overflow-hidden shrink-0"
                     >
                         {node.children.map(node => (
                             <Node node={node} key={node.id} depth={(depth ?? 0) + 1} />

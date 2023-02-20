@@ -18,7 +18,7 @@ export const Node = memo(function TreeNode({ node }: NodeProps) {
         node.id,
         {
             selectionType: 'distinct',
-            isFolder: Boolean(node.children),
+            isFolder: Boolean(node.children?.length),
         },
     )
 
