@@ -1,15 +1,11 @@
-import { ChainableMap } from 'lib/utils'
-import { ReactNode } from 'react'
+import React, { Dispatch, MutableRefObject } from 'react'
 
-export type TreeNodeMetadata = {
-    isFolder: boolean
-    name: string
-    icon: ReactNode | null
-}
+import { ChainableMap } from 'lib/utils'
+
+import { getInitialTreeState } from './tree-initialization'
 
 export type TreeState = {
     isOpen: ChainableMap<string, boolean>
-    metadata: ChainableMap<string, TreeNodeMetadata>
     selectedId?: string | null
 }
 
@@ -64,3 +60,15 @@ export function treeReducer(state: TreeState, action: TreeActions): TreeState {
             throw new Error('Tree Reducer received an unknown action')
     }
 }
+
+export type TreeViewContextType = {
+    state: TreeState
+    dispatch: Dispatch<TreeActions>
+    elements: MutableRefObject<ChainableMap<string, HTMLElement>>
+}
+
+export const TreeViewContext = React.createContext<TreeViewContextType>({
+    state: getInitialTreeState(),
+    dispatch: () => {},
+    elements: { current: new ChainableMap<string, HTMLElement>() },
+})

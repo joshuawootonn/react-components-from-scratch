@@ -1,21 +1,24 @@
 import classNames from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import NextImage from 'next/image'
-import { memo, ReactNode } from 'react'
+import { memo } from 'react'
 
 import { Arrow } from 'components/treeview/icons'
 import { useTreeNode } from 'lib/treeview'
-import { TreeNodeType, TreeviewProvider } from 'lib/treeview'
+import { TreeNodeType } from 'lib/treeview'
+
+import { Root } from '../root'
 
 type NodeProps = {
-    id: string
     depth?: number
-    children?: TreeNodeType[]
+    node: TreeNodeType
 }
 
-export const Node = memo(function TreeNode({ id, children, depth }: NodeProps) {
-    const { isOpen, isFocusable, isSelected, getTreeNodeProps, treeGroupProps, metadata } =
-        useTreeNode(id)
+export const Node = memo(function TreeNode({ node, depth }: NodeProps) {
+    const { isOpen, isFocusable, isSelected, getTreeNodeProps, treeGroupProps } = useTreeNode(
+        node.id,
+        { selectionType: 'followFocus', isFolder: Boolean(node.children) },
+    )
 
     return (
         <>
@@ -36,7 +39,7 @@ export const Node = memo(function TreeNode({ id, children, depth }: NodeProps) {
                         paddingLeft: `${depth ? depth * 16 + 4 : 4}px`,
                     }}
                 >
-                    {metadata.isFolder ? (
+                    {Boolean(node.children) ? (
                         <>
                             <Arrow
                                 className={classNames(
@@ -66,14 +69,14 @@ export const Node = memo(function TreeNode({ id, children, depth }: NodeProps) {
                     )}
 
                     <span className="font-['Source_Sans_Pro'] font-medium leading-none text-ellipsis whitespace-nowrap overflow-hidden flex-grow">
-                        {metadata.name}
+                        {node.name}
                     </span>
                 </div>
             </li>
             <AnimatePresence initial={false}>
-                {isOpen && children && (
+                {isOpen && node.children && (
                     <motion.ul
-                        key={id + 'ul'}
+                        key={node.id + 'ul'}
                         initial={{
                             height: 0,
                         }}
@@ -99,10 +102,8 @@ export const Node = memo(function TreeNode({ id, children, depth }: NodeProps) {
                         {...treeGroupProps}
                         className="flex flex-col justify-end overflow-hidden"
                     >
-                        {children.map(node => (
-                            <AppleTreeview.Node id={node.id} key={node.id} depth={(depth ?? 0) + 1}>
-                                {node.children}
-                            </AppleTreeview.Node>
+                        {node.children.map(node => (
+                            <Node node={node} key={node.id} depth={(depth ?? 0) + 1} />
                         ))}
                     </motion.ul>
                 )}
@@ -110,32 +111,5 @@ export const Node = memo(function TreeNode({ id, children, depth }: NodeProps) {
         </>
     )
 })
-
-type RootProps = {
-    value: TreeNodeType[]
-    label: string
-    className?: string
-    children?: ReactNode | ReactNode[]
-}
-
-export const Root = function TreeRoot({ value, className, children, ...props }: RootProps) {
-    return (
-        <>
-            <TreeviewProvider
-                {...props}
-                className={classNames(
-                    className,
-                    "bg-[#1E1E1E] rounded-[10px] p-4 h-full overflow-auto font-['Source_Sans_Pro']",
-                )}
-                value={value}
-            >
-                <style jsx>{`
-                    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap');
-                `}</style>
-                {children}
-            </TreeviewProvider>
-        </>
-    )
-}
 
 export const AppleTreeview = { Root, Node }

@@ -1,20 +1,26 @@
 import classNames from 'clsx'
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion'
-import { memo, ReactNode } from 'react'
+import { memo } from 'react'
+import React from 'react'
 
 import { Folder, File, Arrow } from 'components/treeview/icons'
 import { useTreeNode } from 'lib/treeview'
-import { TreeNodeType, TreeviewProvider } from 'lib/treeview'
+import { TreeNodeType } from 'lib/treeview'
+
+import { Root } from './root'
 
 type NodeProps = {
-    id: string
-    children?: TreeNodeType[]
-    depth?: number
+    node: TreeNodeType
 }
 
-export const Node = memo(function TreeNode({ id, children }: NodeProps) {
-    const { isOpen, isFocusable, isSelected, getTreeNodeProps, treeGroupProps, metadata } =
-        useTreeNode(id, { selectionType: 'distinct' })
+export const Node = memo(function TreeNode({ node }: NodeProps) {
+    const { isOpen, isFocusable, isSelected, getTreeNodeProps, treeGroupProps } = useTreeNode(
+        node.id,
+        {
+            selectionType: 'distinct',
+            isFolder: Boolean(node.children),
+        },
+    )
 
     return (
         <li
@@ -37,7 +43,7 @@ export const Node = memo(function TreeNode({ id, children }: NodeProps) {
                         isSelected ? 'bg-slate-200' : 'bg-transparent',
                     )}
                 >
-                    {metadata.isFolder ? (
+                    {Boolean(node.children) ? (
                         <>
                             <Arrow className="h-4 w-4" isExpanded={isOpen} />
                             <Folder isExpanded={isOpen} className="h-5 w-5" />
@@ -48,14 +54,14 @@ export const Node = memo(function TreeNode({ id, children }: NodeProps) {
                         </>
                     )}
                     <span className="font-mono font-medium text-ellipsis whitespace-nowrap overflow-hidden flex-grow">
-                        {metadata.name}
+                        {node.name}
                     </span>
                 </div>
 
                 <AnimatePresence initial={false}>
-                    {children && isOpen && (
+                    {node.children && isOpen && (
                         <motion.ul
-                            key={id + 'ul'}
+                            key={node.id + 'ul'}
                             initial={{
                                 height: 0,
                                 opacity: 0,
@@ -95,7 +101,7 @@ export const Node = memo(function TreeNode({ id, children }: NodeProps) {
                                 width={2}
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="absolute top-[31px] h-[calc(100%-36px)] bottom-0 left-2.5 transform -translate-x-1/2 stroke-slate-200 z-[-1]"
-                                key={id + 'line'}
+                                key={node.id + 'line'}
                                 stroke="currentColor"
                             >
                                 <motion.line
@@ -107,10 +113,8 @@ export const Node = memo(function TreeNode({ id, children }: NodeProps) {
                                     strokeWidth={2}
                                 />
                             </motion.svg>
-                            {children.map(node => (
-                                <Treeview.Node id={node.id} key={node.id}>
-                                    {node.children}
-                                </Treeview.Node>
+                            {node.children.map(node => (
+                                <Node node={node} key={node.id} />
                             ))}
                         </motion.ul>
                     )}
@@ -119,24 +123,5 @@ export const Node = memo(function TreeNode({ id, children }: NodeProps) {
         </li>
     )
 })
-
-type RootProps = {
-    value: TreeNodeType[]
-    label: string
-    className?: string
-    children?: ReactNode | ReactNode[]
-}
-
-export const Root = function TreeRoot({ value, className, children, ...props }: RootProps) {
-    return (
-        <TreeviewProvider
-            {...props}
-            className={classNames(className, 'h-full overflow-auto')}
-            value={value}
-        >
-            {children}
-        </TreeviewProvider>
-    )
-}
 
 export const Treeview = { Root, Node }

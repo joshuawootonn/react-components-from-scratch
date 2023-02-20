@@ -1,4 +1,3 @@
-import { TreeState } from './tree-state'
 import { TREE_ID } from './tree-state'
 import { Item } from './useTreeNode'
 
@@ -26,29 +25,25 @@ export function getPreviousFocusable(
     return items[prevIndex].id
 }
 
-export function getNextByTypeahead(
-    state: TreeState,
-    items: Item[],
-    originalId: string,
-    typeaheadValue: string,
-) {
-    function traverse(state: TreeState, key: string, id: string): string {
-        if (id === originalId) {
-            return originalId
+function wrapArray<T>(array: T[], startIndex: number) {
+    return array.map((_, index) => array[(startIndex + index) % array.length])
+}
+
+export function getNextByTypeahead(items: Item[], originalId: string, keyPressed: string) {
+    const index = items.findIndex(({ id }) => id === originalId)
+    const wrappedItems = wrapArray(items, index)
+    let typeaheadMatchIndex = null
+
+    for (let index = 0; index < wrappedItems.length - 1 && typeaheadMatchIndex == null; index++) {
+        const nextItem = wrappedItems.at(index + 1)
+
+        if (
+            nextItem?.element?.textContent?.charAt(0).toLowerCase() ===
+            keyPressed.charAt(0).toLowerCase()
+        ) {
+            typeaheadMatchIndex = nextItem.id
         }
-
-        const name = state.metadata.get(id)?.name
-
-        if (name?.charAt(0).toLowerCase() === key.charAt(0).toLowerCase()) {
-            return id
-        }
-
-        return traverse(state, key, getNextFocusable(items, id, true))
     }
 
-    return traverse(
-        state,
-        typeaheadValue,
-        getNextFocusable(items, originalId, true) ?? getFirstNode(items),
-    )
+    return typeaheadMatchIndex
 }

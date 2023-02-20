@@ -20,8 +20,7 @@ import {
     useRovingTabindex,
 } from 'components/roving-tabindex'
 
-import { TreeViewContextType, TreeViewContext } from './tree-context'
-import { TreeActionTypes, TreeNodeMetadata } from './tree-state'
+import { TreeViewContextType, TreeViewContext, TreeActionTypes } from './tree-state'
 import { getNextByTypeahead } from './tree-traversal'
 
 export type Item = {
@@ -33,8 +32,10 @@ export function useTreeNode<T extends ElementType>(
     id: string,
     options: {
         selectionType: 'followFocus' | 'distinct'
+        isFolder: boolean
     } = {
         selectionType: 'followFocus',
+        isFolder: false,
     },
 ): {
     isOpen: boolean
@@ -42,7 +43,6 @@ export function useTreeNode<T extends ElementType>(
     close: () => void
     isFocusable: boolean
     isSelected: boolean
-    metadata: TreeNodeMetadata
     getTreeNodeProps: (props: ComponentPropsWithoutRef<T>) => {
         ref: (current: HTMLElement | null) => void
         tabIndex: number
@@ -74,15 +74,9 @@ export function useTreeNode<T extends ElementType>(
 
     return useMemo(() => {
         const isOpen = state.isOpen.get(id) ?? false
-        const metadata = state.metadata.get(id) ?? {
-            name: 'Untitled',
-            isFolder: false,
-            icon: null,
-        }
 
         return {
             isOpen,
-            metadata,
             isFocusable: currentRovingTabindexValue === id,
             isSelected: state.selectedId === id,
             open: function () {
@@ -96,7 +90,7 @@ export function useTreeNode<T extends ElementType>(
                 ...rovingProps,
                 [NOT_FOCUSABLE_SELECTOR]: !isOpen,
                 ref,
-                ['aria-expanded']: metadata.isFolder && isOpen,
+                ['aria-expanded']: isOpen,
                 ['aria-selected']: state.selectedId === id,
                 role: 'treeitem',
                 tabIndex: currentRovingTabindexValue === id ? 0 : -1,
@@ -105,7 +99,7 @@ export function useTreeNode<T extends ElementType>(
                     props.onClick?.(e)
                     rovingProps.onClick(e)
                     if (e.button === 0) {
-                        if (metadata.isFolder) {
+                        if (options.isFolder) {
                             isOpen
                                 ? dispatch({ type: TreeActionTypes.CLOSE, id })
                                 : dispatch({ type: TreeActionTypes.OPEN, id })
@@ -129,13 +123,13 @@ export function useTreeNode<T extends ElementType>(
                         e.preventDefault()
                         nextIdToFocus = getNextFocusable(items, id)
                     } else if (isHotkey('left', e)) {
-                        if (isOpen && metadata.isFolder) {
+                        if (isOpen && options.isFolder) {
                             dispatch({ type: TreeActionTypes.CLOSE, id })
                         } else {
                             nextIdToFocus = getParentFocusable(items, id)
                         }
                     } else if (isHotkey('right', e)) {
-                        if (isOpen && metadata.isFolder) {
+                        if (isOpen && options.isFolder) {
                             nextIdToFocus = getNextFocusable(items, id)
                         } else {
                             dispatch({ type: TreeActionTypes.OPEN, id })
@@ -150,7 +144,7 @@ export function useTreeNode<T extends ElementType>(
                         e.preventDefault()
                         dispatch({ type: TreeActionTypes.SELECT, id })
                     } else if (/^[a-z]$/i.test(e.key)) {
-                        nextIdToFocus = getNextByTypeahead(state, items, id, e.key)
+                        nextIdToFocus = getNextByTypeahead(items, id, e.key)
                     }
 
                     if (nextIdToFocus != null) {
@@ -170,6 +164,7 @@ export function useTreeNode<T extends ElementType>(
         elements,
         getOrderedItems,
         id,
+        options.isFolder,
         options.selectionType,
         ref,
         rovingProps,
