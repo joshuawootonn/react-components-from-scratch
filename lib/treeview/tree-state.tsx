@@ -2,8 +2,6 @@ import React, { Dispatch, MutableRefObject } from 'react'
 
 import { ChainableMap } from 'lib/utils'
 
-import { getInitialTreeState } from './tree-initialization'
-
 export type TreeState = {
     isOpen: ChainableMap<string, boolean>
     selectedId?: string | null
@@ -65,6 +63,13 @@ export type TreeViewContextType = {
     state: TreeState
     dispatch: Dispatch<TreeActions>
     elements: MutableRefObject<ChainableMap<string, HTMLElement>>
+}
+
+export function getInitialTreeState(): TreeState {
+    return {
+        isOpen: new ChainableMap<string, boolean>(),
+        selectedId: null,
+    }
 }
 
 export const TreeViewContext = React.createContext<TreeViewContextType>({

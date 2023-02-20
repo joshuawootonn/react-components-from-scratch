@@ -164,6 +164,33 @@ export function getLastFocusable(orderedItems: RovingTabindexItem[]): string {
     return orderedItems.at(-1)?.id ?? ''
 }
 
+function wrapArray<T>(array: T[], startIndex: number) {
+    return array.map((_, index) => array[(startIndex + index) % array.length])
+}
+
+export function getNextFocusableByTypeahead(
+    items: RovingTabindexItem[],
+    originalId: string,
+    keyPressed: string,
+) {
+    const index = items.findIndex(({ id }) => id === originalId)
+    const wrappedItems = wrapArray(items, index)
+    let typeaheadMatchIndex = null
+
+    for (let index = 0; index < wrappedItems.length - 1 && typeaheadMatchIndex == null; index++) {
+        const nextItem = wrappedItems.at(index + 1)
+
+        if (
+            nextItem?.element?.textContent?.charAt(0).toLowerCase() ===
+            keyPressed.charAt(0).toLowerCase()
+        ) {
+            typeaheadMatchIndex = nextItem.id
+        }
+    }
+
+    return typeaheadMatchIndex
+}
+
 export const useRovingTabindex = function (id: string) {
     const { currentRovingTabindexValue, focus, onShiftTab, getOrderedItems } =
         useContext(RovingTabindexContext)

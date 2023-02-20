@@ -14,6 +14,7 @@ import {
     getFirstFocusable,
     getLastFocusable,
     getNextFocusable,
+    getNextFocusableByTypeahead,
     getParentFocusable,
     getPrevFocusable,
     NOT_FOCUSABLE_SELECTOR,
@@ -21,7 +22,6 @@ import {
 } from 'components/roving-tabindex'
 
 import { TreeViewContextType, TreeViewContext, TreeActionTypes } from './tree-state'
-import { getNextByTypeahead } from './tree-traversal'
 
 export type Item = {
     id: string
@@ -144,7 +144,7 @@ export function useTreeNode<T extends ElementType>(
                         e.preventDefault()
                         dispatch({ type: TreeActionTypes.SELECT, id })
                     } else if (/^[a-z]$/i.test(e.key)) {
-                        nextIdToFocus = getNextByTypeahead(items, id, e.key)
+                        nextIdToFocus = getNextFocusableByTypeahead(items, id, e.key)
                     }
 
                     if (nextIdToFocus != null) {
