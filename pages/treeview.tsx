@@ -25,7 +25,7 @@ export default function ToggleGroupPage() {
                 value={selected}
                 onChange={select}
                 label="File manager"
-                className="w-[300px] h-[400px] flex flex-col not-prose overflow-auto"
+                className="w-[300px] h-[400px]  not-prose "
             >
                 {initialValue.map(node => (
                     <Treeview.Node node={node} key={node.id} />
@@ -38,7 +38,7 @@ export default function ToggleGroupPage() {
                 value={appleSelected}
                 onChange={appleSelect}
                 label="Sidebar"
-                className="w-[300px] h-[600px] flex flex-col not-prose bg-[#1E1E1E] rounded-[10px] p-4  overflow-auto font-['Source_Sans_Pro']"
+                className="w-[300px] h-[600px] not-prose bg-[#1E1E1E] rounded-[10px] p-4 font-['Source_Sans_Pro']"
             >
                 {appleInitialValues.map(node => (
                     <AppleTreeview.Node node={node} key={node.id} />
@@ -54,7 +54,7 @@ export default function ToggleGroupPage() {
                 value={bigSelected}
                 onChange={bigSelect}
                 label="File manager"
-                className="w-[300px] h-[400px] flex flex-col not-prose"
+                className="w-[300px] h-[400px]  not-prose"
             >
                 {longInitialValues.map(node => (
                     <Treeview.Node node={node} key={node.id} />

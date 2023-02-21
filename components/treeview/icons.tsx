@@ -1,10 +1,10 @@
 import classNames from 'clsx'
 import { motion } from 'framer-motion'
 
-type Props = { isExpanded?: boolean; className?: string }
+type Props = { open?: boolean; className?: string }
 
-export function Folder({ isExpanded, className }: Props) {
-    if (isExpanded) {
+export function Folder({ open, className }: Props) {
+    if (open) {
         return (
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -12,7 +12,7 @@ export function Folder({ isExpanded, className }: Props) {
                 viewBox="0 0 24 24"
                 strokeWidth="1.6"
                 stroke="currentColor"
-                className={classNames(className)}
+                className={className}
             >
                 <path
                     strokeLinecap="round"
@@ -30,7 +30,7 @@ export function Folder({ isExpanded, className }: Props) {
             viewBox="0 0 24 24"
             strokeWidth="1.6"
             stroke="currentColor"
-            className={classNames(className)}
+            className={className}
         >
             <path
                 strokeLinecap="round"
@@ -49,7 +49,7 @@ export function File({ className }: Props) {
             viewBox="0 0 24 24"
             strokeWidth="1.6"
             stroke="currentColor"
-            className={classNames(className)}
+            className={className}
         >
             <path
                 strokeLinecap="round"
@@ -60,7 +60,7 @@ export function File({ className }: Props) {
     )
 }
 
-export function Arrow({ isExpanded, className }: Props) {
+export function Arrow({ open, className }: Props) {
     return (
         <motion.svg
             xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +70,7 @@ export function Arrow({ isExpanded, className }: Props) {
             stroke="currentColor"
             className={classNames('origin-center', className)}
             initial={false}
-            animate={{ rotate: isExpanded ? 90 : 0 }}
+            animate={{ rotate: open ? 90 : 0 }}
             style={{ originX: '8px', originY: '8px' }}
             transition={{
                 duration: 0.25,

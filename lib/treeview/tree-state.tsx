@@ -1,50 +1,48 @@
-import React, { Dispatch, MutableRefObject } from 'react'
+import { createContext, Dispatch, MutableRefObject } from 'react'
 
 import { ChainableMap } from 'lib/utils'
 
-export type Open = ChainableMap<string, boolean>
+export type OpenState = ChainableMap<string, boolean>
 
-export enum TreeActionTypes {
+export enum TreeViewActionTypes {
     OPEN = 'OPEN',
     CLOSE = 'CLOSE',
 }
 
-export type TreeActions =
+export type TreeViewActions =
     | {
-          type: TreeActionTypes.OPEN
+          type: TreeViewActionTypes.OPEN
           id: string
       }
     | {
-          type: TreeActionTypes.CLOSE
+          type: TreeViewActionTypes.CLOSE
           id: string
       }
 
-export const TREE_ID = 'tree'
+export const TREE_VIEW_ROOT_ID = 'TREE_VIEW_ROOT_ID'
 
-export function treeReducer(state: Open, action: TreeActions): Open {
+export function treeviewReducer(state: OpenState, action: TreeViewActions): OpenState {
     switch (action.type) {
-        case TreeActionTypes.OPEN:
+        case TreeViewActionTypes.OPEN:
             return new ChainableMap(state).set(action.id, true)
 
-        case TreeActionTypes.CLOSE:
+        case TreeViewActionTypes.CLOSE:
             return new ChainableMap(state).set(action.id, false)
 
         default:
-            console.log(action)
-
             throw new Error('Tree Reducer received an unknown action')
     }
 }
 
 export type TreeViewContextType = {
-    open: Open
-    dispatch: Dispatch<TreeActions>
+    open: OpenState
+    dispatch: Dispatch<TreeViewActions>
     elements: MutableRefObject<ChainableMap<string, HTMLElement>>
     selectedId: string | null
     selectId: (id: string | null) => void
 }
 
-export const TreeViewContext = React.createContext<TreeViewContextType>({
+export const TreeViewContext = createContext<TreeViewContextType>({
     open: new ChainableMap<string, boolean>(),
     dispatch: () => {},
     elements: { current: new ChainableMap<string, HTMLElement>() },

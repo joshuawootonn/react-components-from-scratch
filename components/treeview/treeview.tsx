@@ -1,6 +1,5 @@
 import classNames from 'clsx'
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion'
-import { memo } from 'react'
 import React from 'react'
 
 import { Folder, File, Arrow } from 'components/treeview/icons'
@@ -13,7 +12,7 @@ type NodeProps = {
     node: TreeNodeType
 }
 
-export const Node = memo(function TreeNode({ node }: NodeProps) {
+export const Node = function TreeNode({ node }: NodeProps) {
     const { isOpen, isFocusable, isSelected, getTreeNodeProps, treeGroupProps } = useTreeNode(
         node.id,
         {
@@ -43,10 +42,10 @@ export const Node = memo(function TreeNode({ node }: NodeProps) {
                         isSelected ? 'bg-slate-200' : 'bg-transparent',
                     )}
                 >
-                    {Boolean(node.children) ? (
+                    {node.children?.length ? (
                         <>
-                            <Arrow className="h-4 w-4" isExpanded={isOpen} />
-                            <Folder isExpanded={isOpen} className="h-5 w-5" />
+                            <Arrow className="h-4 w-4" open={isOpen} />
+                            <Folder open={isOpen} className="h-5 w-5" />
                         </>
                     ) : (
                         <>
@@ -59,7 +58,7 @@ export const Node = memo(function TreeNode({ node }: NodeProps) {
                 </div>
 
                 <AnimatePresence initial={false}>
-                    {node.children && isOpen && (
+                    {node.children?.length && isOpen && (
                         <motion.ul
                             key={node.id + 'ul'}
                             initial={{
@@ -122,6 +121,6 @@ export const Node = memo(function TreeNode({ node }: NodeProps) {
             </MotionConfig>
         </li>
     )
-})
+}
 
 export const Treeview = { Root, Node }

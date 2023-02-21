@@ -39,14 +39,14 @@ export const Node = memo(function TreeNode({ node, depth }: NodeProps) {
                         paddingLeft: `${depth ? depth * 16 + 4 : 4}px`,
                     }}
                 >
-                    {Boolean(node.children) ? (
+                    {node.children?.length ? (
                         <>
                             <Arrow
                                 className={classNames(
                                     'h-3.5 w-3.5 ',
                                     isSelected ? 'text-white' : 'text-[#A7A7A7]',
                                 )}
-                                isExpanded={isOpen}
+                                open={isOpen}
                             />
                             <NextImage
                                 alt="Folder icon"

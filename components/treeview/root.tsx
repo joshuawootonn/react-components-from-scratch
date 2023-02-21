@@ -1,10 +1,11 @@
+import clsx from 'clsx'
 import React, { ReactNode, useRef, useReducer, useEffect, useMemo, useCallback } from 'react'
 
 import { RovingTabindexRoot } from 'components/roving-tabindex'
-import { treeReducer, TreeViewContext } from 'lib/treeview'
+import { treeviewReducer, TreeViewContext } from 'lib/treeview'
 import { ChainableMap } from 'lib/utils'
 
-type TreeViewProviderProps = {
+type RootProps = {
     children: ReactNode | ReactNode[]
     label: string
     className?: string
@@ -12,9 +13,9 @@ type TreeViewProviderProps = {
     onChange: (id: string | null) => void
 }
 
-export function Root({ children, onChange, value, label, className }: TreeViewProviderProps) {
+export function Root({ children, onChange, value, label, className }: RootProps) {
     const elements = useRef<ChainableMap<string, HTMLElement>>(new ChainableMap())
-    const [open, dispatch] = useReducer(treeReducer, new ChainableMap<string, boolean>())
+    const [open, dispatch] = useReducer(treeviewReducer, new ChainableMap<string, boolean>())
 
     const selectId = useCallback(
         (selectedId: string | null) => {
@@ -31,7 +32,7 @@ export function Root({ children, onChange, value, label, className }: TreeViewPr
     return (
         <TreeViewContext.Provider value={providerValue}>
             <RovingTabindexRoot
-                className={className}
+                className={clsx('flex flex-col overflow-auto', className)}
                 active={providerValue.selectedId ?? null}
                 elementsById={elements.current}
                 as="ul"

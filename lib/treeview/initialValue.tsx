@@ -21,7 +21,7 @@ export const initialValue: TreeNodeType[] = [
                 children: [
                     {
                         id: uuid(),
-                        name: 'Child - 3',
+                        name: 'Child - 33333333333333333333333333333333',
                         children: [
                             {
                                 id: uuid(),

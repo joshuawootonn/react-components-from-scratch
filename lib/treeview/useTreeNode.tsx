@@ -21,7 +21,7 @@ import {
     useRovingTabindex,
 } from 'components/roving-tabindex'
 
-import { TreeViewContextType, TreeViewContext, TreeActionTypes } from './tree-state'
+import { TreeViewContextType, TreeViewContext, TreeViewActionTypes } from './tree-state'
 
 export type Item = {
     id: string
@@ -81,10 +81,10 @@ export function useTreeNode<T extends ElementType>(
             isFocusable: currentRovingTabindexValue === id,
             isSelected: selectedId === id,
             open: function () {
-                dispatch({ type: TreeActionTypes.OPEN, id })
+                dispatch({ type: TreeViewActionTypes.OPEN, id })
             },
             close: function () {
-                dispatch({ type: TreeActionTypes.CLOSE, id })
+                dispatch({ type: TreeViewActionTypes.CLOSE, id })
             },
             getTreeNodeProps: (props: ComponentPropsWithoutRef<T>) => ({
                 ...props,
@@ -102,8 +102,8 @@ export function useTreeNode<T extends ElementType>(
                     if (e.button === 0) {
                         if (options.isFolder) {
                             isOpen
-                                ? dispatch({ type: TreeActionTypes.CLOSE, id })
-                                : dispatch({ type: TreeActionTypes.OPEN, id })
+                                ? dispatch({ type: TreeViewActionTypes.CLOSE, id })
+                                : dispatch({ type: TreeViewActionTypes.OPEN, id })
                         }
                         selectId(id)
                     }
@@ -124,7 +124,7 @@ export function useTreeNode<T extends ElementType>(
                         nextIdToFocus = getNextFocusable(items, id)
                     } else if (isHotkey('left', e)) {
                         if (isOpen && options.isFolder) {
-                            dispatch({ type: TreeActionTypes.CLOSE, id })
+                            dispatch({ type: TreeViewActionTypes.CLOSE, id })
                         } else {
                             nextIdToFocus = getParentFocusable(items, id)
                         }
@@ -132,7 +132,7 @@ export function useTreeNode<T extends ElementType>(
                         if (isOpen && options.isFolder) {
                             nextIdToFocus = getNextFocusable(items, id)
                         } else {
-                            dispatch({ type: TreeActionTypes.OPEN, id })
+                            dispatch({ type: TreeViewActionTypes.OPEN, id })
                         }
                     } else if (isHotkey('home', e)) {
                         e.preventDefault()
