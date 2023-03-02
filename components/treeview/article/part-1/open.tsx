@@ -1,18 +1,7 @@
 import clsx from 'clsx'
-import {
-    createContext,
-    Dispatch,
-    MutableRefObject,
-    ReactNode,
-    useContext,
-    useMemo,
-    useReducer,
-    MouseEvent,
-} from 'react'
+import { createContext, Dispatch, ReactNode, useContext, useReducer } from 'react'
 
-import { ChainableMap } from 'lib/utils'
-
-export type TreeViewState = ChainableMap<string, boolean>
+export type TreeViewState = Map<string, boolean>
 
 export enum TreeViewActionTypes {
     OPEN = 'OPEN',
@@ -32,10 +21,10 @@ export type TreeViewActions =
 export function treeviewReducer(state: TreeViewState, action: TreeViewActions): TreeViewState {
     switch (action.type) {
         case TreeViewActionTypes.OPEN:
-            return new ChainableMap(state).set(action.id, true)
+            return new Map(state).set(action.id, true)
 
         case TreeViewActionTypes.CLOSE:
-            return new ChainableMap(state).set(action.id, false)
+            return new Map(state).set(action.id, false)
 
         default:
             throw new Error('Tree Reducer received an unknown action')
@@ -48,7 +37,7 @@ export type TreeViewContextType = {
 }
 
 export const TreeViewContext = createContext<TreeViewContextType>({
-    open: new ChainableMap<string, boolean>(),
+    open: new Map<string, boolean>(),
     dispatch: () => {},
 })
 
@@ -58,18 +47,15 @@ type RootProps = {
 }
 
 export function Root({ children, className }: RootProps) {
-    const [open, dispatch] = useReducer(treeviewReducer, new ChainableMap<string, boolean>())
-
-    const providerValue = useMemo(
-        () => ({
-            open,
-            dispatch,
-        }),
-        [open],
-    )
+    const [open, dispatch] = useReducer(treeviewReducer, new Map<string, boolean>())
 
     return (
-        <TreeViewContext.Provider value={providerValue}>
+        <TreeViewContext.Provider
+            value={{
+                open,
+                dispatch,
+            }}
+        >
             <ul className={clsx('flex flex-col overflow-auto', className)}>{children}</ul>
         </TreeViewContext.Provider>
     )

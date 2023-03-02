@@ -12,7 +12,7 @@ type NodeProps = {
     node: TreeNodeType
 }
 
-export const Node = function TreeNode({ node }: NodeProps) {
+export function Node({ node }: NodeProps) {
     const { isOpen, isFocusable, isSelected, getTreeNodeProps, treeGroupProps } = useTreeNode(
         node.id,
         {

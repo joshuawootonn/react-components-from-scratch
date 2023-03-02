@@ -21,7 +21,7 @@ export const initialValue: TreeNodeType[] = [
                 children: [
                     {
                         id: uuid(),
-                        name: 'Child - 33333333333333333333333333333333',
+                        name: 'Child - 3 This Node will overflow and cause an ellipse',
                         children: [
                             {
                                 id: uuid(),
