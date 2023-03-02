@@ -7,7 +7,6 @@ import {
     ComponentPropsWithoutRef,
     ElementType,
     useMemo,
-    useCallback,
 } from 'react'
 
 import {
@@ -57,21 +56,10 @@ export function useTreeNode<T extends ElementType>(
         role: 'group'
     }
 } {
-    const { open, selectedId, selectId, dispatch, elements } =
+    const { open, selectedId, selectId, dispatch } =
         useContext<TreeViewContextType>(TreeViewContext)
 
-    const { currentRovingTabindexValue, getOrderedItems, rovingProps } = useRovingTabindex(id)
-
-    const ref = useCallback(
-        function (element: HTMLElement | null) {
-            if (element) {
-                elements.current.set(id, element)
-            } else {
-                elements.current.delete(id)
-            }
-        },
-        [elements, id],
-    )
+    const { currentRovingTabindexValue, getOrderedItems, rovingProps, ref } = useRovingTabindex(id)
 
     return useMemo(() => {
         const isOpen = open.get(id) ?? false
@@ -113,43 +101,43 @@ export function useTreeNode<T extends ElementType>(
                     props.onKeyDown?.(e)
                     rovingProps.onKeyDown(e)
 
-                    let nextIdToFocus: string | null = null
+                    let nextItemToFocus: Item | undefined
                     const items = getOrderedItems()
 
                     if (isHotkey('up', e)) {
                         e.preventDefault()
-                        nextIdToFocus = getPrevFocusable(items, id)
+                        nextItemToFocus = getPrevFocusable(items, id)
                     } else if (isHotkey('down', e)) {
                         e.preventDefault()
-                        nextIdToFocus = getNextFocusable(items, id)
+                        nextItemToFocus = getNextFocusable(items, id)
                     } else if (isHotkey('left', e)) {
                         if (isOpen && options.isFolder) {
                             dispatch({ type: TreeViewActionTypes.CLOSE, id })
                         } else {
-                            nextIdToFocus = getParentFocusable(items, id)
+                            nextItemToFocus = getParentFocusable(items, id)
                         }
                     } else if (isHotkey('right', e)) {
                         if (isOpen && options.isFolder) {
-                            nextIdToFocus = getNextFocusable(items, id)
+                            nextItemToFocus = getNextFocusable(items, id)
                         } else {
                             dispatch({ type: TreeViewActionTypes.OPEN, id })
                         }
                     } else if (isHotkey('home', e)) {
                         e.preventDefault()
-                        nextIdToFocus = getFirstFocusable(items)
+                        nextItemToFocus = getFirstFocusable(items)
                     } else if (isHotkey('end', e)) {
                         e.preventDefault()
-                        nextIdToFocus = getLastFocusable(items)
+                        nextItemToFocus = getLastFocusable(items)
                     } else if (isHotkey('space', e)) {
                         e.preventDefault()
                         selectId(id)
                     } else if (/^[a-z]$/i.test(e.key)) {
-                        nextIdToFocus = getNextFocusableByTypeahead(items, id, e.key)
+                        nextItemToFocus = getNextFocusableByTypeahead(items, id, e.key)
                     }
 
-                    if (nextIdToFocus != null) {
-                        elements.current.get(nextIdToFocus)?.focus()
-                        options.selectionType === 'followFocus' && selectId(nextIdToFocus)
+                    if (nextItemToFocus != null) {
+                        nextItemToFocus.element.focus()
+                        options.selectionType === 'followFocus' && selectId(nextItemToFocus.id)
                     }
                 },
             }),
@@ -160,7 +148,6 @@ export function useTreeNode<T extends ElementType>(
     }, [
         currentRovingTabindexValue,
         dispatch,
-        elements,
         getOrderedItems,
         id,
         open,

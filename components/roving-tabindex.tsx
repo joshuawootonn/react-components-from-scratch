@@ -12,9 +12,8 @@ import {
     ComponentPropsWithoutRef,
     useMemo,
     ElementType,
+    MutableRefObject,
 } from 'react'
-
-import { ChainableMap } from 'lib/utils'
 
 type RovingTabindexItem = {
     id: string
@@ -28,35 +27,38 @@ function focusFirst(candidates: HTMLElement[]) {
     }
 }
 
-const RovingTabindexContext = createContext<{
+type RovingTabindexContextType = {
     currentRovingTabindexValue: string | null
     focus: (id: string) => void
     onShiftTab: () => void
     getOrderedItems: () => RovingTabindexItem[]
-}>({
+    elements: MutableRefObject<Map<string, HTMLElement>>
+}
+
+const RovingTabindexContext = createContext<RovingTabindexContextType>({
     currentRovingTabindexValue: null,
     focus: () => {},
     onShiftTab: () => {},
     getOrderedItems: () => [],
+    elements: { current: new Map<string, HTMLElement>() },
 })
+
+const NODE_SELECTOR = 'data-roving-tabindex-node'
+const ROOT_SELECTOR = 'data-roving-tabindex-root'
+export const NOT_FOCUSABLE_SELECTOR = 'data-roving-tabindex-not-focusable'
 
 type RovingTabindexRootBaseProps<T> = {
     children: ReactNode | ReactNode[]
     active: string | null
-    elementsById: ChainableMap<string, HTMLElement>
     as?: T
 }
 
 type RovingTabindexRootProps<T extends ElementType> = RovingTabindexRootBaseProps<T> &
     Omit<ComponentPropsWithoutRef<T>, keyof RovingTabindexRootBaseProps<T>>
 
-const NODE_SELECTOR = 'data-roving-tabindex-node'
-const ROOT_SELECTOR = 'data-roving-tabindex-root'
-export const NOT_FOCUSABLE_SELECTOR = 'data-roving-tabindex-not-focusable'
-export function RovingTabindexRoot<T extends ElementType = 'div'>({
+export function RovingTabindexRoot<T extends ElementType>({
     children,
     active,
-    elementsById,
     as,
     ...props
 }: RovingTabindexRootProps<T>) {
@@ -66,41 +68,35 @@ export function RovingTabindexRoot<T extends ElementType = 'div'>({
         null,
     )
     const rootRef = useRef<HTMLDivElement | null>(null)
+    const elements = useRef<Map<string, HTMLElement>>(new Map())
 
     const getOrderedItems = useCallback(() => {
-        if (!rootRef.current || !elementsById) return []
+        if (!rootRef.current || !elements.current) return []
         const domElements = Array.from(
             rootRef.current.querySelectorAll(
                 `:where([${NODE_SELECTOR}=true]):not(:where([${NOT_FOCUSABLE_SELECTOR}=true] *))`,
             ),
         )
 
-        return Array.from(elementsById.toMap())
+        return Array.from(elements.current)
             .sort((a, b) => domElements.indexOf(a[1]) - domElements.indexOf(b[1]))
             .map(([id, element]) => ({ id, element }))
-    }, [elementsById])
-
-    const value = useMemo(
-        () => ({
-            focus: function (id: string) {
-                setCurrentRovingTabindexValue(id)
-            },
-            onShiftTab: function () {
-                setIsShiftTabbing(true)
-            },
-            currentRovingTabindexValue,
-            getOrderedItems,
-        }),
-        [
-            currentRovingTabindexValue,
-            getOrderedItems,
-            setCurrentRovingTabindexValue,
-            setIsShiftTabbing,
-        ],
-    )
+    }, [])
 
     return (
-        <RovingTabindexContext.Provider value={value}>
+        <RovingTabindexContext.Provider
+            value={{
+                focus: function (id: string) {
+                    setCurrentRovingTabindexValue(id)
+                },
+                onShiftTab: function () {
+                    setIsShiftTabbing(true)
+                },
+                currentRovingTabindexValue,
+                getOrderedItems,
+                elements,
+            }}
+        >
             <Component
                 {...{ [ROOT_SELECTOR]: true }}
                 tabIndex={isShiftTabbing ? -1 : 0}
@@ -111,8 +107,8 @@ export function RovingTabindexRoot<T extends ElementType = 'div'>({
                     if (orderedItems.length === 0) return
 
                     const candidates = [
-                        elementsById.get(currentRovingTabindexValue ?? ''),
-                        elementsById.get(active ?? ''),
+                        elements.current.get(currentRovingTabindexValue ?? ''),
+                        elements.current.get(active ?? ''),
                         ...orderedItems.map(i => i.element),
                     ].filter((element): element is HTMLElement => element != null)
 
@@ -128,15 +124,21 @@ export function RovingTabindexRoot<T extends ElementType = 'div'>({
     )
 }
 
-export function getNextFocusable(orderedItems: RovingTabindexItem[], id: string): string {
+export function getNextFocusable(
+    orderedItems: RovingTabindexItem[],
+    id: string,
+): RovingTabindexItem | undefined {
     const currIndex = orderedItems.findIndex(item => item.id === id)
-    return orderedItems.at(currIndex === orderedItems.length ? 0 : currIndex + 1)?.id ?? id
+    return orderedItems.at(currIndex === orderedItems.length ? 0 : currIndex + 1)
 }
 
-export function getParentFocusable(orderedItems: RovingTabindexItem[], id: string): string {
+export function getParentFocusable(
+    orderedItems: RovingTabindexItem[],
+    id: string,
+): RovingTabindexItem | undefined {
     const currentElement = orderedItems.find(item => item.id === id)?.element
 
-    if (currentElement == null) return id
+    if (currentElement == null) return
 
     let possibleParent = currentElement.parentElement
 
@@ -148,20 +150,27 @@ export function getParentFocusable(orderedItems: RovingTabindexItem[], id: strin
         possibleParent = possibleParent?.parentElement ?? null
     }
 
-    return orderedItems.find(item => item.element === possibleParent)?.id ?? id
+    return orderedItems.find(item => item.element === possibleParent)
 }
 
-export function getPrevFocusable(orderedItems: RovingTabindexItem[], id: string): string {
+export function getPrevFocusable(
+    orderedItems: RovingTabindexItem[],
+    id: string,
+): RovingTabindexItem | undefined {
     const currIndex = orderedItems.findIndex(item => item.id === id)
-    return orderedItems.at(currIndex === 0 ? -1 : currIndex - 1)?.id ?? id
+    return orderedItems.at(currIndex === 0 ? -1 : currIndex - 1)
 }
 
-export function getFirstFocusable(orderedItems: RovingTabindexItem[]): string {
-    return orderedItems.at(0)?.id ?? ''
+export function getFirstFocusable(
+    orderedItems: RovingTabindexItem[],
+): RovingTabindexItem | undefined {
+    return orderedItems.at(0)
 }
 
-export function getLastFocusable(orderedItems: RovingTabindexItem[]): string {
-    return orderedItems.at(-1)?.id ?? ''
+export function getLastFocusable(
+    orderedItems: RovingTabindexItem[],
+): RovingTabindexItem | undefined {
+    return orderedItems.at(-1)
 }
 
 function wrapArray<T>(array: T[], startIndex: number) {
@@ -175,7 +184,7 @@ export function getNextFocusableByTypeahead(
 ) {
     const index = items.findIndex(({ id }) => id === originalId)
     const wrappedItems = wrapArray(items, index)
-    let typeaheadMatchIndex = null
+    let typeaheadMatchIndex: RovingTabindexItem | undefined
 
     for (let index = 0; index < wrappedItems.length - 1 && typeaheadMatchIndex == null; index++) {
         const nextItem = wrappedItems.at(index + 1)
@@ -184,7 +193,7 @@ export function getNextFocusableByTypeahead(
             nextItem?.element?.textContent?.charAt(0).toLowerCase() ===
             keyPressed.charAt(0).toLowerCase()
         ) {
-            typeaheadMatchIndex = nextItem.id
+            typeaheadMatchIndex = nextItem
         }
     }
 
@@ -192,7 +201,7 @@ export function getNextFocusableByTypeahead(
 }
 
 export const useRovingTabindex = function (id: string) {
-    const { currentRovingTabindexValue, focus, onShiftTab, getOrderedItems } =
+    const { currentRovingTabindexValue, focus, onShiftTab, getOrderedItems, elements } =
         useContext(RovingTabindexContext)
 
     return useMemo(
@@ -217,7 +226,14 @@ export const useRovingTabindex = function (id: string) {
                 },
                 [NODE_SELECTOR]: true,
             },
+            ref: (element: HTMLElement | null) => {
+                if (element) {
+                    elements.current.set(id, element)
+                } else {
+                    elements.current.delete(id)
+                }
+            },
         }),
-        [currentRovingTabindexValue, focus, getOrderedItems, id, onShiftTab],
+        [currentRovingTabindexValue, elements, focus, getOrderedItems, id, onShiftTab],
     )
 }

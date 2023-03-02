@@ -37,7 +37,6 @@ export function treeviewReducer(state: OpenState, action: TreeViewActions): Open
 export type TreeViewContextType = {
     open: OpenState
     dispatch: Dispatch<TreeViewActions>
-    elements: MutableRefObject<ChainableMap<string, HTMLElement>>
     selectedId: string | null
     selectId: (id: string | null) => void
 }
@@ -45,7 +44,6 @@ export type TreeViewContextType = {
 export const TreeViewContext = createContext<TreeViewContextType>({
     open: new ChainableMap<string, boolean>(),
     dispatch: () => {},
-    elements: { current: new ChainableMap<string, HTMLElement>() },
     selectedId: null,
     selectId: () => {},
 })

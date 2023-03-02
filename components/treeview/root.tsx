@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import React, { ReactNode, useRef, useReducer, useEffect, useMemo, useCallback } from 'react'
+import React, { ReactNode, useReducer, useMemo, useCallback } from 'react'
 
 import { RovingTabindexRoot } from 'components/roving-tabindex'
 import { treeviewReducer, TreeViewContext } from 'lib/treeview'
@@ -14,7 +14,6 @@ type RootProps = {
 }
 
 export function Root({ children, onChange, value, label, className }: RootProps) {
-    const elements = useRef<ChainableMap<string, HTMLElement>>(new ChainableMap())
     const [open, dispatch] = useReducer(treeviewReducer, new ChainableMap<string, boolean>())
 
     const selectId = useCallback(
@@ -25,7 +24,7 @@ export function Root({ children, onChange, value, label, className }: RootProps)
     )
 
     const providerValue = useMemo(
-        () => ({ dispatch, elements, open, selectId, selectedId: value }),
+        () => ({ dispatch, open, selectId, selectedId: value }),
         [open, selectId, value],
     )
 
@@ -34,7 +33,6 @@ export function Root({ children, onChange, value, label, className }: RootProps)
             <RovingTabindexRoot
                 className={clsx('flex flex-col overflow-auto', className)}
                 active={providerValue.selectedId ?? null}
-                elementsById={elements.current}
                 as="ul"
                 aria-label={label}
                 aria-multiselectable="false"
