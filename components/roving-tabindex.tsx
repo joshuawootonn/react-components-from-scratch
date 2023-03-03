@@ -200,32 +200,20 @@ export function getNextFocusableByTypeahead(
     return typeaheadMatchIndex
 }
 
-export const useRovingTabindex = function (id: string) {
+export type RovingItem = {
+    id: string
+    element: HTMLElement
+}
+
+export function useRovingTabindex<T extends ElementType>(id: string) {
     const { currentRovingTabindexValue, focus, onShiftTab, getOrderedItems, elements } =
         useContext(RovingTabindexContext)
 
-    return useMemo(
-        () => ({
-            getOrderedItems,
-            currentRovingTabindexValue,
-            rovingProps: {
-                onClick: (e: MouseEvent) => {
-                    if (e.target !== e.currentTarget) return
-                    focus(id)
-                },
-                onKeyDown: (e: KeyboardEvent) => {
-                    if (e.target !== e.currentTarget) return
-                    if (isHotkey('shift+tab', e)) {
-                        onShiftTab()
-                        return
-                    }
-                },
-                onFocus: (e: FocusEvent) => {
-                    if (e.target !== e.currentTarget) return
-                    focus(id)
-                },
-                [NODE_SELECTOR]: true,
-            },
+    return {
+        getOrderedItems,
+        isFocusable: currentRovingTabindexValue === id,
+        getRovingProps: (props: ComponentPropsWithoutRef<T>) => ({
+            ...props,
             ref: (element: HTMLElement | null) => {
                 if (element) {
                     elements.current.set(id, element)
@@ -233,7 +221,26 @@ export const useRovingTabindex = function (id: string) {
                     elements.current.delete(id)
                 }
             },
+            onClick: (e: MouseEvent) => {
+                props?.onClick?.(e)
+                if (e.target !== e.currentTarget) return
+                focus(id)
+            },
+            onKeyDown: (e: KeyboardEvent) => {
+                props?.onKeyDown?.(e)
+                if (e.target !== e.currentTarget) return
+                if (isHotkey('shift+tab', e)) {
+                    onShiftTab()
+                    return
+                }
+            },
+            onFocus: (e: FocusEvent) => {
+                props?.onFocus?.(e)
+                if (e.target !== e.currentTarget) return
+                focus(id)
+            },
+            [NODE_SELECTOR]: true,
+            tabIndex: currentRovingTabindexValue === id ? 0 : -1,
         }),
-        [currentRovingTabindexValue, elements, focus, getOrderedItems, id, onShiftTab],
-    )
+    }
 }
