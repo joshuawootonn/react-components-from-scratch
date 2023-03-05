@@ -1,26 +1,5 @@
 import clsx from 'clsx'
-import isHotkey from 'is-hotkey'
-import {
-    createContext,
-    Dispatch,
-    KeyboardEventHandler,
-    KeyboardEvent,
-    ReactNode,
-    useContext,
-    useReducer,
-} from 'react'
-
-import {
-    getFirstFocusable,
-    getLastFocusable,
-    getNextFocusable,
-    getNextFocusableByTypeahead,
-    getParentFocusable,
-    getPrevFocusable,
-    RovingItem,
-    RovingTabindexRoot,
-    useRovingTabindex,
-} from 'components/roving-tabindex'
+import { createContext, Dispatch, ReactNode, useContext, useReducer } from 'react'
 
 export type TreeViewState = Map<string, boolean>
 
@@ -85,13 +64,7 @@ export function Root({ children, className, value, onChange }: RootProps) {
                 selectId: onChange,
             }}
         >
-            <RovingTabindexRoot
-                active={value}
-                as="ul"
-                className={clsx('flex flex-col overflow-auto', className)}
-            >
-                {children}
-            </RovingTabindexRoot>
+            <ul className={clsx('flex flex-col overflow-auto', className)}>{children}</ul>
         </TreeViewContext.Provider>
     )
 }
@@ -127,72 +100,21 @@ type NodeProps = {
 export const Node = function TreeNode({ node: { id, children, name } }: NodeProps) {
     const { open, dispatch, selectId, selectedId } = useContext(TreeViewContext)
     const isOpen = open.get(id)
-    const { isFocusable, getRovingProps, getOrderedItems } = useRovingTabindex(id)
-
     return (
-        <li
-            {...getRovingProps<'li'>({
-                className: 'group flex flex-col cursor-pointer select-none focus:outline-none',
-                onKeyDown: function (e) {
-                    e.stopPropagation()
-
-                    let nextItemToFocus: RovingItem | undefined
-                    const items = getOrderedItems()
-
-                    if (isHotkey('up', e)) {
-                        e.preventDefault()
-                        nextItemToFocus = getPrevFocusable(items, id)
-                    } else if (isHotkey('down', e)) {
-                        e.preventDefault()
-                        nextItemToFocus = getNextFocusable(items, id)
-                    } else if (isHotkey('left', e)) {
-                        if (isOpen && children?.length) {
-                            dispatch({ type: TreeViewActionTypes.CLOSE, id })
-                        } else {
-                            nextItemToFocus = getParentFocusable(items, id)
-                        }
-                    } else if (isHotkey('right', e)) {
-                        if (isOpen && children?.length) {
-                            nextItemToFocus = getNextFocusable(items, id)
-                        } else {
-                            dispatch({ type: TreeViewActionTypes.OPEN, id })
-                        }
-                    } else if (isHotkey('home', e)) {
-                        e.preventDefault()
-                        nextItemToFocus = getFirstFocusable(items)
-                    } else if (isHotkey('end', e)) {
-                        e.preventDefault()
-                        nextItemToFocus = getLastFocusable(items)
-                    } else if (isHotkey('space', e)) {
-                        e.preventDefault()
-                        selectId(id)
-                    } else if (/^[a-z]$/i.test(e.key)) {
-                        nextItemToFocus = getNextFocusableByTypeahead(items, id, e.key)
-                    }
-
-                    if (nextItemToFocus != null) {
-                        nextItemToFocus.element.focus()
-                        // options.selectionType === 'followFocus' && selectId(nextItemToFocus.id)
-                    }
-                },
-            })}
-        >
+        <li className="flex flex-col cursor-pointer select-none">
             <div
                 className={clsx(
-                    'flex items-center space-x-2 font-mono font-medium rounded-sm px-1 border-[1.5px]',
+                    'flex items-center space-x-2 font-mono font-medium rounded-sm px-1 ',
                     selectedId === id ? 'bg-slate-200' : 'bg-transparent',
-                    isFocusable
-                        ? 'group-focus:border-slate-400 focus-within:border-transparent'
-                        : 'border-transparent',
                 )}
                 onClick={() => {
                     isOpen
                         ? dispatch({
-                              id,
+                              id: id,
                               type: TreeViewActionTypes.CLOSE,
                           })
                         : dispatch({
-                              id,
+                              id: id,
                               type: TreeViewActionTypes.OPEN,
                           })
                     selectId(id)
@@ -208,7 +130,7 @@ export const Node = function TreeNode({ node: { id, children, name } }: NodeProp
             {children?.length && isOpen && (
                 <ul className="pl-4">
                     {children.map(node => (
-                        <Node node={node} key={node.id} />
+                        <Node node={node} key={id} />
                     ))}
                 </ul>
             )}
@@ -216,4 +138,4 @@ export const Node = function TreeNode({ node: { id, children, name } }: NodeProp
     )
 }
 
-export const TreeviewWip = { Root, Node }
+export const TreeviewSelection = { Root, Node }

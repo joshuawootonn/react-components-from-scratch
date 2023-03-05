@@ -55,7 +55,7 @@ export function useTreeNode<T extends ElementType>(
     const { open, selectedId, selectId, dispatch } =
         useContext<TreeViewContextType>(TreeViewContext)
 
-    const { isFocusable, getOrderedItems, getRovingProps } = useRovingTabindex<T>(id)
+    const { isFocusable, getOrderedItems, getRovingProps } = useRovingTabindex(id)
 
     return useMemo(() => {
         const isOpen = open.get(id) ?? false
@@ -74,7 +74,7 @@ export function useTreeNode<T extends ElementType>(
                 ['aria-expanded']: isOpen,
                 ['aria-selected']: selectedId === id,
                 role: 'treeitem',
-                ...getRovingProps({
+                ...getRovingProps<T>({
                     ...props,
                     [NOT_FOCUSABLE_SELECTOR]: !isOpen,
                     onClick: function (e: MouseEvent) {
