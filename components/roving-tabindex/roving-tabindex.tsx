@@ -205,14 +205,14 @@ export type RovingItem = {
     element: HTMLElement
 }
 
-export function useRovingTabindex<T extends ElementType>(id: string) {
+export function useRovingTabindex(id: string) {
     const { currentRovingTabindexValue, focus, onShiftTab, getOrderedItems, elements } =
         useContext(RovingTabindexContext)
 
     return {
         getOrderedItems,
         isFocusable: currentRovingTabindexValue === id,
-        getRovingProps: (props: ComponentPropsWithoutRef<T>) => ({
+        getRovingProps: <T extends ElementType>(props: ComponentPropsWithoutRef<T>) => ({
             ...props,
             ref: (element: HTMLElement | null) => {
                 if (element) {

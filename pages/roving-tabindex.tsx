@@ -1,96 +1,10 @@
+import isHotkey from 'is-hotkey'
 import Link from 'next/link'
-import { useState, KeyboardEvent, useRef } from 'react'
 
-function MyComponent() {
-    return (
-        <div className="space-x-5">
-            <button>button 1</button>
-            <button>button 2</button>
-            <button>button 3</button>
-        </div>
-    )
-}
-
-function MyComponent2() {
-    const [options] = useState(['button 1', 'button 2', 'button 3'])
-    const elements = useRef(new Map<string, HTMLElement>())
-
-    return (
-        <div className="space-x-5">
-            {options.map((button, key) => (
-                <button
-                    key={key}
-                    onKeyDown={() => {
-                        const currentIndex = options.findIndex(text => text === button)
-                        const nextIndex = currentIndex === options.length - 1 ? 0 : currentIndex + 1
-                        elements.current.get(options[nextIndex])?.focus()
-                    }}
-                    ref={element => {
-                        if (element) {
-                            elements.current.set(button, element)
-                        } else {
-                            elements.current.delete(button)
-                        }
-                    }}
-                >
-                    {button}
-                </button>
-            ))}
-        </div>
-    )
-}
-
-function Button3(props: any) {
-    return (
-        <button
-            ref={element => {
-                if (element) {
-                    props.elements.current.set(props.children, element)
-                } else {
-                    props.elements.current.delete(props.children)
-                }
-            }}
-            data-item
-            {...props}
-        >
-            {props.children}
-        </button>
-    )
-}
-
-function MyComponent3() {
-    const elements = useRef(new Map<string, HTMLElement>())
-
-    function onKeyDown(e: KeyboardEvent) {
-        const elementsFromDOM = Array.from(
-            document.querySelectorAll<HTMLElement>('[data-root] > [data-item]'),
-        )
-
-        const items = Array.from(elements.current)
-            .sort((a, b) => elementsFromDOM.indexOf(a[1]) - elementsFromDOM.indexOf(b[1]))
-            .map(([id, element]) => ({ id, element }))
-
-        const currentIndex = items.findIndex(item => item.element === e.currentTarget)
-        const nextItem = items.at(currentIndex === items.length - 1 ? 0 : currentIndex + 1)
-        nextItem?.element.focus()
-    }
-
-    return (
-        <div className="space-x-5" data-root>
-            <Button3 elements={elements} onKeyDown={onKeyDown}>
-                button 1
-            </Button3>
-            <span>hello</span>
-            <Button3 elements={elements} onKeyDown={onKeyDown}>
-                button 2
-            </Button3>
-            <span>world</span>
-            <Button3 elements={elements} onKeyDown={onKeyDown}>
-                button 3
-            </Button3>
-        </div>
-    )
-}
+import * as Step0 from 'components/roving-tabindex/article/step0 - concept-intro'
+import * as Step1 from 'components/roving-tabindex/article/step1 - explicit-order'
+import * as Step2 from 'components/roving-tabindex/article/step2 - dom-order'
+import * as Step3 from 'components/roving-tabindex/article/step3 - cleaner-component-breakdown'
 
 export default function Page() {
     return (
@@ -103,14 +17,21 @@ export default function Page() {
                 This treeview is currently marked as wip as I write the related post explaining it.
                 But the code is really there so check it out if you need to do something similar.
             </p>
+
+            <Step0.RadioComponent />
             <h2>Step 1</h2>
-            <MyComponent />
+            <Step0.MyComponent />
 
-            <h2>Step 2</h2>
-            <MyComponent2 />
+            <h2>get it working</h2>
+            <Step1.MyComponent />
 
-            <h2>Step 3</h2>
-            <MyComponent3 />
+            <h2>order from the dom</h2>
+            <Step2.MyComponent />
+
+            <h2>good api</h2>
+            <Step3.MyComponent />
+
+            <h2>handling tab</h2>
         </div>
     )
 }
