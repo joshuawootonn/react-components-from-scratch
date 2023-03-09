@@ -6,6 +6,7 @@ import * as Step2 from 'components/roving-tabindex/article/step2 - dom-order'
 import * as Step3 from 'components/roving-tabindex/article/step3 - cleaner-component-breakdown'
 import * as Step4 from 'components/roving-tabindex/article/step4 - tab'
 import * as Step5 from 'components/roving-tabindex/article/step5 - shift-tab'
+import * as Step6 from 'components/roving-tabindex/article/step6 - abstraction'
 
 export default function Page() {
     return (
@@ -37,6 +38,9 @@ export default function Page() {
 
             <h2>handling tab</h2>
             <Step5.MyComponent />
+
+            <h2>abstraction </h2>
+            <Step6.MyComponent />
         </div>
     )
 }
