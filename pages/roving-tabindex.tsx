@@ -1,10 +1,11 @@
-import isHotkey from 'is-hotkey'
 import Link from 'next/link'
 
 import * as Step0 from 'components/roving-tabindex/article/step0 - concept-intro'
 import * as Step1 from 'components/roving-tabindex/article/step1 - explicit-order'
 import * as Step2 from 'components/roving-tabindex/article/step2 - dom-order'
 import * as Step3 from 'components/roving-tabindex/article/step3 - cleaner-component-breakdown'
+import * as Step4 from 'components/roving-tabindex/article/step4 - tab'
+import * as Step5 from 'components/roving-tabindex/article/step5 - shift-tab'
 
 export default function Page() {
     return (
@@ -32,6 +33,10 @@ export default function Page() {
             <Step3.MyComponent />
 
             <h2>handling tab</h2>
+            <Step4.MyComponent />
+
+            <h2>handling tab</h2>
+            <Step5.MyComponent />
         </div>
     )
 }
