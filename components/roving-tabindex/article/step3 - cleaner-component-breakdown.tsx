@@ -69,11 +69,11 @@ export function Button(props: ButtonProps) {
 export function MyComponent() {
     const [focusable, setFocusable] = useState('button 1')
     const elements = useRef(new Map<string, HTMLElement>())
+    const ref = useRef<HTMLDivElement | null>(null)
 
     function getOrderedItems() {
-        const elementsFromDOM = Array.from(
-            document.querySelectorAll<HTMLElement>('[data-root] [data-item]'),
-        )
+        if (!ref.current) return []
+        const elementsFromDOM = Array.from(ref.current.querySelectorAll<HTMLElement>('[data-item]'))
 
         return Array.from(elements.current)
             .sort((a, b) => elementsFromDOM.indexOf(a[1]) - elementsFromDOM.indexOf(b[1]))
@@ -84,7 +84,7 @@ export function MyComponent() {
         <RovingTabindexContext.Provider
             value={{ elements, getOrderedItems, setFocusable, focusable }}
         >
-            <div className="space-x-5" data-root>
+            <div ref={ref} className="space-x-5" data-root>
                 <Button>button 1</Button>
                 <span>hello</span>
                 <Button>button 2</Button>
