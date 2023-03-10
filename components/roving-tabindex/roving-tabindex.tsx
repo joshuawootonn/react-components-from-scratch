@@ -212,7 +212,7 @@ export function useRovingTabindex(id: string) {
     return {
         getOrderedItems,
         isFocusable: currentRovingTabindexValue === id,
-        getRovingProps: <T extends ElementType>(props: ComponentPropsWithoutRef<T>) => ({
+        getRovingProps: <T extends ElementType>(props?: ComponentPropsWithoutRef<T>) => ({
             ...props,
             ref: (element: HTMLElement | null) => {
                 if (element) {
