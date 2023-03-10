@@ -71,7 +71,7 @@ export function RovingTabindexRoot<T extends ElementType>({
     const elements = useRef<Map<string, HTMLElement>>(new Map())
 
     const getOrderedItems = useCallback(() => {
-        if (!rootRef.current || !elements.current) return []
+        if (!rootRef.current) return []
         const domElements = Array.from(
             rootRef.current.querySelectorAll(
                 `:where([${NODE_SELECTOR}=true]):not(:where([${NOT_FOCUSABLE_SELECTOR}=true] *))`,

@@ -31,11 +31,13 @@ export function Button(props: ButtonProps) {
 export function MyComponent() {
     const [focusable, setFocusable] = useState('button 1')
     const elements = useRef(new Map<string, HTMLElement>())
+    const ref = useRef<HTMLDivElement | null>(null)
 
     function onKeyDown(e: KeyboardEvent) {
         if (isHotkey('right', e)) {
+            if (!ref.current) return
             const elementsFromDOM = Array.from(
-                document.querySelectorAll<HTMLElement>('[data-root] [data-item]'),
+                ref.current.querySelectorAll<HTMLElement>('[data-item]'),
             )
 
             const items = Array.from(elements.current)
@@ -52,7 +54,7 @@ export function MyComponent() {
     }
 
     return (
-        <div className="space-x-5" data-root>
+        <div ref={ref} className="space-x-5">
             <Button focusable={focusable} elements={elements} onKeyDown={onKeyDown}>
                 button 1
             </Button>

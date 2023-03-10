@@ -69,11 +69,11 @@ export function Button(props: ButtonProps) {
 export function MyComponent() {
     const [focusable, setFocusable] = useState<string | null>(null)
     const elements = useRef(new Map<string, HTMLElement>())
+    const ref = useRef<HTMLDivElement | null>(null)
 
     function getOrderedItems() {
-        const elementsFromDOM = Array.from(
-            document.querySelectorAll<HTMLElement>('[data-root] [data-item]'),
-        )
+        if (!ref.current) return []
+        const elementsFromDOM = Array.from(ref.current.querySelectorAll<HTMLElement>('[data-item]'))
 
         return Array.from(elements.current)
             .sort((a, b) => elementsFromDOM.indexOf(a[1]) - elementsFromDOM.indexOf(b[1]))
@@ -85,8 +85,8 @@ export function MyComponent() {
             value={{ elements, getOrderedItems, setFocusable, focusable }}
         >
             <div
+                ref={ref}
                 className="space-x-5"
-                data-root
                 tabIndex={0}
                 onFocus={e => {
                     if (e.target !== e.currentTarget) return
