@@ -78,6 +78,7 @@ function useRovingTabindex(id: string) {
 type RovingTabindexRootBaseProps<T> = {
     children: ReactNode | ReactNode[]
     as?: T
+    activeId?: string
 }
 
 type RovingTabindexRootProps<T extends ElementType> = RovingTabindexRootBaseProps<T> &
@@ -85,6 +86,7 @@ type RovingTabindexRootProps<T extends ElementType> = RovingTabindexRootBaseProp
 
 export function RovingTabindexRoot<T extends ElementType>({
     children,
+    activeId,
     as,
     ...props
 }: RovingTabindexRootProps<T>) {
@@ -127,6 +129,8 @@ export function RovingTabindexRoot<T extends ElementType>({
 
                     if (focusable != null) {
                         elements.current.get(focusable)?.focus()
+                    } else if (activeId != null) {
+                        elements.current.get(activeId)?.focus()
                     } else {
                         orderedItems.at(0)?.element.focus()
                     }
@@ -179,11 +183,13 @@ export function Button(props: ButtonProps) {
 }
 
 export function MyComponent() {
+    const [activeId, setActiveId] = useState('button 2')
+
     return (
-        <RovingTabindexRoot className="space-x-5" as="div">
-            <Button>button 1</Button>
-            <Button>button 2</Button>
-            <Button>button 3</Button>
+        <RovingTabindexRoot className="space-x-5" as="div" activeId={activeId}>
+            <Button onClick={() => setActiveId('button 1')}>button 1</Button>
+            <Button onClick={() => setActiveId('button 2')}>button 2</Button>
+            <Button onClick={() => setActiveId('button 3')}>button 3</Button>
         </RovingTabindexRoot>
     )
 }
