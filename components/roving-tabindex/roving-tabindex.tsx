@@ -53,8 +53,9 @@ type RovingTabindexRootBaseProps<T> = {
     as?: T
 }
 
-type RovingTabindexRootProps<T extends ElementType> = RovingTabindexRootBaseProps<T> &
-    Omit<ComponentPropsWithoutRef<T>, keyof RovingTabindexRootBaseProps<T>>
+type RovingTabindexRootProps<T extends ElementType> =
+    RovingTabindexRootBaseProps<T> &
+        Omit<ComponentPropsWithoutRef<T>, keyof RovingTabindexRootBaseProps<T>>
 
 export function RovingTabindexRoot<T extends ElementType>({
     children,
@@ -64,9 +65,8 @@ export function RovingTabindexRoot<T extends ElementType>({
 }: RovingTabindexRootProps<T>) {
     const Component = as || 'div'
     const [isShiftTabbing, setIsShiftTabbing] = useState(false)
-    const [currentRovingTabindexValue, setCurrentRovingTabindexValue] = useState<string | null>(
-        null,
-    )
+    const [currentRovingTabindexValue, setCurrentRovingTabindexValue] =
+        useState<string | null>(null)
     const rootRef = useRef<HTMLDivElement | null>(null)
     const elements = useRef<Map<string, HTMLElement>>(new Map())
 
@@ -79,7 +79,9 @@ export function RovingTabindexRoot<T extends ElementType>({
         )
 
         return Array.from(elements.current)
-            .sort((a, b) => domElements.indexOf(a[1]) - domElements.indexOf(b[1]))
+            .sort(
+                (a, b) => domElements.indexOf(a[1]) - domElements.indexOf(b[1]),
+            )
             .map(([id, element]) => ({ id, element }))
     }, [])
 
@@ -110,7 +112,9 @@ export function RovingTabindexRoot<T extends ElementType>({
                         elements.current.get(currentRovingTabindexValue ?? ''),
                         elements.current.get(active ?? ''),
                         ...orderedItems.map(i => i.element),
-                    ].filter((element): element is HTMLElement => element != null)
+                    ].filter(
+                        (element): element is HTMLElement => element != null,
+                    )
 
                     focusFirst(candidates)
                 }}
@@ -129,7 +133,9 @@ export function getNextFocusable(
     id: string,
 ): RovingTabindexItem | undefined {
     const currIndex = orderedItems.findIndex(item => item.id === id)
-    return orderedItems.at(currIndex === orderedItems.length ? 0 : currIndex + 1)
+    return orderedItems.at(
+        currIndex === orderedItems.length ? 0 : currIndex + 1,
+    )
 }
 
 export function getParentFocusable(
@@ -186,7 +192,11 @@ export function getNextFocusableByTypeahead(
     const wrappedItems = wrapArray(items, index)
     let typeaheadMatchIndex: RovingTabindexItem | undefined
 
-    for (let index = 0; index < wrappedItems.length - 1 && typeaheadMatchIndex == null; index++) {
+    for (
+        let index = 0;
+        index < wrappedItems.length - 1 && typeaheadMatchIndex == null;
+        index++
+    ) {
         const nextItem = wrappedItems.at(index + 1)
 
         if (
@@ -206,13 +216,20 @@ export type RovingItem = {
 }
 
 export function useRovingTabindex(id: string) {
-    const { currentRovingTabindexValue, focus, onShiftTab, getOrderedItems, elements } =
-        useContext(RovingTabindexContext)
+    const {
+        currentRovingTabindexValue,
+        focus,
+        onShiftTab,
+        getOrderedItems,
+        elements,
+    } = useContext(RovingTabindexContext)
 
     return {
         getOrderedItems,
         isFocusable: currentRovingTabindexValue === id,
-        getRovingProps: <T extends ElementType>(props?: ComponentPropsWithoutRef<T>) => ({
+        getRovingProps: <T extends ElementType>(
+            props?: ComponentPropsWithoutRef<T>,
+        ) => ({
             ...props,
             ref: (element: HTMLElement | null) => {
                 if (element) {
