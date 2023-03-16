@@ -85,6 +85,7 @@ function useRovingTabindex(id: string) {
 type RovingTabindexRootBaseProps<T> = {
     children: ReactNode | ReactNode[]
     as?: T
+    activeId?: string
 }
 
 type RovingTabindexRootProps<T extends ElementType> =
@@ -93,6 +94,7 @@ type RovingTabindexRootProps<T extends ElementType> =
 
 export function RovingTabindexRoot<T extends ElementType>({
     children,
+    activeId,
     as,
     ...props
 }: RovingTabindexRootProps<T>) {
@@ -141,6 +143,8 @@ export function RovingTabindexRoot<T extends ElementType>({
 
                     if (focusableId != null) {
                         elements.current.get(focusableId)?.focus()
+                    } else if (activeId != null) {
+                        elements.current.get(activeId)?.focus()
                     } else {
                         orderedItems.at(0)?.element.focus()
                     }
@@ -154,6 +158,24 @@ export function RovingTabindexRoot<T extends ElementType>({
             </Component>
         </RovingTabindexContext.Provider>
     )
+}
+
+export function getNextFocusable(
+    orderedItems: RovingTabindexItem[],
+    id: string,
+): RovingTabindexItem | undefined {
+    const currIndex = orderedItems.findIndex(item => item.id === id)
+    return orderedItems.at(
+        currIndex === orderedItems.length - 1 ? 0 : currIndex + 1,
+    )
+}
+
+export function getPrevFocusable(
+    orderedItems: RovingTabindexItem[],
+    id: string,
+): RovingTabindexItem | undefined {
+    const currIndex = orderedItems.findIndex(item => item.id === id)
+    return orderedItems.at(currIndex === 0 ? -1 : currIndex - 1)
 }
 
 /**
@@ -176,18 +198,14 @@ export function Button(props: ButtonProps) {
             {...getRovingProps<'button'>({
                 onKeyDown: e => {
                     props?.onKeyDown?.(e)
+                    const items = getOrderedItems()
+                    let nextItem: RovingTabindexItem | undefined
                     if (isHotkey('right', e)) {
-                        const items = getOrderedItems()
-                        const currentIndex = items.findIndex(
-                            item => item.element === e.currentTarget,
-                        )
-                        const nextItem = items.at(
-                            currentIndex === items.length - 1
-                                ? 0
-                                : currentIndex + 1,
-                        )
-                        nextItem?.element.focus()
+                        nextItem = getNextFocusable(items, props.children)
+                    } else if (isHotkey('left', e)) {
+                        nextItem = getPrevFocusable(items, props.children)
                     }
+                    nextItem?.element.focus()
                 },
                 ...props,
             })}
@@ -198,11 +216,13 @@ export function Button(props: ButtonProps) {
 }
 
 export function ButtonGroup() {
+    const [activeId, setActiveId] = useState('button 2')
+
     return (
-        <RovingTabindexRoot className="space-x-5" as="div">
-            <Button>button 1</Button>
-            <Button>button 2</Button>
-            <Button>button 3</Button>
+        <RovingTabindexRoot className="space-x-5" as="div" activeId={activeId}>
+            <Button onClick={() => setActiveId('button 1')}>button 1</Button>
+            <Button onClick={() => setActiveId('button 2')}>button 2</Button>
+            <Button onClick={() => setActiveId('button 3')}>button 3</Button>
         </RovingTabindexRoot>
     )
 }

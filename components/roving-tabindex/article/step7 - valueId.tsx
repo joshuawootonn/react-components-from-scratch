@@ -16,16 +16,16 @@ type RovingTabindexItem = {
 }
 
 type RovingTabindexContextType = {
-    focusable: string | null
-    setFocusable: (id: string) => void
+    focusableId: string | null
+    setFocusableId: (id: string) => void
     onShiftTab: () => void
     getOrderedItems: () => RovingTabindexItem[]
     elements: MutableRefObject<Map<string, HTMLElement>>
 }
 
 const RovingTabindexContext = createContext<RovingTabindexContextType>({
-    focusable: null,
-    setFocusable: () => {},
+    focusableId: null,
+    setFocusableId: () => {},
     onShiftTab: () => {},
     getOrderedItems: () => [],
     elements: { current: new Map<string, HTMLElement>() },
@@ -36,13 +36,20 @@ const RovingTabindexContext = createContext<RovingTabindexContextType>({
  */
 
 function useRovingTabindex(id: string) {
-    const { elements, getOrderedItems, setFocusable, focusable, onShiftTab } =
-        useContext(RovingTabindexContext)
+    const {
+        elements,
+        getOrderedItems,
+        setFocusableId,
+        focusableId,
+        onShiftTab,
+    } = useContext(RovingTabindexContext)
 
     return {
         getOrderedItems,
-        isFocusable: focusable === id,
-        getRovingProps: <T extends ElementType>(props: ComponentPropsWithoutRef<T>) => ({
+        isFocusable: focusableId === id,
+        getRovingProps: <T extends ElementType>(
+            props: ComponentPropsWithoutRef<T>,
+        ) => ({
             ...props,
             ref: (element: HTMLElement | null) => {
                 if (element) {
@@ -54,7 +61,7 @@ function useRovingTabindex(id: string) {
             onClick: (e: MouseEvent) => {
                 props?.onClick?.(e)
                 if (e.target !== e.currentTarget) return
-                setFocusable(id)
+                setFocusableId(id)
             },
             onKeyDown: (e: KeyboardEvent) => {
                 props?.onKeyDown?.(e)
@@ -67,10 +74,10 @@ function useRovingTabindex(id: string) {
             onFocus: (e: FocusEvent) => {
                 props?.onFocus?.(e)
                 if (e.target !== e.currentTarget) return
-                setFocusable(id)
+                setFocusableId(id)
             },
             ['data-item']: true,
-            tabIndex: focusable === id ? 0 : -1,
+            tabIndex: focusableId === id ? 0 : -1,
         }),
     }
 }
@@ -78,30 +85,37 @@ function useRovingTabindex(id: string) {
 type RovingTabindexRootBaseProps<T> = {
     children: ReactNode | ReactNode[]
     as?: T
-    activeId?: string
+    valueId?: string
 }
 
-type RovingTabindexRootProps<T extends ElementType> = RovingTabindexRootBaseProps<T> &
-    Omit<ComponentPropsWithoutRef<T>, keyof RovingTabindexRootBaseProps<T>>
+type RovingTabindexRootProps<T extends ElementType> =
+    RovingTabindexRootBaseProps<T> &
+        Omit<ComponentPropsWithoutRef<T>, keyof RovingTabindexRootBaseProps<T>>
 
 export function RovingTabindexRoot<T extends ElementType>({
     children,
-    activeId,
+    valueId,
     as,
     ...props
 }: RovingTabindexRootProps<T>) {
     const Component = as ?? 'div'
-    const [focusable, setFocusable] = useState<string | null>(null)
+    const [focusableId, setFocusableId] = useState<string | null>(null)
     const [isShiftTabbing, setIsShiftTabbing] = useState(false)
     const elements = useRef(new Map<string, HTMLElement>())
     const ref = useRef<HTMLDivElement | null>(null)
 
     function getOrderedItems() {
         if (!ref.current) return []
-        const elementsFromDOM = Array.from(ref.current.querySelectorAll<HTMLElement>('[data-item]'))
+        const elementsFromDOM = Array.from(
+            ref.current.querySelectorAll<HTMLElement>('[data-item]'),
+        )
 
         return Array.from(elements.current)
-            .sort((a, b) => elementsFromDOM.indexOf(a[1]) - elementsFromDOM.indexOf(b[1]))
+            .sort(
+                (a, b) =>
+                    elementsFromDOM.indexOf(a[1]) -
+                    elementsFromDOM.indexOf(b[1]),
+            )
             .map(([id, element]) => ({ id, element }))
     }
 
@@ -110,8 +124,8 @@ export function RovingTabindexRoot<T extends ElementType>({
             value={{
                 elements,
                 getOrderedItems,
-                setFocusable,
-                focusable,
+                setFocusableId,
+                focusableId,
                 onShiftTab: function () {
                     setIsShiftTabbing(true)
                 },
@@ -127,10 +141,10 @@ export function RovingTabindexRoot<T extends ElementType>({
                     const orderedItems = getOrderedItems()
                     if (orderedItems.length === 0) return
 
-                    if (focusable != null) {
-                        elements.current.get(focusable)?.focus()
-                    } else if (activeId != null) {
-                        elements.current.get(activeId)?.focus()
+                    if (focusableId != null) {
+                        elements.current.get(focusableId)?.focus()
+                    } else if (valueId != null) {
+                        elements.current.get(valueId)?.focus()
                     } else {
                         orderedItems.at(0)?.element.focus()
                     }
@@ -154,10 +168,13 @@ type BaseButtonProps = {
     children: string
 }
 
-type ButtonProps = BaseButtonProps & Omit<ComponentPropsWithoutRef<'button'>, keyof BaseButtonProps>
+type ButtonProps = BaseButtonProps &
+    Omit<ComponentPropsWithoutRef<'button'>, keyof BaseButtonProps>
 
 export function Button(props: ButtonProps) {
-    const { getOrderedItems, getRovingProps } = useRovingTabindex(props.children)
+    const { getOrderedItems, getRovingProps } = useRovingTabindex(
+        props.children,
+    )
     return (
         <button
             {...getRovingProps<'button'>({
@@ -169,7 +186,9 @@ export function Button(props: ButtonProps) {
                             item => item.element === e.currentTarget,
                         )
                         const nextItem = items.at(
-                            currentIndex === items.length - 1 ? 0 : currentIndex + 1,
+                            currentIndex === items.length - 1
+                                ? 0
+                                : currentIndex + 1,
                         )
                         nextItem?.element.focus()
                     }
@@ -182,14 +201,14 @@ export function Button(props: ButtonProps) {
     )
 }
 
-export function MyComponent() {
-    const [activeId, setActiveId] = useState('button 2')
+export function ButtonGroup() {
+    const [valueId, setValueId] = useState('button 2')
 
     return (
-        <RovingTabindexRoot className="space-x-5" as="div" activeId={activeId}>
-            <Button onClick={() => setActiveId('button 1')}>button 1</Button>
-            <Button onClick={() => setActiveId('button 2')}>button 2</Button>
-            <Button onClick={() => setActiveId('button 3')}>button 3</Button>
+        <RovingTabindexRoot className="space-x-5" as="div" valueId={valueId}>
+            <Button onClick={() => setValueId('button 1')}>button 1</Button>
+            <Button onClick={() => setValueId('button 2')}>button 2</Button>
+            <Button onClick={() => setValueId('button 3')}>button 3</Button>
         </RovingTabindexRoot>
     )
 }

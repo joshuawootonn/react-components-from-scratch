@@ -39,7 +39,8 @@ type RootBaseProps = {
     onChange: (value: string) => void
 }
 
-type RootProps = RootBaseProps & Omit<ComponentPropsWithoutRef<'div'>, keyof RootBaseProps>
+type RootProps = RootBaseProps &
+    Omit<ComponentPropsWithoutRef<'div'>, keyof RootBaseProps>
 
 function Root({ value, onChange, children, ...props }: RootProps) {
     const elements = useRef<Map<string, HTMLElement>>(new Map())
@@ -50,10 +51,14 @@ function Root({ value, onChange, children, ...props }: RootProps) {
     const getOrderedItems = useCallback(() => {
         if (!ref.current) return []
 
-        const domElements = Array.from(ref.current.querySelectorAll('[data-roving-tabindex-item]'))
+        const domElements = Array.from(
+            ref.current.querySelectorAll('[data-roving-tabindex-item]'),
+        )
 
         return Array.from(elements.current)
-            .sort((a, b) => domElements.indexOf(a[1]) - domElements.indexOf(b[1]))
+            .sort(
+                (a, b) => domElements.indexOf(a[1]) - domElements.indexOf(b[1]),
+            )
             .map(([value, element]) => ({ value, element }))
     }, [elements])
 
@@ -116,7 +121,12 @@ type ToggleGroupButtonBaseProps = {
 type ToggleGroupButtonProps = ToggleGroupButtonBaseProps &
     Omit<ComponentPropsWithoutRef<'button'>, keyof ToggleGroupButtonBaseProps>
 
-function Button({ children, value, className, ...props }: ToggleGroupButtonProps) {
+function Button({
+    children,
+    value,
+    className,
+    ...props
+}: ToggleGroupButtonProps) {
     const {
         value: selectedValue,
         onChange,
@@ -160,9 +170,15 @@ function Button({ children, value, className, ...props }: ToggleGroupButtonProps
                 if (currIndex === -1) {
                     nextItem = items.shift()
                 } else if (isHotkey(['down', 'right'], e)) {
-                    nextItem = currIndex === items.length - 1 ? items[0] : items[currIndex + 1]
+                    nextItem =
+                        currIndex === items.length - 1
+                            ? items[0]
+                            : items[currIndex + 1]
                 } else if (isHotkey(['up', 'left'], e)) {
-                    nextItem = currIndex === 0 ? items[items.length - 1] : items[currIndex - 1]
+                    nextItem =
+                        currIndex === 0
+                            ? items[items.length - 1]
+                            : items[currIndex - 1]
                 }
 
                 if (nextItem) {

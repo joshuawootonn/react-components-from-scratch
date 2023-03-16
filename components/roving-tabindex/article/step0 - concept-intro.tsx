@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export function MyComponent() {
+export function ButtonGroup() {
     return (
         <div className="space-x-5">
             <button>button 1</button>

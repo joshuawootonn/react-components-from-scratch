@@ -1,13 +1,20 @@
 import isHotkey from 'is-hotkey'
-import { MutableRefObject, ComponentPropsWithoutRef, useState, useRef, KeyboardEvent } from 'react'
+import {
+    MutableRefObject,
+    ComponentPropsWithoutRef,
+    useState,
+    useRef,
+    KeyboardEvent,
+} from 'react'
 
 type BaseButtonProps = {
     children: string
-    focusable: string
+    focusableId: string
     elements: MutableRefObject<Map<string, HTMLElement>>
 }
 
-type ButtonProps = BaseButtonProps & Omit<ComponentPropsWithoutRef<'button'>, keyof BaseButtonProps>
+type ButtonProps = BaseButtonProps &
+    Omit<ComponentPropsWithoutRef<'button'>, keyof BaseButtonProps>
 
 export function Button(props: ButtonProps) {
     return (
@@ -19,7 +26,7 @@ export function Button(props: ButtonProps) {
                     props.elements.current.delete(props.children)
                 }
             }}
-            tabIndex={props.children === props.focusable ? 0 : -1}
+            tabIndex={props.children === props.focusableId ? 0 : -1}
             data-item
             {...props}
         >
@@ -28,8 +35,8 @@ export function Button(props: ButtonProps) {
     )
 }
 
-export function MyComponent() {
-    const [focusable, setFocusable] = useState('button 1')
+export function ButtonGroup() {
+    const [focusableId, setFocusableId] = useState('button 1')
     const elements = useRef(new Map<string, HTMLElement>())
     const ref = useRef<HTMLDivElement | null>(null)
 
@@ -41,29 +48,49 @@ export function MyComponent() {
             )
 
             const items = Array.from(elements.current)
-                .sort((a, b) => elementsFromDOM.indexOf(a[1]) - elementsFromDOM.indexOf(b[1]))
+                .sort(
+                    (a, b) =>
+                        elementsFromDOM.indexOf(a[1]) -
+                        elementsFromDOM.indexOf(b[1]),
+                )
                 .map(([id, element]) => ({ id, element }))
 
-            const currentIndex = items.findIndex(item => item.element === e.currentTarget)
-            const nextItem = items.at(currentIndex === items.length - 1 ? 0 : currentIndex + 1)
+            const currentIndex = items.findIndex(
+                item => item.element === e.currentTarget,
+            )
+            const nextItem = items.at(
+                currentIndex === items.length - 1 ? 0 : currentIndex + 1,
+            )
             if (nextItem != null) {
                 nextItem.element.focus()
-                setFocusable(nextItem.id)
+                setFocusableId(nextItem.id)
             }
         }
     }
 
     return (
         <div ref={ref} className="space-x-5">
-            <Button focusable={focusable} elements={elements} onKeyDown={onKeyDown}>
+            <Button
+                focusableId={focusableId}
+                elements={elements}
+                onKeyDown={onKeyDown}
+            >
                 button 1
             </Button>
             <span>hello</span>
-            <Button focusable={focusable} elements={elements} onKeyDown={onKeyDown}>
+            <Button
+                focusableId={focusableId}
+                elements={elements}
+                onKeyDown={onKeyDown}
+            >
                 button 2
             </Button>
             <span>world</span>
-            <Button focusable={focusable} elements={elements} onKeyDown={onKeyDown}>
+            <Button
+                focusableId={focusableId}
+                elements={elements}
+                onKeyDown={onKeyDown}
+            >
                 button 3
             </Button>
         </div>

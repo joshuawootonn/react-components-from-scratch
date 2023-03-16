@@ -7,44 +7,70 @@ import * as Step3 from 'components/roving-tabindex/article/step3 - cleaner-compo
 import * as Step4 from 'components/roving-tabindex/article/step4 - tab'
 import * as Step5 from 'components/roving-tabindex/article/step5 - shift-tab'
 import * as Step6 from 'components/roving-tabindex/article/step6 - abstraction'
-import * as Step7 from 'components/roving-tabindex/article/step7 - activeId'
+import * as Step7 from 'components/roving-tabindex/article/step7 - valueId'
+import * as Step8 from 'components/roving-tabindex/article/step8 - selectors'
 
 export default function Page() {
     return (
-        <div className="max-w-5xl p-4 lg:p-8 mx-auto prose prose-headings:font-700 ">
+        <div className="max-w-5xl p-4 lg:p-8 mx-auto prose prose-headings:font-700">
+            <style global jsx>{`
+                button {
+                    border: 2px solid black;
+                    padding: 2px 8px 0px 8px;
+                }
+                button:focus {
+                    outline: 2px solid black;
+                    outline-offset: 4px;
+                    background: black;
+                    color: white;
+                }
+            `}</style>
             <div className="flex flex-row justify-between items-start">
-                <h1 className="font-sans">Treeview (wip)</h1>
+                <h1 className="font-sans">Roving Tabindex</h1>
                 <Link href="/">Back to the full list of components</Link>
             </div>
             <p>
-                This treeview is currently marked as wip as I write the related post explaining it.
-                But the code is really there so check it out if you need to do something similar.
+                This page is the demo for an article on{' '}
+                <a href="https://joshuawootonn.com/react-roving-tabindex">
+                    how to create a roving tabindex in react
+                </a>
+                .
             </p>
-
+            <h2>Intro</h2>
+            <p>
+                We want to make our group of buttons remember the last focus
+                similar to a radio group.
+            </p>
             <Step0.RadioComponent />
-            <h2>Step 1</h2>
-            <Step0.MyComponent />
-
+            <p>but this obviously doesn't work out of the box</p>
+            <Step0.ButtonGroup />
             <h2>get it working</h2>
-            <Step1.MyComponent />
-
-            <h2>order from the dom</h2>
-            <Step2.MyComponent />
-
+            <p>
+                (Note: until the last step only right arrow moves focus through
+                the list of buttons)
+            </p>
+            <Step1.ButtonGroup />
+            <h2>getting order from the dom</h2>
+            <Step2.ButtonGroup />
             <h2>good api</h2>
-            <Step3.MyComponent />
-
-            <h2>handling tab</h2>
-            <Step4.MyComponent />
-
-            <h2>handling tab</h2>
-            <Step5.MyComponent />
-
-            <h2>abstraction </h2>
-            <Step6.MyComponent />
-
-            <h2>activeId </h2>
-            <Step7.MyComponent />
+            <Step3.ButtonGroup />
+            <h2>tab</h2>
+            <p>tab now selects the first node when focusableId is null</p>
+            <Step4.ButtonGroup />
+            <h2>shift+tab</h2>
+            <p>
+                shift+tab now works again (we broke it in the previous example)
+            </p>
+            <Step5.ButtonGroup />
+            <h2>Creating our abstraction</h2>
+            <p>not much has changed but the code is cleaner</p>
+            <Step6.ButtonGroup />
+            <h2>ValueId </h2>
+            <p>option 2 is initially selected since valueId is set</p>
+            <Step7.ButtonGroup />
+            <h2>Selectors </h2>
+            <p>left arrow should now work!</p>
+            <Step8.ButtonGroup />
         </div>
     )
 }

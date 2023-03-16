@@ -14,15 +14,15 @@ type RovingTabindexItem = {
 }
 
 type RovingTabindexContextType = {
-    focusable: string | null
-    setFocusable: (id: string) => void
+    focusableId: string | null
+    setFocusableId: (id: string) => void
     getOrderedItems: () => RovingTabindexItem[]
     elements: MutableRefObject<Map<string, HTMLElement>>
 }
 
 const RovingTabindexContext = createContext<RovingTabindexContextType>({
-    focusable: null,
-    setFocusable: () => {},
+    focusableId: null,
+    setFocusableId: () => {},
     getOrderedItems: () => [],
     elements: { current: new Map<string, HTMLElement>() },
 })
@@ -31,10 +31,12 @@ type BaseButtonProps = {
     children: string
 }
 
-type ButtonProps = BaseButtonProps & Omit<ComponentPropsWithoutRef<'button'>, keyof BaseButtonProps>
+type ButtonProps = BaseButtonProps &
+    Omit<ComponentPropsWithoutRef<'button'>, keyof BaseButtonProps>
 
 export function Button(props: ButtonProps) {
-    const { elements, getOrderedItems, setFocusable, focusable } = useContext(RovingTabindexContext)
+    const { elements, getOrderedItems, setFocusableId, focusableId } =
+        useContext(RovingTabindexContext)
     return (
         <button
             ref={element => {
@@ -47,17 +49,21 @@ export function Button(props: ButtonProps) {
             onKeyDown={e => {
                 if (isHotkey('right', e)) {
                     const items = getOrderedItems()
-                    const currentIndex = items.findIndex(item => item.element === e.currentTarget)
+                    const currentIndex = items.findIndex(
+                        item => item.element === e.currentTarget,
+                    )
                     const nextItem = items.at(
-                        currentIndex === items.length - 1 ? 0 : currentIndex + 1,
+                        currentIndex === items.length - 1
+                            ? 0
+                            : currentIndex + 1,
                     )
                     if (nextItem != null) {
                         nextItem.element.focus()
-                        setFocusable(nextItem.id)
+                        setFocusableId(nextItem.id)
                     }
                 }
             }}
-            tabIndex={props.children === focusable ? 0 : -1}
+            tabIndex={props.children === focusableId ? 0 : -1}
             data-item
             {...props}
         >
@@ -66,23 +72,29 @@ export function Button(props: ButtonProps) {
     )
 }
 
-export function MyComponent() {
-    const [focusable, setFocusable] = useState<string | null>(null)
+export function ButtonGroup() {
+    const [focusableId, setFocusableId] = useState<string | null>(null)
     const elements = useRef(new Map<string, HTMLElement>())
     const ref = useRef<HTMLDivElement | null>(null)
 
     function getOrderedItems() {
         if (!ref.current) return []
-        const elementsFromDOM = Array.from(ref.current.querySelectorAll<HTMLElement>('[data-item]'))
+        const elementsFromDOM = Array.from(
+            ref.current.querySelectorAll<HTMLElement>('[data-item]'),
+        )
 
         return Array.from(elements.current)
-            .sort((a, b) => elementsFromDOM.indexOf(a[1]) - elementsFromDOM.indexOf(b[1]))
+            .sort(
+                (a, b) =>
+                    elementsFromDOM.indexOf(a[1]) -
+                    elementsFromDOM.indexOf(b[1]),
+            )
             .map(([id, element]) => ({ id, element }))
     }
 
     return (
         <RovingTabindexContext.Provider
-            value={{ elements, getOrderedItems, setFocusable, focusable }}
+            value={{ elements, getOrderedItems, setFocusableId, focusableId }}
         >
             <div
                 ref={ref}
@@ -93,8 +105,8 @@ export function MyComponent() {
                     const orderedItems = getOrderedItems()
                     if (orderedItems.length === 0) return
 
-                    if (focusable != null) {
-                        elements.current.get(focusable)?.focus()
+                    if (focusableId != null) {
+                        elements.current.get(focusableId)?.focus()
                     } else {
                         orderedItems.at(0)?.element.focus()
                     }
