@@ -2,14 +2,15 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 import { Treeview } from 'components/treeview'
-import { TreeviewOpen } from 'components/treeview/article/part-1/open'
-import { TreeviewOpenIndicator } from 'components/treeview/article/part-1/open-indicator'
-import { TreeviewSelection } from 'components/treeview/article/part-1/selection'
-import { TreeviewStructure } from 'components/treeview/article/part-1/structure'
+import { TreeviewStructure } from 'components/treeview/article/part-1/1 - structure'
+import { TreeviewOpen } from 'components/treeview/article/part-1/2 - open'
+import { TreeviewOpenIndicator } from 'components/treeview/article/part-1/3 - open-indicator'
+import { TreeviewSelection } from 'components/treeview/article/part-1/4 - selection'
+import { TreeviewWip } from 'components/treeview/article/part-2/selection copy'
 import { AppleTreeview, appleInitialValues } from 'components/treeview/examples'
 import { initialValue, longInitialValues } from 'lib/treeview'
 
-export default function ToggleGroupPage() {
+export default function TreeviewPage() {
     const [selected, select] = useState<string | null>(null)
     const [appleSelected, appleSelect] = useState<string | null>(null)
     const [bigSelected, bigSelect] = useState<string | null>(null)
@@ -63,8 +64,8 @@ export default function ToggleGroupPage() {
                 {longInitialValues.map(node => (
                     <Treeview.Node node={node} key={node.id} />
                 ))}
-            </Treeview.Root> */}
-
+            </Treeview.Root>
+*/}
             {/* <h2>Treeview General Structure</h2>
             <TreeviewStructure.Root className="w-[300px] h-[400px]  not-prose ">
                 {initialValue.map(node => (
@@ -93,6 +94,16 @@ export default function ToggleGroupPage() {
                     <TreeviewSelection.Node node={node} key={node.id} />
                 ))}
             </TreeviewSelection.Root> */}
+
+            <TreeviewWip.Root
+                value={selected}
+                onChange={select}
+                className="w-[300px] h-[400px] not-prose"
+            >
+                {initialValue.map(node => (
+                    <TreeviewWip.Node node={node} key={node.id} />
+                ))}
+            </TreeviewWip.Root>
         </div>
     )
 }
