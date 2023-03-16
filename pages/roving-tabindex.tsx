@@ -42,7 +42,7 @@ export default function Page() {
                 similar to a radio group.
             </p>
             <Step0.RadioComponent />
-            <p>but this obviously doesn't work out of the box</p>
+            <p>but this obviously doesn&apos;t work out of the box</p>
             <Step0.ButtonGroup />
             <h2>get it working</h2>
             <p>
