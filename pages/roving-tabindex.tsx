@@ -10,21 +10,11 @@ import * as Step6 from 'components/roving-tabindex/article/step6 - abstraction'
 import * as Step7 from 'components/roving-tabindex/article/step7 - valueId'
 import * as Step8 from 'components/roving-tabindex/article/step8 - selectors'
 
+//className="border-2 border-black px-2 pt-0.5 focus:outline-dashed focus:outline-offset-4 focus:outline-2"
+
 export default function Page() {
     return (
         <div className="max-w-5xl p-4 lg:p-8 mx-auto prose prose-headings:font-700">
-            <style global jsx>{`
-                button {
-                    border: 2px solid black;
-                    padding: 2px 8px 0px 8px;
-                }
-                button:focus {
-                    outline: 2px solid black;
-                    outline-offset: 4px;
-                    background: black;
-                    color: white;
-                }
-            `}</style>
             <div className="flex flex-row justify-between items-start">
                 <h1 className="font-sans">Roving Tabindex</h1>
                 <Link href="/">Back to the full list of components</Link>

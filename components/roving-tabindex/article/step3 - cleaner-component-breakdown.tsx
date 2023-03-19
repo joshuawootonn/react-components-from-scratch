@@ -13,14 +13,14 @@ type RovingTabindexItem = {
     element: HTMLElement
 }
 
-type RovingTabindexContextType = {
+type RovingTabindexContext = {
     focusableId: string | null
     setFocusableId: (id: string) => void
     getOrderedItems: () => RovingTabindexItem[]
     elements: MutableRefObject<Map<string, HTMLElement>>
 }
 
-const RovingTabindexContext = createContext<RovingTabindexContextType>({
+const RovingTabindexContext = createContext<RovingTabindexContext>({
     focusableId: null,
     setFocusableId: () => {},
     getOrderedItems: () => [],
@@ -39,6 +39,7 @@ export function Button(props: ButtonProps) {
         useContext(RovingTabindexContext)
     return (
         <button
+            className="border-2 border-black px-2 pt-0.5 focus:outline-dashed focus:outline-offset-4 focus:outline-2 focus:outline-black"
             ref={element => {
                 if (element) {
                     elements.current.set(props.children, element)

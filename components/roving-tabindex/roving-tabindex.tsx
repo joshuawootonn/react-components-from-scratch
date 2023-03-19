@@ -10,12 +10,11 @@ import {
     MouseEvent,
     KeyboardEvent,
     ComponentPropsWithoutRef,
-    useMemo,
     ElementType,
     MutableRefObject,
 } from 'react'
 
-type RovingTabindexItem = {
+export type RovingTabindexItem = {
     id: string
     element: HTMLElement
 }
@@ -27,7 +26,7 @@ function focusFirst(candidates: HTMLElement[]) {
     }
 }
 
-type RovingTabindexContextType = {
+type RovingTabindexContext = {
     currentRovingTabindexValue: string | null
     focus: (id: string) => void
     onShiftTab: () => void
@@ -35,7 +34,7 @@ type RovingTabindexContextType = {
     elements: MutableRefObject<Map<string, HTMLElement>>
 }
 
-const RovingTabindexContext = createContext<RovingTabindexContextType>({
+const RovingTabindexContext = createContext<RovingTabindexContext>({
     currentRovingTabindexValue: null,
     focus: () => {},
     onShiftTab: () => {},
@@ -128,7 +127,7 @@ export function RovingTabindexRoot<T extends ElementType>({
     )
 }
 
-export function getNextFocusable(
+export function getNextFocusableId(
     orderedItems: RovingTabindexItem[],
     id: string,
 ): RovingTabindexItem | undefined {
@@ -138,7 +137,7 @@ export function getNextFocusable(
     )
 }
 
-export function getParentFocusable(
+export function getParentFocusableId(
     orderedItems: RovingTabindexItem[],
     id: string,
 ): RovingTabindexItem | undefined {
@@ -159,7 +158,7 @@ export function getParentFocusable(
     return orderedItems.find(item => item.element === possibleParent)
 }
 
-export function getPrevFocusable(
+export function getPrevFocusableId(
     orderedItems: RovingTabindexItem[],
     id: string,
 ): RovingTabindexItem | undefined {
@@ -167,13 +166,13 @@ export function getPrevFocusable(
     return orderedItems.at(currIndex === 0 ? -1 : currIndex - 1)
 }
 
-export function getFirstFocusable(
+export function getFirstFocusableId(
     orderedItems: RovingTabindexItem[],
 ): RovingTabindexItem | undefined {
     return orderedItems.at(0)
 }
 
-export function getLastFocusable(
+export function getLastFocusableId(
     orderedItems: RovingTabindexItem[],
 ): RovingTabindexItem | undefined {
     return orderedItems.at(-1)
@@ -183,7 +182,7 @@ function wrapArray<T>(array: T[], startIndex: number) {
     return array.map((_, index) => array[(startIndex + index) % array.length])
 }
 
-export function getNextFocusableByTypeahead(
+export function getNextFocusableIdByTypeahead(
     items: RovingTabindexItem[],
     originalId: string,
     keyPressed: string,
@@ -208,11 +207,6 @@ export function getNextFocusableByTypeahead(
     }
 
     return typeaheadMatchIndex
-}
-
-export type RovingItem = {
-    id: string
-    element: HTMLElement
 }
 
 export function useRovingTabindex(id: string) {

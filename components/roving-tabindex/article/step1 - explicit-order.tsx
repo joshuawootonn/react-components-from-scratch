@@ -11,6 +11,7 @@ export function ButtonGroup() {
             {options.map((button, key) => (
                 <button
                     key={key}
+                    className="border-2 border-black px-2 pt-0.5 focus:outline-dashed focus:outline-offset-4 focus:outline-2 focus:outline-black"
                     onKeyDown={(e: KeyboardEvent) => {
                         if (isHotkey('right', e)) {
                             const currentIndex = options.findIndex(

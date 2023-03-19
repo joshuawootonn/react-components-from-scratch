@@ -19,6 +19,7 @@ type ButtonProps = BaseButtonProps &
 export function Button(props: ButtonProps) {
     return (
         <button
+            className="border-2 border-black px-2 pt-0.5 focus:outline-dashed focus:outline-offset-4 focus:outline-2 focus:outline-black"
             ref={element => {
                 if (element) {
                     props.elements.current.set(props.children, element)

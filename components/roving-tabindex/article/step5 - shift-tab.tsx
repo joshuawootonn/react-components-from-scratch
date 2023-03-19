@@ -13,7 +13,7 @@ type RovingTabindexItem = {
     element: HTMLElement
 }
 
-type RovingTabindexContextType = {
+type RovingTabindexContext = {
     focusableId: string | null
     setFocusableId: (id: string) => void
     onShiftTab: () => void
@@ -21,7 +21,7 @@ type RovingTabindexContextType = {
     elements: MutableRefObject<Map<string, HTMLElement>>
 }
 
-const RovingTabindexContext = createContext<RovingTabindexContextType>({
+const RovingTabindexContext = createContext<RovingTabindexContext>({
     focusableId: null,
     setFocusableId: () => {},
     onShiftTab: () => {},
@@ -46,6 +46,7 @@ export function Button(props: ButtonProps) {
     } = useContext(RovingTabindexContext)
     return (
         <button
+            className="border-2 border-black px-2 pt-0.5 focus:outline-dashed focus:outline-offset-4 focus:outline-2 focus:outline-black"
             ref={element => {
                 if (element) {
                     elements.current.set(props.children, element)
@@ -138,5 +139,16 @@ export function ButtonGroup() {
                 <Button>button 3</Button>
             </div>
         </RovingTabindexContext.Provider>
+    )
+}
+
+export default function App() {
+    return (
+        <div className="space-y-5">
+            <button className="border-2 border-black px-2 pt-0.5 focus:outline-dashed focus:outline-offset-4 focus:outline-2 focus:outline-black">
+                previous interactive element
+            </button>
+            <ButtonGroup />
+        </div>
     )
 }

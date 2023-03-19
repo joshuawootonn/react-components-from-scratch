@@ -15,7 +15,7 @@ type RovingTabindexItem = {
     element: HTMLElement
 }
 
-type RovingTabindexContextType = {
+type RovingTabindexContext = {
     focusableId: string | null
     setFocusableId: (id: string) => void
     onShiftTab: () => void
@@ -23,7 +23,7 @@ type RovingTabindexContextType = {
     elements: MutableRefObject<Map<string, HTMLElement>>
 }
 
-const RovingTabindexContext = createContext<RovingTabindexContextType>({
+const RovingTabindexContext = createContext<RovingTabindexContext>({
     focusableId: null,
     setFocusableId: () => {},
     onShiftTab: () => {},
@@ -35,7 +35,7 @@ const RovingTabindexContext = createContext<RovingTabindexContextType>({
  * Abstractions
  */
 
-function useRovingTabindex(id: string) {
+export function useRovingTabindex(id: string) {
     const {
         elements,
         getOrderedItems,
@@ -174,6 +174,8 @@ export function Button(props: ButtonProps) {
     return (
         <button
             {...getRovingProps<'button'>({
+                className:
+                    'border-2 border-black px-2 pt-0.5 focus:outline-dashed focus:outline-offset-4 focus:outline-2 focus:outline-black',
                 onKeyDown: e => {
                     props?.onKeyDown?.(e)
                     if (isHotkey('right', e)) {
@@ -199,10 +201,21 @@ export function Button(props: ButtonProps) {
 
 export function ButtonGroup() {
     return (
-        <RovingTabindexRoot className="space-x-5" as="div">
+        <RovingTabindexRoot className="space-x-5 flex" as="div">
             <Button>button 1</Button>
             <Button>button 2</Button>
             <Button>button 3</Button>
         </RovingTabindexRoot>
+    )
+}
+
+export default function App() {
+    return (
+        <div className="space-y-5 flex flex-col h-screen justify-center items-center">
+            <button className="border-2 border-black px-2 pt-0.5 focus:outline-dashed focus:outline-offset-4 focus:outline-2 focus:outline-black">
+                previous interactive element
+            </button>
+            <ButtonGroup />
+        </div>
     )
 }
