@@ -3,23 +3,21 @@ import isHotkey from 'is-hotkey'
 import {
     createContext,
     Dispatch,
-    KeyboardEventHandler,
-    KeyboardEvent,
     ReactNode,
     useContext,
     useReducer,
 } from 'react'
 
 import {
-    getFirstFocusable,
-    getLastFocusable,
-    getNextFocusable,
-    getNextFocusableByTypeahead,
-    getParentFocusable,
-    getPrevFocusable,
-    RovingItem,
+    getFirstFocusableId,
+    getLastFocusableId,
+    getNextFocusableId,
+    getNextFocusableIdByTypeahead,
+    getParentFocusableId,
+    getPrevFocusableId,
     RovingTabindexRoot,
     useRovingTabindex,
+    RovingTabindexItem,
 } from 'components/roving-tabindex'
 
 export type TreeViewState = Map<string, boolean>
@@ -39,7 +37,10 @@ export type TreeViewActions =
           id: string
       }
 
-export function treeviewReducer(state: TreeViewState, action: TreeViewActions): TreeViewState {
+export function treeviewReducer(
+    state: TreeViewState,
+    action: TreeViewActions,
+): TreeViewState {
     switch (action.type) {
         case TreeViewActionTypes.OPEN:
             return new Map(state).set(action.id, true)
@@ -74,7 +75,10 @@ type RootProps = {
 }
 
 export function Root({ children, className, value, onChange }: RootProps) {
-    const [open, dispatch] = useReducer(treeviewReducer, new Map<string, boolean>())
+    const [open, dispatch] = useReducer(
+        treeviewReducer,
+        new Map<string, boolean>(),
+    )
 
     return (
         <TreeViewContext.Provider
@@ -113,9 +117,17 @@ export function Arrow({ open, className }: IconProps) {
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className={clsx('origin-center', open ? 'rotate-90' : 'rotate-0', className)}
+            className={clsx(
+                'origin-center',
+                open ? 'rotate-90' : 'rotate-0',
+                className,
+            )}
         >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+            />
         </svg>
     )
 }
@@ -124,50 +136,58 @@ type NodeProps = {
     node: TreeNodeType
 }
 
-export const Node = function TreeNode({ node: { id, children, name } }: NodeProps) {
+export const Node = function TreeNode({
+    node: { id, children, name },
+}: NodeProps) {
     const { open, dispatch, selectId, selectedId } = useContext(TreeViewContext)
     const isOpen = open.get(id)
-    const { isFocusable, getRovingProps, getOrderedItems } = useRovingTabindex(id)
+    const { isFocusable, getRovingProps, getOrderedItems } =
+        useRovingTabindex(id)
 
     return (
         <li
             {...getRovingProps<'li'>({
-                className: 'group flex flex-col cursor-pointer select-none focus:outline-none',
+                className:
+                    'group flex flex-col cursor-pointer select-none focus:outline-none',
                 onKeyDown: function (e) {
                     e.stopPropagation()
 
-                    let nextItemToFocus: RovingItem | undefined
+                    let nextItemToFocus: RovingTabindexItem | undefined
                     const items = getOrderedItems()
 
                     if (isHotkey('up', e)) {
                         e.preventDefault()
-                        nextItemToFocus = getPrevFocusable(items, id)
+                        nextItemToFocus = getPrevFocusableId(items, id)
                     } else if (isHotkey('down', e)) {
                         e.preventDefault()
-                        nextItemToFocus = getNextFocusable(items, id)
+                        nextItemToFocus = getNextFocusableId(items, id)
                     } else if (isHotkey('left', e)) {
                         if (isOpen && children?.length) {
                             dispatch({ type: TreeViewActionTypes.CLOSE, id })
                         } else {
-                            nextItemToFocus = getParentFocusable(items, id)
+                            nextItemToFocus = getParentFocusableId(items, id)
                         }
                     } else if (isHotkey('right', e)) {
                         if (isOpen && children?.length) {
-                            nextItemToFocus = getNextFocusable(items, id)
+                            nextItemToFocus = getNextFocusableId(items, id)
                         } else {
                             dispatch({ type: TreeViewActionTypes.OPEN, id })
                         }
                     } else if (isHotkey('home', e)) {
                         e.preventDefault()
-                        nextItemToFocus = getFirstFocusable(items)
+                        nextItemToFocus = getFirstFocusableId(items)
                     } else if (isHotkey('end', e)) {
                         e.preventDefault()
-                        nextItemToFocus = getLastFocusable(items)
+                        nextItemToFocus = getLastFocusableId(items)
                     } else if (isHotkey('space', e)) {
                         e.preventDefault()
                         selectId(id)
                     } else if (/^[a-z]$/i.test(e.key)) {
-                        nextItemToFocus = getNextFocusableByTypeahead(items, id, e.key)
+                        nextItemToFocus = getNextFocusableIdByTypeahead(
+                            items,
+                            id,
+                            e.key,
+                        )
                     }
 
                     if (nextItemToFocus != null) {
@@ -203,7 +223,9 @@ export const Node = function TreeNode({ node: { id, children, name } }: NodeProp
                 ) : (
                     <span className="h-4 w-4" />
                 )}
-                <span className="text-ellipsis whitespace-nowrap overflow-hidden">{name}</span>
+                <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+                    {name}
+                </span>
             </div>
             {children?.length && isOpen && (
                 <ul className="pl-4">
