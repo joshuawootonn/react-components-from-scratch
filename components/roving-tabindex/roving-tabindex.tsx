@@ -28,7 +28,7 @@ function focusFirst(candidates: HTMLElement[]) {
 
 type RovingTabindexContext = {
     currentRovingTabindexValue: string | null
-    focus: (id: string) => void
+    setFocusableId: (id: string) => void
     onShiftTab: () => void
     getOrderedItems: () => RovingTabindexItem[]
     elements: MutableRefObject<Map<string, HTMLElement>>
@@ -36,7 +36,7 @@ type RovingTabindexContext = {
 
 const RovingTabindexContext = createContext<RovingTabindexContext>({
     currentRovingTabindexValue: null,
-    focus: () => {},
+    setFocusableId: () => {},
     onShiftTab: () => {},
     getOrderedItems: () => [],
     elements: { current: new Map<string, HTMLElement>() },
@@ -87,7 +87,7 @@ export function RovingTabindexRoot<T extends ElementType>({
     return (
         <RovingTabindexContext.Provider
             value={{
-                focus: function (id: string) {
+                setFocusableId: function (id: string) {
                     setCurrentRovingTabindexValue(id)
                 },
                 onShiftTab: function () {
@@ -212,7 +212,7 @@ export function getNextFocusableIdByTypeahead(
 export function useRovingTabindex(id: string) {
     const {
         currentRovingTabindexValue,
-        focus,
+        setFocusableId,
         onShiftTab,
         getOrderedItems,
         elements,
@@ -232,10 +232,10 @@ export function useRovingTabindex(id: string) {
                     elements.current.delete(id)
                 }
             },
-            onClick: (e: MouseEvent) => {
-                props?.onClick?.(e)
+            onMouseDown: (e: MouseEvent) => {
+                props?.onMouseDown?.(e)
                 if (e.target !== e.currentTarget) return
-                focus(id)
+                setFocusableId(id)
             },
             onKeyDown: (e: KeyboardEvent) => {
                 props?.onKeyDown?.(e)
@@ -248,7 +248,7 @@ export function useRovingTabindex(id: string) {
             onFocus: (e: FocusEvent) => {
                 props?.onFocus?.(e)
                 if (e.target !== e.currentTarget) return
-                focus(id)
+                setFocusableId(id)
             },
             [NODE_SELECTOR]: true,
             tabIndex: currentRovingTabindexValue === id ? 0 : -1,
