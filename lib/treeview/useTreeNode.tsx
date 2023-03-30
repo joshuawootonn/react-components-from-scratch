@@ -48,7 +48,7 @@ export function useTreeNode<T extends ElementType>(
         ['aria-expanded']: boolean
         ['aria-selected']: boolean
         role: 'treeitem'
-        onClick: (event: MouseEvent) => void
+        onMouseDown: (event: MouseEvent) => void
         onKeyDown: (event: KeyboardEvent) => void
         onFocus: (event: FocusEvent) => void
     }
@@ -82,9 +82,9 @@ export function useTreeNode<T extends ElementType>(
                 ...getRovingProps<T>({
                     ...props,
                     [NOT_FOCUSABLE_SELECTOR]: !isOpen,
-                    onClick: function (e: MouseEvent) {
+                    onMouseDown: function (e: MouseEvent) {
                         e.stopPropagation()
-                        props?.onClick?.(e)
+                        props?.onMouseDown?.(e)
                         if (e.button === 0) {
                             if (options.isFolder) {
                                 isOpen
