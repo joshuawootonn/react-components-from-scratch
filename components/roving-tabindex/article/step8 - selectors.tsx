@@ -59,8 +59,8 @@ export function useRovingTabindex(id: string) {
                     elements.current.delete(id)
                 }
             },
-            onClick: (e: MouseEvent) => {
-                props?.onClick?.(e)
+            onMouseDown: (e: MouseEvent) => {
+                props?.onMouseDown?.(e)
                 if (e.target !== e.currentTarget) return
                 setFocusableId(id)
             },
