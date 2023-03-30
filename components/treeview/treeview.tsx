@@ -13,13 +13,16 @@ type NodeProps = {
 }
 
 export function Node({ node }: NodeProps) {
-    const { isOpen, isFocusable, isSelected, getTreeNodeProps, treeGroupProps } = useTreeNode(
-        node.id,
-        {
-            selectionType: 'distinct',
-            isFolder: Boolean(node.children?.length),
-        },
-    )
+    const {
+        isOpen,
+        isFocusable,
+        isSelected,
+        getTreeNodeProps,
+        treeGroupProps,
+    } = useTreeNode(node.id, {
+        selectionType: 'distinct',
+        isFolder: Boolean(node.children?.length),
+    })
 
     return (
         <li
@@ -36,23 +39,31 @@ export function Node({ node }: NodeProps) {
             >
                 <div
                     className={classNames(
-                        'group flex flex-row items-center border-[1.5px] border-transparent rounded-sm space-x-2 px-1',
+                        'group flex flex-row items-center border-[1.5px] border-transparent space-x-2 px-1',
                         isFocusable &&
-                            'group-focus:border-slate-400 focus-within:border-transparent',
-                        isSelected ? 'bg-slate-200' : 'bg-transparent',
+                            'group-focus:border-black focus-within:border-transparent',
+                        isSelected
+                            ? 'bg-black text-white'
+                            : 'bg-transparent text-black',
                     )}
                 >
                     {node.children?.length ? (
                         <>
-                            <Arrow className="h-4 w-4" open={isOpen} />
-                            <Folder open={isOpen} className="h-5 w-5" />
+                            <Arrow
+                                className="h-4 w-4 flex-shrink-0"
+                                open={isOpen}
+                            />
+                            <Folder
+                                open={isOpen}
+                                className="h-5 w-5 flex-shrink-0"
+                            />
                         </>
                     ) : (
                         <>
-                            <File className="ml-6 h-5 w-5" />
+                            <File className="ml-6 h-5 w-5 flex-shrink-0" />
                         </>
                     )}
-                    <span className="font-mono font-medium text-ellipsis whitespace-nowrap overflow-hidden flex-grow">
+                    <span className="font-mono font-light text-base text-ellipsis whitespace-nowrap overflow-hidden flex-grow">
                         {node.name}
                     </span>
                 </div>
@@ -91,7 +102,7 @@ export function Node({ node }: NodeProps) {
                                 },
                             }}
                             {...treeGroupProps}
-                            className={classNames('pl-4')}
+                            className={classNames('pl-6')}
                         >
                             <motion.svg
                                 viewBox="0 0 3 60"
@@ -99,7 +110,7 @@ export function Node({ node }: NodeProps) {
                                 preserveAspectRatio="none"
                                 width={2}
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="absolute top-[31px] h-[calc(100%-36px)] bottom-0 left-2.5 transform -translate-x-1/2 stroke-slate-200 z-[-1]"
+                                className="absolute top-[31px] h-[calc(100%-30px)] bottom-0 left-3.5 transform -translate-x-1/2 stroke-black z-[-1]"
                                 key={node.id + 'line'}
                                 stroke="currentColor"
                             >

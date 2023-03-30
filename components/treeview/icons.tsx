@@ -77,7 +77,11 @@ export function Arrow({ open, className }: Props) {
                 ease: [0.164, 0.84, 0.43, 1],
             }}
         >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+            />
         </motion.svg>
     )
 }

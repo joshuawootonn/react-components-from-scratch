@@ -97,9 +97,11 @@ type NodeProps = {
     node: TreeNodeType
 }
 
-export const Node = function TreeNode({ node: { id, children, name } }: NodeProps) {
+export const Node = function TreeNode({
+    node: { id, children, name },
+}: NodeProps) {
     const { open, dispatch, selectId, selectedId } = useContext(TreeViewContext)
-    const isOpen = open.get(id)
+    const isOpen = open.get(node.id)
     return (
         <li className="flex flex-col cursor-pointer select-none">
             <div
@@ -125,7 +127,9 @@ export const Node = function TreeNode({ node: { id, children, name } }: NodeProp
                 ) : (
                     <span className="h-4 w-4" />
                 )}
-                <span className="text-ellipsis whitespace-nowrap overflow-hidden">{name}</span>
+                <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+                    {name}
+                </span>
             </div>
             {children?.length && isOpen && (
                 <ul className="pl-4">
