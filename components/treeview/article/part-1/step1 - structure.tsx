@@ -7,7 +7,11 @@ type RootProps = {
 }
 
 export function Root({ children, className }: RootProps) {
-    return <ul className={clsx('flex flex-col overflow-auto', className)}>{children}</ul>
+    return (
+        <ul className={clsx('flex flex-col overflow-auto', className)}>
+            {children}
+        </ul>
+    )
 }
 
 export type TreeNodeType = {
@@ -21,7 +25,7 @@ type NodeProps = {
     node: TreeNodeType
 }
 
-export const Node = function TreeNode({ node }: NodeProps) {
+export const Node = function TreeNode({ node: { name, children } }: NodeProps) {
     return (
         <li className="flex flex-col cursor-pointer select-none">
             <div
@@ -29,11 +33,11 @@ export const Node = function TreeNode({ node }: NodeProps) {
                     'font-mono font-medium rounded-sm px-1 text-ellipsis whitespace-nowrap overflow-hidden'
                 }
             >
-                {node.name}
+                {name}
             </div>
-            {node.children?.length && (
+            {children?.length && (
                 <ul className="pl-4">
-                    {node.children.map(node => (
+                    {children.map(node => (
                         <Node node={node} key={node.id} />
                     ))}
                 </ul>

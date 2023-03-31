@@ -1,5 +1,11 @@
 import clsx from 'clsx'
-import { createContext, Dispatch, ReactNode, useContext, useReducer } from 'react'
+import {
+    createContext,
+    Dispatch,
+    ReactNode,
+    useContext,
+    useReducer,
+} from 'react'
 
 export type TreeViewState = Map<string, boolean>
 
@@ -18,7 +24,10 @@ export type TreeViewActions =
           id: string
       }
 
-export function treeviewReducer(state: TreeViewState, action: TreeViewActions): TreeViewState {
+export function treeviewReducer(
+    state: TreeViewState,
+    action: TreeViewActions,
+): TreeViewState {
     switch (action.type) {
         case TreeViewActionTypes.OPEN:
             return new Map(state).set(action.id, true)
@@ -34,37 +43,34 @@ export function treeviewReducer(state: TreeViewState, action: TreeViewActions): 
 export type TreeViewContextType = {
     open: TreeViewState
     dispatch: Dispatch<TreeViewActions>
-    selectedId: string | null
-    selectId: (id: string) => void
 }
 
 export const TreeViewContext = createContext<TreeViewContextType>({
     open: new Map<string, boolean>(),
     dispatch: () => {},
-    selectedId: null,
-    selectId: () => {},
 })
 
 type RootProps = {
     children: ReactNode | ReactNode[]
     className?: string
-    value: string | null
-    onChange: (id: string) => void
 }
 
-export function Root({ children, className, value, onChange }: RootProps) {
-    const [open, dispatch] = useReducer(treeviewReducer, new Map<string, boolean>())
+export function Root({ children, className }: RootProps) {
+    const [open, dispatch] = useReducer(
+        treeviewReducer,
+        new Map<string, boolean>(),
+    )
 
     return (
         <TreeViewContext.Provider
             value={{
                 open,
                 dispatch,
-                selectedId: value,
-                selectId: onChange,
             }}
         >
-            <ul className={clsx('flex flex-col overflow-auto', className)}>{children}</ul>
+            <ul className={clsx('flex flex-col overflow-auto', className)}>
+                {children}
+            </ul>
         </TreeViewContext.Provider>
     )
 }
@@ -86,9 +92,17 @@ export function Arrow({ open, className }: IconProps) {
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className={clsx('origin-center', open ? 'rotate-90' : 'rotate-0', className)}
+            className={clsx(
+                'origin-center',
+                open ? 'rotate-90' : 'rotate-0',
+                className,
+            )}
         >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+            />
         </svg>
     )
 }
@@ -97,39 +111,39 @@ type NodeProps = {
     node: TreeNodeType
 }
 
-export const Node = function TreeNode({ node }: NodeProps) {
-    const { open, dispatch, selectId, selectedId } = useContext(TreeViewContext)
-    const isOpen = open.get(node.id)
+export const Node = function TreeNode({
+    node: { id, name, children },
+}: NodeProps) {
+    const { open, dispatch } = useContext(TreeViewContext)
+    const isOpen = open.get(id)
     return (
         <li className="flex flex-col cursor-pointer select-none">
             <div
-                className={clsx(
-                    'flex items-center space-x-2 font-mono font-medium rounded-sm px-1 ',
-                    selectedId === node.id ? 'bg-slate-200' : 'bg-transparent',
-                )}
+                className={
+                    'flex items-center space-x-2 font-mono font-medium rounded-sm px-1 text-ellipsis whitespace-nowrap overflow-hidden'
+                }
                 onClick={() => {
                     isOpen
                         ? dispatch({
-                              id: node.id,
+                              id: id,
                               type: TreeViewActionTypes.CLOSE,
                           })
                         : dispatch({
-                              id: node.id,
+                              id: id,
                               type: TreeViewActionTypes.OPEN,
                           })
-                    selectId(node.id)
                 }}
             >
-                {node.children?.length ? (
-                    <Arrow className="h-4 w-4 shrink-0" open={isOpen} />
+                {children?.length ? (
+                    <Arrow className="h-4 w-4" open={isOpen} />
                 ) : (
                     <span className="h-4 w-4" />
                 )}
-                <span className="text-ellipsis whitespace-nowrap overflow-hidden">{node.name}</span>
+                <span>{name}</span>
             </div>
-            {node.children?.length && isOpen && (
+            {children?.length && isOpen && (
                 <ul className="pl-4">
-                    {node.children.map(node => (
+                    {children.map(node => (
                         <Node node={node} key={node.id} />
                     ))}
                 </ul>
@@ -138,4 +152,4 @@ export const Node = function TreeNode({ node }: NodeProps) {
     )
 }
 
-export const TreeviewSelection = { Root, Node }
+export const TreeviewOpenIndicator = { Root, Node }

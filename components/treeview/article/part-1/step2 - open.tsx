@@ -1,5 +1,11 @@
 import clsx from 'clsx'
-import { createContext, Dispatch, ReactNode, useContext, useReducer } from 'react'
+import {
+    createContext,
+    Dispatch,
+    ReactNode,
+    useContext,
+    useReducer,
+} from 'react'
 
 export type TreeViewState = Map<string, boolean>
 
@@ -18,7 +24,10 @@ export type TreeViewActions =
           id: string
       }
 
-export function treeviewReducer(state: TreeViewState, action: TreeViewActions): TreeViewState {
+export function treeviewReducer(
+    state: TreeViewState,
+    action: TreeViewActions,
+): TreeViewState {
     switch (action.type) {
         case TreeViewActionTypes.OPEN:
             return new Map(state).set(action.id, true)
@@ -47,7 +56,10 @@ type RootProps = {
 }
 
 export function Root({ children, className }: RootProps) {
-    const [open, dispatch] = useReducer(treeviewReducer, new Map<string, boolean>())
+    const [open, dispatch] = useReducer(
+        treeviewReducer,
+        new Map<string, boolean>(),
+    )
 
     return (
         <TreeViewContext.Provider
@@ -56,7 +68,9 @@ export function Root({ children, className }: RootProps) {
                 dispatch,
             }}
         >
-            <ul className={clsx('flex flex-col overflow-auto', className)}>{children}</ul>
+            <ul className={clsx('flex flex-col overflow-auto', className)}>
+                {children}
+            </ul>
         </TreeViewContext.Provider>
     )
 }
@@ -68,58 +82,37 @@ export type TreeNodeType = {
     icon?: ReactNode
 }
 
-type IconProps = { open?: boolean; className?: string }
-
-export function Arrow({ open, className }: IconProps) {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className={clsx('origin-center', open ? 'rotate-90' : 'rotate-0', className)}
-        >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-        </svg>
-    )
-}
-
 type NodeProps = {
     node: TreeNodeType
 }
 
-export const Node = function TreeNode({ node }: NodeProps) {
+export const Node = function TreeNode({
+    node: { id, name, children },
+}: NodeProps) {
     const { open, dispatch } = useContext(TreeViewContext)
-    const isOpen = open.get(node.id)
     return (
         <li className="flex flex-col cursor-pointer select-none">
             <div
                 className={
-                    'flex items-center space-x-2 font-mono font-medium rounded-sm px-1 text-ellipsis whitespace-nowrap overflow-hidden'
+                    'font-mono font-medium rounded-sm px-1 text-ellipsis whitespace-nowrap overflow-hidden'
                 }
                 onClick={() => {
-                    isOpen
+                    open.get(id)
                         ? dispatch({
-                              id: node.id,
+                              id: id,
                               type: TreeViewActionTypes.CLOSE,
                           })
                         : dispatch({
-                              id: node.id,
+                              id: id,
                               type: TreeViewActionTypes.OPEN,
                           })
                 }}
             >
-                {node.children?.length ? (
-                    <Arrow className="h-4 w-4" open={isOpen} />
-                ) : (
-                    <span className="h-4 w-4" />
-                )}
-                <span>{node.name}</span>
+                {name}
             </div>
-            {node.children?.length && isOpen && (
+            {children?.length && open.get(id) && (
                 <ul className="pl-4">
-                    {node.children.map(node => (
+                    {children.map(node => (
                         <Node node={node} key={node.id} />
                     ))}
                 </ul>
@@ -127,5 +120,4 @@ export const Node = function TreeNode({ node }: NodeProps) {
         </li>
     )
 }
-
-export const TreeviewOpenIndicator = { Root, Node }
+export const TreeviewOpen = { Root, Node }
