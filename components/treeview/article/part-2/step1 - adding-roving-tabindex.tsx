@@ -101,7 +101,7 @@ export const Node = function TreeNode({
     node: { id, children, name },
 }: NodeProps) {
     const { open, dispatch, selectId, selectedId } = useContext(TreeViewContext)
-    const isOpen = open.get(node.id)
+    const isOpen = open.get(id)
     return (
         <li className="flex flex-col cursor-pointer select-none">
             <div
@@ -134,7 +134,7 @@ export const Node = function TreeNode({
             {children?.length && isOpen && (
                 <ul className="pl-4">
                     {children.map(node => (
-                        <Node node={node} key={id} />
+                        <Node node={node} key={node.id} />
                     ))}
                 </ul>
             )}
