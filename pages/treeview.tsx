@@ -7,8 +7,9 @@ import { TreeviewOpen } from 'components/treeview/article/part-1/step2 - open'
 import { TreeviewOpenIndicator } from 'components/treeview/article/part-1/step3 - open-indicator'
 import { TreeviewSelection } from 'components/treeview/article/part-1/step4 - selection'
 import { TreeviewRovingTabindex } from 'components/treeview/article/part-2/step1 - adding-roving-tabindex'
-import { TreeviewRightLeft } from 'components/treeview/article/part-2/step3 - right-left'
 import { TreeviewUpDown } from 'components/treeview/article/part-2/step2 - up-down'
+import { TreeviewRightLeft } from 'components/treeview/article/part-2/step3 - right-left'
+import { TreeviewStyle } from 'components/treeview/article/part-2/step4 - style'
 import { TreeviewWip } from 'components/treeview/article/part-2/unknown'
 import { appleInitialValues, AppleTreeview } from 'components/treeview/examples'
 import { initialValue, longInitialValues } from 'lib/treeview'
@@ -100,6 +101,16 @@ export default function TreeviewPage() {
                     <TreeviewRightLeft.Node node={node} key={node.id} />
                 ))}
             </TreeviewRightLeft.Root>
+            <p>Updated focus styles</p>
+            <TreeviewStyle.Root
+                value={selected}
+                onChange={select}
+                className="w-[300px] h-[400px] not-prose"
+            >
+                {initialValue.map(node => (
+                    <TreeviewStyle.Node node={node} key={node.id} />
+                ))}
+            </TreeviewStyle.Root>
         </div>
     )
 }
