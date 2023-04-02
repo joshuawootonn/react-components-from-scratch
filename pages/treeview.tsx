@@ -10,6 +10,7 @@ import { TreeviewRovingTabindex } from 'components/treeview/article/part-2/step1
 import { TreeviewUpDown } from 'components/treeview/article/part-2/step2 - up-down'
 import { TreeviewRightLeft } from 'components/treeview/article/part-2/step3 - right-left'
 import { TreeviewStyle } from 'components/treeview/article/part-2/step4 - style'
+import { TreeviewHomeEnd } from 'components/treeview/article/part-2/step5 - home-end'
 import { TreeviewWip } from 'components/treeview/article/part-2/unknown'
 import { appleInitialValues, AppleTreeview } from 'components/treeview/examples'
 import { initialValue, longInitialValues } from 'lib/treeview'
@@ -111,6 +112,16 @@ export default function TreeviewPage() {
                     <TreeviewStyle.Node node={node} key={node.id} />
                 ))}
             </TreeviewStyle.Root>
+            <p>Home and end keybindings</p>
+            <TreeviewHomeEnd.Root
+                value={selected}
+                onChange={select}
+                className="w-[300px] h-[400px] not-prose"
+            >
+                {initialValue.map(node => (
+                    <TreeviewHomeEnd.Node node={node} key={node.id} />
+                ))}
+            </TreeviewHomeEnd.Root>
         </div>
     )
 }

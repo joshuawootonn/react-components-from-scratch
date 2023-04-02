@@ -200,3 +200,14 @@ export function getParentFocusableId(
 
     return orderedItems.find(item => item.element === possibleParent)
 }
+
+export function getFirstFocusableId(
+    orderedItems: RovingTabindexItem[],
+): RovingTabindexItem | undefined {
+    return orderedItems.at(0)
+}
+export function getLastFocusableId(
+    orderedItems: RovingTabindexItem[],
+): RovingTabindexItem | undefined {
+    return orderedItems.at(-1)
+}
