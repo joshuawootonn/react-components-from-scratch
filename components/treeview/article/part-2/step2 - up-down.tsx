@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import isHotkey from 'is-hotkey'
 import {
     createContext,
     Dispatch,
@@ -8,7 +9,13 @@ import {
     useReducer,
 } from 'react'
 
-import { RovingTabindexRoot, useRovingTabindex } from './roving-tabindex'
+import {
+    getNextFocusableId,
+    getPrevFocusableId,
+    RovingTabindexItem,
+    RovingTabindexRoot,
+    useRovingTabindex,
+} from './roving-tabindex'
 
 export type TreeViewState = Map<string, boolean>
 
@@ -136,8 +143,21 @@ export const Node = function TreeNode({
             {...getRovingProps<'li'>({
                 className: 'flex flex-col cursor-pointer select-none',
                 onKeyDown: function (e: KeyboardEvent) {
+                    e.stopPropagation()
+
                     const items = getOrderedItems()
+                    let nextItemToFocus: RovingTabindexItem | undefined
+
                     console.log(items)
+
+                    if (isHotkey('up', e)) {
+                        e.preventDefault()
+                        nextItemToFocus = getPrevFocusableId(items, id)
+                    } else if (isHotkey('down', e)) {
+                        e.preventDefault()
+                        nextItemToFocus = getNextFocusableId(items, id)
+                    }
+                    nextItemToFocus?.element.focus()
                 },
             })}
         >
@@ -179,4 +199,4 @@ export const Node = function TreeNode({
     )
 }
 
-export const TreeviewRovingTabindex = { Root, Node }
+export const TreeviewUpDown = { Root, Node }

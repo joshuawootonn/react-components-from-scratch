@@ -11,7 +11,7 @@ import {
     ReactNode,
 } from 'react'
 
-type RovingTabindexItem = {
+export type RovingTabindexItem = {
     id: string
     element: HTMLElement
 }
@@ -177,75 +177,4 @@ export function getPrevFocusableId(
 ): RovingTabindexItem | undefined {
     const currIndex = orderedItems.findIndex(item => item.id === id)
     return orderedItems.at(currIndex === 0 ? -1 : currIndex - 1)
-}
-
-/**
- * Usage
- */
-
-type BaseButtonProps = {
-    children: string
-    isSelected: boolean
-}
-
-type ButtonProps = BaseButtonProps &
-    Omit<ComponentPropsWithoutRef<'button'>, keyof BaseButtonProps>
-
-export function Button(props: ButtonProps) {
-    const { getOrderedItems, getRovingProps } = useRovingTabindex(
-        props.children,
-    )
-    return (
-        <button
-            {...getRovingProps<'button'>({
-                className: clsx(
-                    'border-2 border-black px-2 pt-0.5 focus:outline-dashed focus:outline-offset-4 focus:outline-2 focus:outline-black',
-                    props.isSelected
-                        ? 'bg-black text-white'
-                        : 'bg-white text-black',
-                ),
-                onKeyDown: e => {
-                    props?.onKeyDown?.(e)
-                    const items = getOrderedItems()
-                    let nextItem: RovingTabindexItem | undefined
-                    if (isHotkey('right', e)) {
-                        nextItem = getNextFocusableId(items, props.children)
-                    } else if (isHotkey('left', e)) {
-                        nextItem = getPrevFocusableId(items, props.children)
-                    }
-                    nextItem?.element.focus()
-                },
-                ...props,
-            })}
-        >
-            {props.children}
-        </button>
-    )
-}
-
-export function ButtonGroup() {
-    const [valueId, setValueId] = useState('button 2')
-
-    return (
-        <RovingTabindexRoot className="space-x-5" as="div" valueId={valueId}>
-            <Button
-                isSelected={valueId === 'button 1'}
-                onClick={() => setValueId('button 1')}
-            >
-                button 1
-            </Button>
-            <Button
-                isSelected={valueId === 'button 2'}
-                onClick={() => setValueId('button 2')}
-            >
-                button 2
-            </Button>
-            <Button
-                isSelected={valueId === 'button 3'}
-                onClick={() => setValueId('button 3')}
-            >
-                button 3
-            </Button>
-        </RovingTabindexRoot>
-    )
 }
