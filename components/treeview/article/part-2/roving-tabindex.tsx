@@ -136,6 +136,7 @@ export function RovingTabindexRoot<T extends ElementType>({
                 {...props}
                 ref={ref}
                 tabIndex={isShiftTabbing ? -1 : 0}
+                data-root
                 onFocus={e => {
                     props?.onFocus?.(e)
                     if (e.target !== e.currentTarget || isShiftTabbing) return
@@ -177,4 +178,25 @@ export function getPrevFocusableId(
 ): RovingTabindexItem | undefined {
     const currIndex = orderedItems.findIndex(item => item.id === id)
     return orderedItems.at(currIndex === 0 ? -1 : currIndex - 1)
+}
+
+export function getParentFocusableId(
+    orderedItems: RovingTabindexItem[],
+    id: string,
+): RovingTabindexItem | undefined {
+    const currentElement = orderedItems.find(item => item.id === id)?.element
+
+    if (currentElement == null) return
+
+    let possibleParent = currentElement.parentElement
+
+    while (
+        possibleParent !== null &&
+        possibleParent.getAttribute('data-item') === null &&
+        possibleParent.getAttribute('data-root') === null
+    ) {
+        possibleParent = possibleParent?.parentElement ?? null
+    }
+
+    return orderedItems.find(item => item.element === possibleParent)
 }

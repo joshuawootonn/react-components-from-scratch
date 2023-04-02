@@ -7,6 +7,7 @@ import { TreeviewOpen } from 'components/treeview/article/part-1/step2 - open'
 import { TreeviewOpenIndicator } from 'components/treeview/article/part-1/step3 - open-indicator'
 import { TreeviewSelection } from 'components/treeview/article/part-1/step4 - selection'
 import { TreeviewRovingTabindex } from 'components/treeview/article/part-2/step1 - adding-roving-tabindex'
+import { TreeviewRightLeft } from 'components/treeview/article/part-2/step3 - right-left'
 import { TreeviewUpDown } from 'components/treeview/article/part-2/step2 - up-down'
 import { TreeviewWip } from 'components/treeview/article/part-2/unknown'
 import { appleInitialValues, AppleTreeview } from 'components/treeview/examples'
@@ -89,6 +90,16 @@ export default function TreeviewPage() {
                     <TreeviewUpDown.Node node={node} key={node.id} />
                 ))}
             </TreeviewUpDown.Root>
+            <p>Right and left keybindings</p>
+            <TreeviewRightLeft.Root
+                value={selected}
+                onChange={select}
+                className="w-[300px] h-[400px] not-prose"
+            >
+                {initialValue.map(node => (
+                    <TreeviewRightLeft.Node node={node} key={node.id} />
+                ))}
+            </TreeviewRightLeft.Root>
         </div>
     )
 }
