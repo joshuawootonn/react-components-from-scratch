@@ -134,6 +134,16 @@ export default function TreeviewPage() {
                     <TreeviewTypeahead.Node node={node} key={node.id} />
                 ))}
             </TreeviewTypeahead.Root>
+            <p>Selection</p>
+            <TreeviewSelection.Root
+                value={selected}
+                onChange={select}
+                className="w-[300px] h-[400px] not-prose"
+            >
+                {initialValue.map(node => (
+                    <TreeviewSelection.Node node={node} key={node.id} />
+                ))}
+            </TreeviewSelection.Root>
         </div>
     )
 }
