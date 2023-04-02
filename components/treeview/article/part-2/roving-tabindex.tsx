@@ -211,3 +211,34 @@ export function getLastFocusableId(
 ): RovingTabindexItem | undefined {
     return orderedItems.at(-1)
 }
+
+// wrapArray([1,2,3],2) -> [3,1,2]
+function wrapArray<T>(array: T[], startIndex: number) {
+    return array.map((_, index) => array[(startIndex + index) % array.length])
+}
+
+export function getNextFocusableIdByTypeahead(
+    items: RovingTabindexItem[],
+    id: string,
+    keyPressed: string,
+) {
+    const currentIndex = items.findIndex(item => item.id === id)
+    const wrappedItems = wrapArray(items, currentIndex)
+    let index = 0,
+        typeaheadMatchItem: RovingTabindexItem | undefined
+
+    while (index < wrappedItems.length - 1 && typeaheadMatchItem == null) {
+        const nextItem = wrappedItems.at(index + 1)
+
+        if (
+            nextItem?.element?.textContent?.charAt(0).toLowerCase() ===
+            keyPressed.charAt(0).toLowerCase()
+        ) {
+            typeaheadMatchItem = nextItem
+        }
+
+        index++
+    }
+
+    return typeaheadMatchItem
+}

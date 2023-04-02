@@ -11,6 +11,7 @@ import { TreeviewUpDown } from 'components/treeview/article/part-2/step2 - up-do
 import { TreeviewRightLeft } from 'components/treeview/article/part-2/step3 - right-left'
 import { TreeviewStyle } from 'components/treeview/article/part-2/step4 - style'
 import { TreeviewHomeEnd } from 'components/treeview/article/part-2/step5 - home-end'
+import { TreeviewTypeahead } from 'components/treeview/article/part-2/step6 - typeahead'
 import { TreeviewWip } from 'components/treeview/article/part-2/unknown'
 import { appleInitialValues, AppleTreeview } from 'components/treeview/examples'
 import { initialValue, longInitialValues } from 'lib/treeview'
@@ -122,6 +123,17 @@ export default function TreeviewPage() {
                     <TreeviewHomeEnd.Node node={node} key={node.id} />
                 ))}
             </TreeviewHomeEnd.Root>
+
+            <p>Typeahead</p>
+            <TreeviewTypeahead.Root
+                value={selected}
+                onChange={select}
+                className="w-[300px] h-[400px] not-prose"
+            >
+                {initialValue.map(node => (
+                    <TreeviewTypeahead.Node node={node} key={node.id} />
+                ))}
+            </TreeviewTypeahead.Root>
         </div>
     )
 }
