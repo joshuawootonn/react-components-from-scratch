@@ -108,10 +108,13 @@ export function RovingTabindexRoot<T extends ElementType>({
     function getOrderedItems() {
         if (!ref.current) return []
         const elementsFromDOM = Array.from(
-            ref.current.querySelectorAll<HTMLElement>('[data-item]'),
+            ref.current.querySelectorAll<HTMLElement>(
+                ':where([data-item=true]):not(:where([aria-expanded=false] *))',
+            ),
         )
 
         return Array.from(elements.current)
+            .filter(a => elementsFromDOM.indexOf(a[1]) > -1)
             .sort(
                 (a, b) =>
                     elementsFromDOM.indexOf(a[1]) -
