@@ -1,0 +1,64 @@
+
+### fixing Node is empty
+
+You need this so the property will be defined
+
+//todo
+
+```diff
+-    children?.length && isOpen
++    children?.length && (
+        <ul
+            role="group"
+-            className="pl-4"
++            className={clsx('pl-4', isOpen ? 'visible h-auto' : 'invisible h-0')}
+        >
+            {children.map(node => (
+                <Node node={node} key={node.id} />
+            ))}
+        </ul>
+    )
+```
+
+Make a note about these buddies:
+https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-setsize
+https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-posinset
+
+```diff
+    function getOrderedItems() {
+        if (!ref.current) return []
+        const elementsFromDOM = Array.from(
+-            ref.current.querySelectorAll<HTMLElement>('[data-item]'),
++            ref.current.querySelectorAll<HTMLElement>(
++                ':where([data-item=true]):not(:where([aria-expanded=false] *))',
++            ),
+        )
+
+        return Array.from(elements.current)
++            .filter(a => elementsFromDOM.indexOf(a[1]) > -1)
+            .sort(
+                (a, b) =>
+                    elementsFromDOM.indexOf(a[1]) -
+                    elementsFromDOM.indexOf(b[1]),
+            )
+            .map(([id, element]) => ({ id, element }))
+    }
+```
+
+We now have to filter our items since they aren't being removed from the DOM -> aren't being deregistered in out Map of elements -> are always included in Array.map()
+
+```diff
+    <li
+        {...getRovingProps<'li'>({
+            className:
+                'flex flex-col cursor-pointer select-none focus:outline-none group',
+            onKeyDown: function (e: KeyboardEvent) {
+                /* ... */
+            },
+-            ['aria-expanded']: isOpen,
++            ['aria-expanded']: children?.length ? Boolean(isOpen) : undefined,
+            ['aria-selected']: selectedId === id,
+            role: 'treeitem',
+        })}
+    >
+```

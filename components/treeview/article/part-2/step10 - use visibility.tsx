@@ -73,9 +73,16 @@ type RootProps = {
     className?: string
     value: string | null
     onChange: (id: string) => void
+    label: string
 }
 
-export function Root({ children, className, value, onChange }: RootProps) {
+export function Root({
+    children,
+    className,
+    value,
+    onChange,
+    label,
+}: RootProps) {
     const [open, dispatch] = useReducer(
         treeviewReducer,
         new Map<string, boolean>(),
@@ -93,7 +100,7 @@ export function Root({ children, className, value, onChange }: RootProps) {
             <RovingTabindexRoot
                 as="ul"
                 className={clsx('flex flex-col overflow-auto', className)}
-                aria-label={'tree'}
+                aria-label={label}
                 aria-multiselectable="false"
                 role="tree"
             >
@@ -112,9 +119,10 @@ export type TreeNodeType = {
 
 type IconProps = { open?: boolean; className?: string }
 
-export function Arrow({ open, className }: IconProps) {
+export function Arrow({ open, className, ...props }: IconProps) {
     return (
         <svg
+            {...props}
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -157,8 +165,6 @@ export const Node = function TreeNode({
                     const items = getOrderedItems()
                     let nextItemToFocus: RovingTabindexItem | undefined
 
-                    console.log(items)
-
                     if (isHotkey('up', e)) {
                         e.preventDefault()
                         nextItemToFocus = getPrevFocusableId(items, id)
@@ -196,22 +202,12 @@ export const Node = function TreeNode({
                         e.preventDefault()
                         selectId(id)
                     }
+
+                    console.log(items, nextItemToFocus)
                     nextItemToFocus?.element.focus()
                 },
-                ['aria-expanded']: children?.length
-                    ? Boolean(isOpen)
-                    : undefined,
-                ['aria-selected']: selectedId === id,
-                role: 'treeitem',
-            })}
-        >
-            <div
-                className={clsx(
-                    'flex items-center space-x-2 font-mono font-medium rounded-sm px-1 border-[1.5px] border-transparent',
-                    isFocusable && 'group-focus:border-slate-500',
-                    selectedId === id ? 'bg-slate-200' : 'bg-transparent',
-                )}
-                onClick={() => {
+                onClick: e => {
+                    e.stopPropagation()
                     isOpen
                         ? dispatch({
                               id: id,
@@ -222,19 +218,44 @@ export const Node = function TreeNode({
                               type: TreeViewActionTypes.OPEN,
                           })
                     selectId(id)
-                }}
+                },
+                ['aria-expanded']: children?.length
+                    ? Boolean(isOpen)
+                    : undefined,
+                ['aria-selected']: selectedId === id,
+                role: 'treeitem',
+            })}
+        >
+            <span
+                className={clsx(
+                    'flex items-center space-x-2 font-mono font-medium rounded-sm px-1 border-[1.5px] border-transparent',
+                    isFocusable && 'group-focus:border-slate-500',
+                    selectedId === id ? 'bg-slate-200' : 'bg-transparent',
+                )}
             >
                 {children?.length ? (
-                    <Arrow className="h-4 w-4 shrink-0" open={isOpen} />
+                    <Arrow
+                        className="h-4 w-4 shrink-0"
+                        aria-hidden
+                        open={isOpen}
+                    />
                 ) : (
-                    <span className="h-4 w-4" />
+                    <span aria-hidden className="h-4 w-4" />
                 )}
-                <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+                <span className="text-ellipsis whitespace-nowrap overflow-hidden before:content-['_']">
                     {name}
                 </span>
-            </div>
-            {children?.length && isOpen && (
-                <ul role="group" className="pl-4">
+            </span>
+            {children?.length && (
+                <ul
+                    role="group"
+                    className={clsx(
+                        'pl-4',
+                        isOpen
+                            ? 'visible h-auto'
+                            : 'invisible h-0 overflow-hidden',
+                    )}
+                >
                     {children.map(node => (
                         <Node node={node} key={node.id} />
                     ))}
@@ -244,4 +265,4 @@ export const Node = function TreeNode({
     )
 }
 
-export const TreeviewARIA = { Root, Node }
+export const TreeviewARIAOptimizedForVoiceOver = { Root, Node }

@@ -198,6 +198,19 @@ export const Node = function TreeNode({
                     }
                     nextItemToFocus?.element.focus()
                 },
+                onClick: function (e) {
+                    e.stopPropagation()
+                    isOpen
+                        ? dispatch({
+                              id: id,
+                              type: TreeViewActionTypes.CLOSE,
+                          })
+                        : dispatch({
+                              id: id,
+                              type: TreeViewActionTypes.OPEN,
+                          })
+                    selectId(id)
+                },
                 ['aria-expanded']: children?.length
                     ? Boolean(isOpen)
                     : undefined,
@@ -211,25 +224,13 @@ export const Node = function TreeNode({
                     isFocusable && 'group-focus:border-slate-500',
                     selectedId === id ? 'bg-slate-200' : 'bg-transparent',
                 )}
-                onClick={() => {
-                    isOpen
-                        ? dispatch({
-                              id: id,
-                              type: TreeViewActionTypes.CLOSE,
-                          })
-                        : dispatch({
-                              id: id,
-                              type: TreeViewActionTypes.OPEN,
-                          })
-                    selectId(id)
-                }}
             >
                 {children?.length ? (
                     <Arrow className="h-4 w-4 shrink-0" open={isOpen} />
                 ) : (
                     <span className="h-4 w-4" />
                 )}
-                <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+                <span className="text-ellipsis whitespace-nowrap overflow-hidden before:content-['_']">
                     {name}
                 </span>
             </div>
@@ -244,4 +245,4 @@ export const Node = function TreeNode({
     )
 }
 
-export const TreeviewARIA = { Root, Node }
+export const TreeviewMidAria = { Root, Node }
