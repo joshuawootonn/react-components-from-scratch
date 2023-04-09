@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import isHotkey from 'is-hotkey'
 import {
     MutableRefObject,

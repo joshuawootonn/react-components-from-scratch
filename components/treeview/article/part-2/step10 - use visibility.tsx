@@ -265,4 +265,4 @@ export const Node = function TreeNode({
     )
 }
 
-export const TreeviewARIAOptimizedForVoiceOver = { Root, Node }
+export const TreeviewOptimizedForVisibility = { Root, Node }

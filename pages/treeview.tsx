@@ -13,7 +13,8 @@ import { TreeviewStyle } from 'components/treeview/article/part-2/step4 - style'
 import { TreeviewHomeEnd } from 'components/treeview/article/part-2/step5 - home-end'
 import { TreeviewTypeahead } from 'components/treeview/article/part-2/step6 - typeahead'
 import { TreeviewARIA } from 'components/treeview/article/part-2/step8 - aria'
-import { TreeviewARIAOptimizedForVoiceOver } from 'components/treeview/article/part-2/step10 - use visibility'
+import { TreeviewForVoiceover } from 'components/treeview/article/part-2/step9 - voiceover optimization'
+import { TreeviewOptimizedForVisibility } from 'components/treeview/article/part-2/step10 - use visibility'
 import { TreeviewWip } from 'components/treeview/article/part-2/unknown'
 import { appleInitialValues, AppleTreeview } from 'components/treeview/examples'
 import { initialValue, longInitialValues } from 'lib/treeview'
@@ -151,25 +152,23 @@ export default function TreeviewPage() {
                 value={selected}
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
+                label="File Explorer"
             >
                 {initialValue.map(node => (
                     <TreeviewARIA.Node node={node} key={node.id} />
                 ))}
             </TreeviewARIA.Root>
             <p>ARIA optimized for voiceover</p>
-            <TreeviewARIAOptimizedForVoiceOver.Root
+            <TreeviewForVoiceover.Root
                 value={selected}
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
                 label="File Explorer"
             >
                 {initialValue.map(node => (
-                    <TreeviewARIAOptimizedForVoiceOver.Node
-                        node={node}
-                        key={node.id}
-                    />
+                    <TreeviewForVoiceover.Node node={node} key={node.id} />
                 ))}
-            </TreeviewARIAOptimizedForVoiceOver.Root>
+            </TreeviewForVoiceover.Root>
         </div>
     )
 }

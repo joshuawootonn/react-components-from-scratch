@@ -73,9 +73,16 @@ type RootProps = {
     className?: string
     value: string | null
     onChange: (id: string) => void
+    label: string
 }
 
-export function Root({ children, className, value, onChange }: RootProps) {
+export function Root({
+    children,
+    className,
+    value,
+    onChange,
+    label,
+}: RootProps) {
     const [open, dispatch] = useReducer(
         treeviewReducer,
         new Map<string, boolean>(),
@@ -93,7 +100,7 @@ export function Root({ children, className, value, onChange }: RootProps) {
             <RovingTabindexRoot
                 as="ul"
                 className={clsx('flex flex-col overflow-auto', className)}
-                aria-label={'tree'}
+                aria-label={label}
                 aria-multiselectable="false"
                 role="tree"
             >
@@ -156,8 +163,6 @@ export const Node = function TreeNode({
 
                     const items = getOrderedItems()
                     let nextItemToFocus: RovingTabindexItem | undefined
-
-                    console.log(items)
 
                     if (isHotkey('up', e)) {
                         e.preventDefault()
