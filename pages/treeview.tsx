@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
-import { Treeview } from 'components/treeview'
 import { TreeviewStructure } from 'components/treeview/article/part-1/step1 - structure'
 import { TreeviewOpen } from 'components/treeview/article/part-1/step2 - open'
 import { TreeviewOpenIndicator } from 'components/treeview/article/part-1/step3 - open-indicator'
@@ -13,20 +12,11 @@ import { TreeviewStyle } from 'components/treeview/article/part-2/step4 - style'
 import { TreeviewHomeEnd } from 'components/treeview/article/part-2/step5 - home-end'
 import { TreeviewTypeahead } from 'components/treeview/article/part-2/step6 - typeahead'
 import { TreeviewARIA } from 'components/treeview/article/part-2/step8 - aria'
-import { TreeviewForVoiceover } from 'components/treeview/article/part-2/step9 - voiceover optimization'
-import { TreeviewOptimizedForVisibility } from 'components/treeview/article/part-2/step10 - use visibility'
-import { TreeviewWip } from 'components/treeview/article/part-2/unknown'
-import { appleInitialValues, AppleTreeview } from 'components/treeview/examples'
-import {
-    initialValue,
-    longInitialValues,
-    demoInitialValues,
-} from 'lib/treeview'
+import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
+import { demoInitialValues } from 'lib/treeview'
 
 export default function TreeviewPage() {
     const [selected, select] = useState<string | null>(null)
-    const [appleSelected, appleSelect] = useState<string | null>(null)
-    const [bigSelected, bigSelect] = useState<string | null>(null)
     return (
         <div className="max-w-5xl p-4 lg:p-8 mx-auto prose prose-headings:font-700 ">
             <div className="flex flex-row justify-between items-start">
@@ -39,74 +29,81 @@ export default function TreeviewPage() {
             </p>
             <ul>
                 <li>
-                    <a href="https://www.joshuawootonn.com/react-treeview-component-part-1">
+                    <a href="https://www.joshuawootonn.com/react-treeview-component">
                         Part 1
                     </a>{' '}
                     covers mouse interativity.
                 </li>
                 <li>
-                    <a href="https://www.joshuawootonn.com/react-treeview-component-part-1">
+                    <a href="https://www.joshuawootonn.com/react-treeview-component-part-2">
                         Part 2
                     </a>{' '}
                     covers keyboard navigation and accessibility.
                 </li>
+                <li>
+                    <a href="https://www.joshuawootonn.com/react-treeview-component-part-3">
+                        Part 3 (Bonus)
+                    </a>{' '}
+                    adds animations
+                </li>
             </ul>
-            <h2>Demo of the final treeview</h2>
-
-            {/* <Treeview.Root
-                value={selected}
-                onChange={select}
-                label="File manager"
-                className="w-[300px] h-[400px]  not-prose "
-            >
-                {initialValue.map(node => (
-                    <Treeview.Node node={node} key={node.id} />
+            <h2>Part 1</h2>
+            <p>Structure</p>
+            <TreeviewStructure.Root className="w-[300px] h-[400px]  not-prose ">
+                {demoInitialValues.map(node => (
+                    <TreeviewStructure.Node node={node} key={node.id} />
                 ))}
-            </Treeview.Root>
-
+            </TreeviewStructure.Root>
+            <p>Open</p>
+            <TreeviewOpen.Root className="w-[300px] h-[400px] not-prose">
+                {demoInitialValues.map(node => (
+                    <TreeviewOpen.Node node={node} key={node.id} />
+                ))}
+            </TreeviewOpen.Root>
+            <p>Open state indicator</p>
+            <TreeviewOpenIndicator.Root className="w-[300px] h-[400px] not-prose">
+                {demoInitialValues.map(node => (
+                    <TreeviewOpenIndicator.Node node={node} key={node.id} />
+                ))}
+            </TreeviewOpenIndicator.Root>
+            <p>Selection</p>
             <TreeviewSelection.Root
                 value={selected}
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {initialValue.map(node => (
+                {demoInitialValues.map(node => (
                     <TreeviewSelection.Node node={node} key={node.id} />
                 ))}
             </TreeviewSelection.Root>
-
-            <h2>Part 1</h2>
-            <p>tbd</p>
-
             <h2>Part 2</h2>
             <p>Adding Roving tabindex</p>
-
             <TreeviewRovingTabindex.Root
                 value={selected}
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {initialValue.map(node => (
+                {demoInitialValues.map(node => (
                     <TreeviewRovingTabindex.Node node={node} key={node.id} />
                 ))}
             </TreeviewRovingTabindex.Root>
-            <p>Up and down keybindings</p>
-
+            <p>Up / Down keybindings</p>
             <TreeviewUpDown.Root
                 value={selected}
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {initialValue.map(node => (
+                {demoInitialValues.map(node => (
                     <TreeviewUpDown.Node node={node} key={node.id} />
                 ))}
             </TreeviewUpDown.Root>
-            <p>Right and left keybindings</p>
+            <p>Right and Left keybindings</p>
             <TreeviewRightLeft.Root
                 value={selected}
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {initialValue.map(node => (
+                {demoInitialValues.map(node => (
                     <TreeviewRightLeft.Node node={node} key={node.id} />
                 ))}
             </TreeviewRightLeft.Root>
@@ -116,7 +113,7 @@ export default function TreeviewPage() {
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {initialValue.map(node => (
+                {demoInitialValues.map(node => (
                     <TreeviewStyle.Node node={node} key={node.id} />
                 ))}
             </TreeviewStyle.Root>
@@ -126,18 +123,17 @@ export default function TreeviewPage() {
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {initialValue.map(node => (
+                {demoInitialValues.map(node => (
                     <TreeviewHomeEnd.Node node={node} key={node.id} />
                 ))}
             </TreeviewHomeEnd.Root>
-
             <p>Typeahead</p>
             <TreeviewTypeahead.Root
                 value={selected}
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {initialValue.map(node => (
+                {demoInitialValues.map(node => (
                     <TreeviewTypeahead.Node node={node} key={node.id} />
                 ))}
             </TreeviewTypeahead.Root>
@@ -147,10 +143,10 @@ export default function TreeviewPage() {
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {initialValue.map(node => (
+                {demoInitialValues.map(node => (
                     <TreeviewSelection.Node node={node} key={node.id} />
                 ))}
-            </TreeviewSelection.Root> */}
+            </TreeviewSelection.Root>
             <p>ARIA</p>
             <TreeviewARIA.Root
                 value={selected}
@@ -162,83 +158,17 @@ export default function TreeviewPage() {
                     <TreeviewARIA.Node node={node} key={node.id} />
                 ))}
             </TreeviewARIA.Root>
-        </div>
-    )
-}
-
-// function App() {
-//     const [selected, select] = useState<string | null>(null)
-//     return (
-//         <TreeviewSelection.Root
-//             value={selected}
-//             onChange={select}
-//             className="w-[300px] h-[400px] not-prose"
-//         >
-//             {initialValue.map(node => (
-//                 <TreeviewSelection.Node node={node} key={node.id} />
-//             ))}
-//         </TreeviewSelection.Root>
-//     )
-// }
-
-{
-    /* <h2>Apple sidebar</h2>
-
-            <AppleTreeview.Root
-                value={appleSelected}
-                onChange={appleSelect}
-                label="Sidebar"
-                className="w-[300px] h-[600px] not-prose bg-[#1E1E1E] rounded-[10px] p-4 font-['Source_Sans_Pro']"
-            >
-                {appleInitialValues.map(node => (
-                    <AppleTreeview.Node node={node} key={node.id} />
-                ))}
-                <style jsx>{`
-                    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap');
-                `}</style>
-            </AppleTreeview.Root>
-
-            <h2>Really big tree</h2>
-
-            <Treeview.Root
-                value={bigSelected}
-                onChange={bigSelect}
-                label="File manager"
-                className="w-[300px] h-[400px]  not-prose"
-            >
-                {longInitialValues.map(node => (
-                    <Treeview.Node node={node} key={node.id} />
-                ))}
-            </Treeview.Root>
-*/
-}
-{
-    /* <h2>Treeview General Structure</h2>
-            <TreeviewStructure.Root className="w-[300px] h-[400px]  not-prose ">
-                {initialValue.map(node => (
-                    <TreeviewStructure.Node node={node} key={node.id} />
-                ))}
-            </TreeviewStructure.Root>
-            <h2>Treeview Open state</h2>
-            <TreeviewOpen.Root className="w-[300px] h-[400px]  not-prose  ">
-                {initialValue.map(node => (
-                    <TreeviewOpen.Node node={node} key={node.id} />
-                ))}
-            </TreeviewOpen.Root>
-            <h2>Treeview Open state indicator</h2>
-            <TreeviewOpenIndicator.Root className="w-[300px] h-[400px]  not-prose  ">
-                {initialValue.map(node => (
-                    <TreeviewOpenIndicator.Node node={node} key={node.id} />
-                ))}
-            </TreeviewOpenIndicator.Root>
-            <h2>Treeview Selection</h2>
-            <TreeviewSelection.Root
+            <h2>Part 3: Animation</h2>
+            <TreeviewArrow.Root
                 value={selected}
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
+                label="File Explorer"
             >
-                {initialValue.map(node => (
-                    <TreeviewSelection.Node node={node} key={node.id} />
+                {demoInitialValues.map(node => (
+                    <TreeviewArrow.Node node={node} key={node.id} />
                 ))}
-            </TreeviewSelection.Root> */
+            </TreeviewArrow.Root>
+        </div>
+    )
 }

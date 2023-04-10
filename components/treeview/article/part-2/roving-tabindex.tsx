@@ -107,9 +107,7 @@ export function RovingTabindexRoot<T extends ElementType>({
     function getOrderedItems() {
         if (!ref.current) return []
         const elementsFromDOM = Array.from(
-            ref.current.querySelectorAll<HTMLElement>(
-                ':where([data-item=true]):not(:where([aria-expanded=false] *))',
-            ),
+            ref.current.querySelectorAll<HTMLElement>('[data-item]'),
         )
 
         return Array.from(elements.current)

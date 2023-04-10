@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { AnimatePresence, motion, MotionConfig } from 'framer-motion'
 import isHotkey from 'is-hotkey'
 import {
     createContext,
@@ -121,24 +122,21 @@ type IconProps = { open?: boolean; className?: string }
 
 export function Arrow({ open, className }: IconProps) {
     return (
-        <svg
+        <motion.svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className={clsx(
-                'origin-center',
-                open ? 'rotate-90' : 'rotate-0',
-                className,
-            )}
+            className={clsx('origin-center', className)}
+            animate={{ rotate: open ? 90 : 0 }}
         >
             <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 d="M8.25 4.5l7.5 7.5-7.5 7.5"
             />
-        </svg>
+        </motion.svg>
     )
 }
 
@@ -210,43 +208,85 @@ export const Node = function TreeNode({
                 role: 'treeitem',
             })}
         >
-            <div
-                className={clsx(
-                    'flex items-center space-x-2 font-mono font-medium rounded-sm px-1 border-[1.5px] border-transparent',
-                    isFocusable && 'group-focus:border-slate-500',
-                    selectedId === id ? 'bg-slate-200' : 'bg-transparent',
-                )}
-                onClick={() => {
-                    isOpen
-                        ? dispatch({
-                              id: id,
-                              type: TreeViewActionTypes.CLOSE,
-                          })
-                        : dispatch({
-                              id: id,
-                              type: TreeViewActionTypes.OPEN,
-                          })
-                    selectId(id)
+            <MotionConfig
+                transition={{
+                    ease: [0.164, 0.84, 0.43, 1],
+                    duration: 0.25,
                 }}
             >
-                {children?.length ? (
-                    <Arrow className="h-4 w-4 shrink-0" open={isOpen} />
-                ) : (
-                    <span className="h-4 w-4" />
-                )}
-                <span className="text-ellipsis whitespace-nowrap overflow-hidden">
-                    {name}
-                </span>
-            </div>
-            {children?.length && isOpen && (
-                <ul role="group" className="pl-4">
-                    {children.map(node => (
-                        <Node node={node} key={node.id} />
-                    ))}
-                </ul>
-            )}
+                <div
+                    className={clsx(
+                        'flex items-center space-x-2 font-mono font-medium rounded-sm px-1 border-[1.5px] border-transparent',
+                        isFocusable && 'group-focus:border-slate-500',
+                        selectedId === id ? 'bg-slate-200' : 'bg-transparent',
+                    )}
+                    onClick={() => {
+                        isOpen
+                            ? dispatch({
+                                  id: id,
+                                  type: TreeViewActionTypes.CLOSE,
+                              })
+                            : dispatch({
+                                  id: id,
+                                  type: TreeViewActionTypes.OPEN,
+                              })
+                        selectId(id)
+                    }}
+                >
+                    {children?.length ? (
+                        <Arrow className="h-4 w-4 shrink-0" open={isOpen} />
+                    ) : (
+                        <span className="h-4 w-4" />
+                    )}
+                    <span className="text-ellipsis whitespace-nowrap overflow-hidden">
+                        {name}
+                    </span>
+                </div>
+                <AnimatePresence initial={false}>
+                    {children?.length && isOpen && (
+                        <motion.ul
+                            initial={{
+                                height: 0,
+                                opacity: 0,
+                            }}
+                            animate={{
+                                height: 'auto',
+                                opacity: 1,
+                                transition: {
+                                    height: {
+                                        duration: 0.25,
+                                    },
+                                    opacity: {
+                                        duration: 0.2,
+                                        delay: 0.05,
+                                    },
+                                },
+                            }}
+                            exit={{
+                                height: 0,
+                                opacity: 0,
+                                transition: {
+                                    height: {
+                                        duration: 0.25,
+                                    },
+                                    opacity: {
+                                        duration: 0.2,
+                                    },
+                                },
+                            }}
+                            key={'ul'}
+                            role="group"
+                            className="pl-4 relative"
+                        >
+                            {children.map(node => (
+                                <Node node={node} key={node.id} />
+                            ))}
+                        </motion.ul>
+                    )}
+                </AnimatePresence>
+            </MotionConfig>
         </li>
     )
 }
 
-export const TreeviewARIA = { Root, Node }
+export const TreeviewArrow = { Root, Node }
