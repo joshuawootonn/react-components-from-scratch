@@ -17,7 +17,11 @@ import { TreeviewForVoiceover } from 'components/treeview/article/part-2/step9 -
 import { TreeviewOptimizedForVisibility } from 'components/treeview/article/part-2/step10 - use visibility'
 import { TreeviewWip } from 'components/treeview/article/part-2/unknown'
 import { appleInitialValues, AppleTreeview } from 'components/treeview/examples'
-import { initialValue, longInitialValues } from 'lib/treeview'
+import {
+    initialValue,
+    longInitialValues,
+    demoInitialValues,
+} from 'lib/treeview'
 
 export default function TreeviewPage() {
     const [selected, select] = useState<string | null>(null)
@@ -49,7 +53,7 @@ export default function TreeviewPage() {
             </ul>
             <h2>Demo of the final treeview</h2>
 
-            <Treeview.Root
+            {/* <Treeview.Root
                 value={selected}
                 onChange={select}
                 label="File manager"
@@ -146,7 +150,7 @@ export default function TreeviewPage() {
                 {initialValue.map(node => (
                     <TreeviewSelection.Node node={node} key={node.id} />
                 ))}
-            </TreeviewSelection.Root>
+            </TreeviewSelection.Root> */}
             <p>ARIA</p>
             <TreeviewARIA.Root
                 value={selected}
@@ -154,21 +158,10 @@ export default function TreeviewPage() {
                 className="w-[300px] h-[400px] not-prose"
                 label="File Explorer"
             >
-                {initialValue.map(node => (
+                {demoInitialValues.map(node => (
                     <TreeviewARIA.Node node={node} key={node.id} />
                 ))}
             </TreeviewARIA.Root>
-            <p>ARIA optimized for voiceover</p>
-            <TreeviewForVoiceover.Root
-                value={selected}
-                onChange={select}
-                className="w-[300px] h-[400px] not-prose"
-                label="File Explorer"
-            >
-                {initialValue.map(node => (
-                    <TreeviewForVoiceover.Node node={node} key={node.id} />
-                ))}
-            </TreeviewForVoiceover.Root>
         </div>
     )
 }
