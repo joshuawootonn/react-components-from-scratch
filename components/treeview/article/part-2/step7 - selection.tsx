@@ -236,4 +236,4 @@ export const Node = function TreeNode({
     )
 }
 
-export const TreeviewSelection = { Root, Node }
+export const TreeviewKeyboardSelection = { Root, Node }

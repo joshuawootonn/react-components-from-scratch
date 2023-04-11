@@ -11,6 +11,7 @@ import { TreeviewRightLeft } from 'components/treeview/article/part-2/step3 - ri
 import { TreeviewStyle } from 'components/treeview/article/part-2/step4 - style'
 import { TreeviewHomeEnd } from 'components/treeview/article/part-2/step5 - home-end'
 import { TreeviewTypeahead } from 'components/treeview/article/part-2/step6 - typeahead'
+import { TreeviewKeyboardSelection } from 'components/treeview/article/part-2/step7 - selection'
 import { TreeviewARIA } from 'components/treeview/article/part-2/step8 - aria'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
 import { demoInitialValues } from 'lib/treeview'
@@ -18,7 +19,7 @@ import { demoInitialValues } from 'lib/treeview'
 export default function TreeviewPage() {
     const [selected, select] = useState<string | null>(null)
     return (
-        <div className="max-w-5xl p-4 lg:p-8 mx-auto prose prose-headings:font-700 ">
+        <div className="max-w-2xl p-4 lg:p-8 mx-auto prose prose-headings:font-700 ">
             <div className="flex flex-row justify-between items-start">
                 <h1 className="font-sans">Treeview</h1>
                 <Link href="/">Back to the full list of components</Link>
@@ -138,15 +139,15 @@ export default function TreeviewPage() {
                 ))}
             </TreeviewTypeahead.Root>
             <p>Selection</p>
-            <TreeviewSelection.Root
+            <TreeviewKeyboardSelection.Root
                 value={selected}
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
                 {demoInitialValues.map(node => (
-                    <TreeviewSelection.Node node={node} key={node.id} />
+                    <TreeviewKeyboardSelection.Node node={node} key={node.id} />
                 ))}
-            </TreeviewSelection.Root>
+            </TreeviewKeyboardSelection.Root>
             <p>ARIA</p>
             <TreeviewARIA.Root
                 value={selected}
