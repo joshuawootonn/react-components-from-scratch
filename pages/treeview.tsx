@@ -20,7 +20,7 @@ export default function TreeviewPage() {
     return (
         <div className="max-w-5xl p-4 lg:p-8 mx-auto prose prose-headings:font-700 ">
             <div className="flex flex-row justify-between items-start">
-                <h1 className="font-sans">Treeview (wip)</h1>
+                <h1 className="font-sans">Treeview</h1>
                 <Link href="/">Back to the full list of components</Link>
             </div>
             <p>

@@ -50,7 +50,7 @@ export default function Home() {
                         <Link href="/toggle-group">Toggle Group &#x2197;</Link>
                     </li>
                     <li>
-                        <Link href="/treeview">Treeview (wip) &#x2197;</Link>
+                        <Link href="/treeview">Treeview &#x2197;</Link>
                     </li>
                 </ol>
 
