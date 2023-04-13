@@ -14,7 +14,7 @@ import { TreeviewTypeahead } from 'components/treeview/article/part-2/step6 - ty
 import { TreeviewKeyboardSelection } from 'components/treeview/article/part-2/step7 - selection'
 import { TreeviewARIA } from 'components/treeview/article/part-2/step8 - aria'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
-import { demoInitialValues } from 'lib/treeview'
+import { demoInitialValues, longInitialValues } from 'lib/treeview'
 
 export default function TreeviewPage() {
     const [selected, select] = useState<string | null>(null)
@@ -170,6 +170,21 @@ export default function TreeviewPage() {
                     <TreeviewArrow.Node node={node} key={node.id} />
                 ))}
             </TreeviewArrow.Root>
+
+            <hr />
+
+            <h2 id="large-dataset">Large dataset</h2>
+            <TreeviewArrow.Root
+                value={selected}
+                onChange={select}
+                className="w-[300px] h-[400px] not-prose"
+                label="File Explorer"
+            >
+                {longInitialValues.map(node => (
+                    <TreeviewArrow.Node node={node} key={node.id} />
+                ))}
+            </TreeviewArrow.Root>
+            <div className="h-64" />
         </div>
     )
 }
