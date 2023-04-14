@@ -14,7 +14,11 @@ import { TreeviewTypeahead } from 'components/treeview/article/part-2/step6 - ty
 import { TreeviewKeyboardSelection } from 'components/treeview/article/part-2/step7 - selection'
 import { TreeviewARIA } from 'components/treeview/article/part-2/step8 - aria'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
-import { demoInitialValues, longInitialValues } from 'lib/treeview'
+import {
+    demoInitialValues,
+    longInitialValues,
+    nextprojectInitialValues,
+} from 'lib/treeview'
 
 export default function TreeviewPage() {
     const [selected, select] = useState<string | null>(null)
@@ -51,19 +55,19 @@ export default function TreeviewPage() {
             <h2>Part 1</h2>
             <p>Structure</p>
             <TreeviewStructure.Root className="w-[300px] h-[400px]  not-prose ">
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewStructure.Node node={node} key={node.id} />
                 ))}
             </TreeviewStructure.Root>
             <p>Open</p>
             <TreeviewOpen.Root className="w-[300px] h-[400px] not-prose">
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewOpen.Node node={node} key={node.id} />
                 ))}
             </TreeviewOpen.Root>
             <p>Open state indicator</p>
             <TreeviewOpenIndicator.Root className="w-[300px] h-[400px] not-prose">
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewOpenIndicator.Node node={node} key={node.id} />
                 ))}
             </TreeviewOpenIndicator.Root>
@@ -73,7 +77,7 @@ export default function TreeviewPage() {
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewSelection.Node node={node} key={node.id} />
                 ))}
             </TreeviewSelection.Root>
@@ -84,7 +88,7 @@ export default function TreeviewPage() {
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewRovingTabindex.Node node={node} key={node.id} />
                 ))}
             </TreeviewRovingTabindex.Root>
@@ -94,7 +98,7 @@ export default function TreeviewPage() {
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewUpDown.Node node={node} key={node.id} />
                 ))}
             </TreeviewUpDown.Root>
@@ -104,7 +108,7 @@ export default function TreeviewPage() {
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewRightLeft.Node node={node} key={node.id} />
                 ))}
             </TreeviewRightLeft.Root>
@@ -114,7 +118,7 @@ export default function TreeviewPage() {
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewStyle.Node node={node} key={node.id} />
                 ))}
             </TreeviewStyle.Root>
@@ -124,7 +128,7 @@ export default function TreeviewPage() {
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewHomeEnd.Node node={node} key={node.id} />
                 ))}
             </TreeviewHomeEnd.Root>
@@ -134,7 +138,7 @@ export default function TreeviewPage() {
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewTypeahead.Node node={node} key={node.id} />
                 ))}
             </TreeviewTypeahead.Root>
@@ -144,7 +148,7 @@ export default function TreeviewPage() {
                 onChange={select}
                 className="w-[300px] h-[400px] not-prose"
             >
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewKeyboardSelection.Node node={node} key={node.id} />
                 ))}
             </TreeviewKeyboardSelection.Root>
@@ -155,7 +159,7 @@ export default function TreeviewPage() {
                 className="w-[300px] h-[400px] not-prose"
                 label="File Explorer"
             >
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewARIA.Node node={node} key={node.id} />
                 ))}
             </TreeviewARIA.Root>
@@ -166,13 +170,11 @@ export default function TreeviewPage() {
                 className="w-[300px] h-[400px] not-prose"
                 label="File Explorer"
             >
-                {demoInitialValues.map(node => (
+                {nextprojectInitialValues.map(node => (
                     <TreeviewArrow.Node node={node} key={node.id} />
                 ))}
             </TreeviewArrow.Root>
-
             <hr />
-
             <h2 id="large-dataset">Large dataset</h2>
             <TreeviewArrow.Root
                 value={selected}
