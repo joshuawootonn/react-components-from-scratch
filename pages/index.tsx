@@ -54,7 +54,12 @@ export default function Home() {
                     </li>
                     <li>
                         <Link href="/splitter">
-                            Window Splitter (WIP) &#x2197;
+                            Makeswift Splitter (WIP) &#x2197;
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href="/notion-splitter">
+                            Notion Splitter (WIP) &#x2197;
                         </Link>
                     </li>
                 </ol>
