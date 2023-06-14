@@ -52,16 +52,6 @@ export default function Home() {
                     <li>
                         <Link href="/treeview">Treeview &#x2197;</Link>
                     </li>
-                    <li>
-                        <Link href="/splitter">
-                            Makeswift Splitter (WIP) &#x2197;
-                        </Link>
-                    </li>
-                    <li>
-                        <Link href="/notion-splitter">
-                            Notion Splitter (WIP) &#x2197;
-                        </Link>
-                    </li>
                 </ol>
 
                 <h2>Utils created so far:</h2>

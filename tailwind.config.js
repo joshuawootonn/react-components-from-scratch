@@ -1,9 +1,15 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+    content: [
+        './pages/**/*.{js,ts,jsx,tsx}',
+        './components/**/*.{js,ts,jsx,tsx}',
+    ],
     theme: {
         extend: {
+            transitionTimingFunction: {
+                'my-favorite': 'cubic-bezier(0.165, 0.84, 0.44, 1)',
+            },
             spacing: {
                 4.5: '1.125rem',
                 5.5: '1.375rem',
