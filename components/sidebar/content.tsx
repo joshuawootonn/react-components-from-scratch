@@ -3,21 +3,9 @@ import clamp from 'lodash.clamp'
 import Link from 'next/link'
 import { ComponentPropsWithoutRef, useEffect, useRef, useState } from 'react'
 
-type TruckProps = {
-    isFast: boolean
-    width: number
-    height: number
-    offset: number
-}
-
-function Truck(props: TruckProps) {
-    const [positionY] = useState(() => Math.random() * props.height)
+function Truck() {
+    const [positionY] = useState(() => Math.random())
     const [speed] = useState(() => Math.random())
-
-    const direction = Math.cos((props.offset * speed) / 100) > 0
-
-    const positionX =
-        (Math.sin((props.offset * speed) / 100) * props.width + props.width) / 2
 
     return (
         <svg
@@ -27,22 +15,9 @@ function Truck(props: TruckProps) {
             strokeWidth={1.5}
             stroke="currentColor"
             className="absolute w-6 h-6 -z-10"
-            style={
-                !props.isFast
-                    ? {
-                          left: `${positionX}px`,
-                          top: `${positionY}px`,
-                          transform: direction
-                              ? 'rotateY(0deg)'
-                              : 'rotateY(180deg)',
-                      }
-                    : {
-                          top: `${positionY}px`,
-                          transform: direction
-                              ? `translateX(${positionX}px) rotateY(0deg)`
-                              : `translateX(${positionX}px) rotateY(180deg)`,
-                      }
-            }
+            data-truck
+            data-speed={speed}
+            data-positiony={positionY}
         >
             <path
                 strokeLinecap="round"
@@ -55,10 +30,9 @@ function Truck(props: TruckProps) {
 
 export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
     const [number, setNumber] = useState(5)
-    const [isFast, setFast] = useState(false)
     const [rect, setRect] = useState<DOMRect>()
     const ref = useRef<HTMLDivElement | null>(null)
-    const [offset, setOffset] = useState(0)
+    const offset = useRef(0)
     const requestRef = useRef<number>(0)
 
     useEffect(() => {
@@ -67,27 +41,42 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
 
     useEffect(() => {
         const animate = () => {
-            setOffset(prev => prev + 1)
+            offset.current = offset.current + 1
+            if (rect == null) return
+
+            document
+                .querySelectorAll<SVGElement>('[data-truck]')
+                .forEach(truck => {
+                    const speed = parseFloat(truck.dataset.speed ?? '0')
+                    const positionY = parseFloat(
+                        truck.dataset['positiony'] ?? '0',
+                    )
+
+                    const direction =
+                        Math.cos((offset.current * speed) / 100) > 0
+
+                    const positionX =
+                        (Math.sin((offset.current * speed) / 100) * rect.width +
+                            rect.width) /
+                        2
+
+                    truck.style.top = `${positionY * rect.height}px`
+                    truck.style.left = `${positionX}px`
+                    truck.style.transform = `rotateY(${
+                        direction ? '0deg' : '180deg'
+                    }) translateX(0px)`
+                })
+
             requestRef.current = requestAnimationFrame(animate)
         }
         requestRef.current = requestAnimationFrame(animate)
         return () => cancelAnimationFrame(requestRef.current)
-    }, [])
+    }, [, rect])
 
     return (
         <div ref={ref} {...props} className={clsx('relative', props.className)}>
             {rect &&
-                new Array(number)
-                    .fill('')
-                    .map((_, i) => (
-                        <Truck
-                            key={i}
-                            width={rect.width}
-                            height={rect.height}
-                            offset={offset}
-                            isFast={isFast}
-                        />
-                    ))}
+                new Array(number).fill('').map((_, i) => <Truck key={i} />)}
             <div className="flex w-min mx-auto border-gray-100 border-2 rounded-md p-2 -translate-y-1/2 justify-center items-center bg-white">
                 <button
                     onClick={() => setNumber(prev => clamp(prev + 5, 0, 5000))}
@@ -134,40 +123,6 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
                             d="M19.5 12h-15"
                         />
                     </svg>
-                </button>
-
-                <button className="ml-3" onClick={() => setFast(prev => !prev)}>
-                    {!isFast ? (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                            className="w-6 h-6"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
-                            />
-                        </svg>
-                    ) : (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                            className="w-6 h-6"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M11.412 15.655L9.75 21.75l3.745-4.012M9.257 13.5H3.75l2.659-2.849m2.048-2.194L14.25 2.25 12 10.5h8.25l-4.707 5.043M8.457 8.457L3 3m5.457 5.457l7.086 7.086m0 0L21 21"
-                            />
-                        </svg>
-                    )}
                 </button>
             </div>
         </div>
