@@ -214,6 +214,7 @@ export default function LinearSidebarPage() {
                                 strokeWidth={1.5}
                                 stroke="currentColor"
                                 className="w-6 h-6"
+                                initial={false}
                                 animate={{
                                     rotate: isOpen === Open.Locked ? 180 : 0,
                                 }}
