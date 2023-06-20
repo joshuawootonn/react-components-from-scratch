@@ -237,7 +237,7 @@ export default function NotionSidebarPage() {
                         </div>
                     </div>
                     <div className="w-full py-12 mx-auto overflow-auto">
-                        <div className="prose mx-auto overflow-hidden">
+                        <div className="prose mx-auto">
                             <h1>{`Sidebar state ${isOpen}`}</h1>
                             <Content />
                         </div>
