@@ -153,10 +153,10 @@ export function Content() {
             <PerfSlayer className="h-96 w-full mb-12" />
 
             <div className="flex space-x-4">
-                <Link href="/splitter/initial">Initial</Link>
-                <Link href="/splitter/linear">Linear</Link>
-                <Link href="/splitter/notion">Notion</Link>
-                <Link href="/splitter/gitlab">Gitlab</Link>
+                <Link href="/sidebar/initial">Initial</Link>
+                <Link href="/sidebar/linear">Linear</Link>
+                <Link href="/sidebar/notion">Notion</Link>
+                <Link href="/sidebar/gitlab">Gitlab</Link>
             </div>
             <p>
                 <strong>Pellentesque habitant morbi tristique</strong> senectus
