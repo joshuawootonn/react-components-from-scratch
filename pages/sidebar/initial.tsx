@@ -5,7 +5,7 @@ import { PointerEvent as ReactPointerEvent, useRef, useState } from 'react'
 
 import { Content } from 'components/sidebar/content'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
-import { longInitialValues } from 'lib/treeview'
+import { initialValue } from 'lib/treeview'
 
 const Open = {
     Locked: 'locked',
@@ -23,7 +23,9 @@ export default function MakeswiftSidebarPage() {
     const [isOpen, setOpen] = useState<Open>(Open.Locked)
 
     return (
-        <MotionConfig transition={{ duration: 0.35 }}>
+        <MotionConfig
+            transition={{ ease: [0.165, 0.84, 0.44, 1], duration: 0.3 }}
+        >
             <div className="flex w-screen justify-start items-start">
                 <motion.div
                     className={clsx(
@@ -69,20 +71,7 @@ export default function MakeswiftSidebarPage() {
                                 className={clsx('not-prose')}
                                 label="File Explorer"
                             >
-                                {longInitialValues.map(node => (
-                                    <TreeviewArrow.Node
-                                        node={node}
-                                        key={node.id}
-                                    />
-                                ))}
-                            </TreeviewArrow.Root>
-                            <TreeviewArrow.Root
-                                value={selected}
-                                onChange={select}
-                                className={clsx('not-prose')}
-                                label="File Explorer"
-                            >
-                                {longInitialValues.map(node => (
+                                {initialValue.map(node => (
                                     <TreeviewArrow.Node
                                         node={node}
                                         key={node.id}
@@ -132,12 +121,14 @@ export default function MakeswiftSidebarPage() {
                                     else setOpen(Open.Locked)
 
                                     setWidth(
-                                        clamp(
-                                            originalWidth.current +
-                                                e.clientX -
-                                                originalClientX.current,
-                                            200,
-                                            400,
+                                        Math.floor(
+                                            clamp(
+                                                originalWidth.current +
+                                                    e.clientX -
+                                                    originalClientX.current,
+                                                200,
+                                                400,
+                                            ),
                                         ),
                                     )
                                 }
@@ -185,7 +176,7 @@ export default function MakeswiftSidebarPage() {
                     <div className="w-10"></div>
                     <div className="flex flex-col py-12 flex-grow overflow-auto">
                         <div className="prose mx-auto">
-                            <h1>{`${isOpen}`}</h1>
+                            <h1>{`Sidebar state ${isOpen}`}</h1>
                             <Content />
                         </div>
                     </div>

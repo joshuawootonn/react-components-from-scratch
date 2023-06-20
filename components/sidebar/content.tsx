@@ -64,7 +64,7 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
                     truck.style.left = `${positionX}px`
                     truck.style.transform = `rotateY(${
                         direction ? '0deg' : '180deg'
-                    }) translateX(0px)`
+                    }) translateX(-50%)`
                 })
 
             requestRef.current = requestAnimationFrame(animate)
@@ -77,7 +77,7 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
         <div ref={ref} {...props} className={clsx('relative', props.className)}>
             {rect &&
                 new Array(number).fill('').map((_, i) => <Truck key={i} />)}
-            <div className="flex w-min mx-auto border-gray-100 border-2 rounded-md p-2 -translate-y-1/2 justify-center items-center bg-white">
+            <div className="flex w-min mx-auto border-gray-100 border-2 rounded-md p-2 translate-y-1/4 justify-center items-center bg-white">
                 <button
                     onClick={() => setNumber(prev => clamp(prev + 5, 0, 5000))}
                 >
@@ -132,13 +132,31 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
 export function Content() {
     return (
         <>
+            <p className="font-medium text-blue text-lg text-center">
+                Increase this value to intentionally bottle neck the main thread
+            </p>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2.5}
+                stroke="currentColor"
+                className="text-center animate-bounce ease-in-out mx-auto w-6 h-6"
+            >
+                <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
+                />
+            </svg>
+
             <PerfSlayer className="h-96 w-full mb-12" />
 
             <div className="flex space-x-4">
-                <Link href="/splitter/gitlab">Gitlab</Link>
+                <Link href="/splitter/initial">Initial</Link>
                 <Link href="/splitter/linear">Linear</Link>
                 <Link href="/splitter/notion">Notion</Link>
-                <Link href="/splitter/makeswift">Makeswift</Link>
+                <Link href="/splitter/gitlab">Gitlab</Link>
             </div>
             <p>
                 <strong>Pellentesque habitant morbi tristique</strong> senectus

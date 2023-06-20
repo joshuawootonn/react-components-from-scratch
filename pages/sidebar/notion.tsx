@@ -10,7 +10,7 @@ import {
 
 import { Content } from 'components/sidebar/content'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
-import { longInitialValues } from 'lib/treeview'
+import { initialValue } from 'lib/treeview'
 
 const Open = {
     Locked: 'locked',
@@ -30,7 +30,7 @@ export default function NotionSidebarPage() {
 
     return (
         <MotionConfig
-            transition={{ ease: [0.165, 0.84, 0.44, 1], duration: 0.35 }}
+            transition={{ ease: [0.165, 0.84, 0.44, 1], duration: 0.3 }}
         >
             <div
                 className="flex overflow-hidden"
@@ -113,23 +113,10 @@ export default function NotionSidebarPage() {
                             <TreeviewArrow.Root
                                 value={selected}
                                 onChange={select}
-                                className={clsx('h-full not-prose')}
+                                className={clsx('not-prose')}
                                 label="File Explorer"
                             >
-                                {longInitialValues.map(node => (
-                                    <TreeviewArrow.Node
-                                        node={node}
-                                        key={node.id}
-                                    />
-                                ))}
-                            </TreeviewArrow.Root>
-                            <TreeviewArrow.Root
-                                value={selected}
-                                onChange={select}
-                                className={clsx('h-full not-prose')}
-                                label="File Explorer"
-                            >
-                                {longInitialValues.map(node => (
+                                {initialValue.map(node => (
                                     <TreeviewArrow.Node
                                         node={node}
                                         key={node.id}
@@ -156,12 +143,14 @@ export default function NotionSidebarPage() {
                                             else setOpen(Open.Locked)
 
                                             setWidth(
-                                                clamp(
-                                                    originalWidth.current +
-                                                        e.clientX -
-                                                        originalClientX.current,
-                                                    200,
-                                                    400,
+                                                Math.floor(
+                                                    clamp(
+                                                        originalWidth.current +
+                                                            e.clientX -
+                                                            originalClientX.current,
+                                                        200,
+                                                        400,
+                                                    ),
                                                 ),
                                             )
                                         }
@@ -249,7 +238,7 @@ export default function NotionSidebarPage() {
                     </div>
                     <div className="w-full py-12 mx-auto overflow-auto">
                         <div className="prose mx-auto overflow-hidden">
-                            <h1>{`${isOpen}`}</h1>
+                            <h1>{`Sidebar state ${isOpen}`}</h1>
                             <Content />
                         </div>
                     </div>

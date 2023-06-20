@@ -10,7 +10,7 @@ import {
 
 import { Content } from 'components/sidebar/content'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
-import { longInitialValues } from 'lib/treeview'
+import { initialValue } from 'lib/treeview'
 
 const Open = {
     Locked: 'locked',
@@ -68,12 +68,13 @@ export default function LinearSidebarPage() {
             }}
         >
             <MotionConfig
-                transition={{ ease: [0.165, 0.84, 0.44, 1], duration: 0.35 }}
+                transition={{ ease: [0.165, 0.84, 0.44, 1], duration: 0.3 }}
             >
                 <motion.div
                     initial={false}
                     animate={{ width: isOpen === Open.Locked ? width : 0 }}
-                ></motion.div>
+                    transition={{ duration: isDragging ? 0 : 0.3 }}
+                />
                 <motion.div
                     data-show-unlocked-sidebar
                     className={clsx(
@@ -100,6 +101,11 @@ export default function LinearSidebarPage() {
                         }[isOpen],
                         bottom: isOpen === Open.Locked ? 0 : 5,
                         x: isOpen === Open.Hidden ? -width + 20 : 0,
+                        transition: {
+                            width: {
+                                duration: isDragging ? 0 : 0.3,
+                            },
+                        },
                     }}
                 >
                     <div className="flex flex-col relative z-0 space-y-4">
@@ -109,20 +115,11 @@ export default function LinearSidebarPage() {
                             className={clsx('h-full not-prose')}
                             label="File Explorer"
                         >
-                            {longInitialValues.map(node => (
+                            {initialValue.map(node => (
                                 <TreeviewArrow.Node node={node} key={node.id} />
                             ))}
                         </TreeviewArrow.Root>
-                        <TreeviewArrow.Root
-                            value={selected}
-                            onChange={select}
-                            className={clsx('h-full not-prose')}
-                            label="File Explorer"
-                        >
-                            {longInitialValues.map(node => (
-                                <TreeviewArrow.Node node={node} key={node.id} />
-                            ))}
-                        </TreeviewArrow.Root>
+
                         <div className="absolute z-10 right-0 w-0 flex-grow-0 top-0 bottom-0">
                             <div
                                 onPointerDown={(e: ReactPointerEvent) => {
@@ -141,12 +138,14 @@ export default function LinearSidebarPage() {
                                         else setOpen(Open.Locked)
 
                                         setWidth(
-                                            clamp(
-                                                originalWidth.current +
-                                                    e.clientX -
-                                                    originalClientX.current,
-                                                200,
-                                                400,
+                                            Math.floor(
+                                                clamp(
+                                                    originalWidth.current +
+                                                        e.clientX -
+                                                        originalClientX.current,
+                                                    200,
+                                                    400,
+                                                ),
                                             ),
                                         )
                                     }
@@ -233,7 +232,7 @@ export default function LinearSidebarPage() {
                     </div>
                     <div className="w-full py-12 mx-auto overflow-auto">
                         <div className="prose mx-auto">
-                            <h1>{`${isOpen}`}</h1>
+                            <h1>{`Sidebar state ${isOpen}`}</h1>
                             <Content />
                         </div>
                     </div>

@@ -10,6 +10,9 @@ module.exports = {
             transitionTimingFunction: {
                 'my-favorite': 'cubic-bezier(0.165, 0.84, 0.44, 1)',
             },
+            transitionDuration: {
+                250: '250ms',
+            },
             spacing: {
                 4.5: '1.125rem',
                 5.5: '1.375rem',
