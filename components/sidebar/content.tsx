@@ -132,9 +132,16 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
 export function Content() {
     return (
         <>
-            <p className="font-medium text-blue text-lg text-center">
+            <h2>Links to other sidebar examples</h2>
+            <div className="flex space-x-4">
+                <Link href="/sidebar/initial">Initial</Link>
+                <Link href="/sidebar/linear">Linear</Link>
+                <Link href="/sidebar/notion">Notion</Link>
+                <Link href="/sidebar/gitlab">Gitlab</Link>
+            </div>
+            <h2 className="">
                 Increase this value to intentionally bottle neck the main thread
-            </p>
+            </h2>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -152,12 +159,6 @@ export function Content() {
 
             <PerfSlayer className="h-96 w-full mb-12" />
 
-            <div className="flex space-x-4">
-                <Link href="/sidebar/initial">Initial</Link>
-                <Link href="/sidebar/linear">Linear</Link>
-                <Link href="/sidebar/notion">Notion</Link>
-                <Link href="/sidebar/gitlab">Gitlab</Link>
-            </div>
             <p>
                 <strong>Pellentesque habitant morbi tristique</strong> senectus
                 et netus et malesuada fames ac turpis egestas. Vestibulum tortor

@@ -75,11 +75,11 @@ export default function LinearSidebarPage() {
                     animate={{ width: isOpen === Open.Locked ? width : 0 }}
                     transition={{ duration: isDragging ? 0 : 0.3 }}
                 />
-                <motion.div
+                <motion.nav
                     data-show-unlocked-sidebar
-                    className={clsx(
-                        `p-3 fixed top-0 left-0 bottom-0 bg-[rgb(251,251,250)]`,
-                    )}
+                    className={
+                        'p-3 fixed top-0 left-0 bottom-0 bg-[rgb(251,251,250)]'
+                    }
                     initial={false}
                     animate={{
                         boxShadow: `${
@@ -105,10 +105,16 @@ export default function LinearSidebarPage() {
                             width: {
                                 duration: isDragging ? 0 : 0.3,
                             },
+                            top: {
+                                duration: isOpen === Open.Hidden ? 0 : 0.3,
+                            },
                         },
                     }}
                 >
-                    <div className="flex flex-col relative z-0 space-y-4">
+                    <div className="flex flex-col space-y-4">
+                        <h2 id="nav-heading" className="text-lg font-bold">
+                            Lorem Ipsum
+                        </h2>
                         <TreeviewArrow.Root
                             value={selected}
                             onChange={select}
@@ -191,10 +197,10 @@ export default function LinearSidebarPage() {
                             />
                         </div>
                     </div>
-                </motion.div>
+                </motion.nav>
 
                 <div className="flex flex-col flex-grow max-h-screen">
-                    <div className="flex flex-row w-full items-center space-x-3 p-3 shadow-[rgba(0,0,0,0.04)_0px_-2px_0px_0px_inset]">
+                    <header className="flex flex-row w-full items-center space-x-3 p-3 shadow-[rgba(0,0,0,0.04)_0px_-2px_0px_0px_inset]">
                         <motion.button
                             className="self-end"
                             onClick={() =>
@@ -226,16 +232,15 @@ export default function LinearSidebarPage() {
                             </motion.svg>
                         </motion.button>
 
-                        <div className="translate-y-[1px]">
-                            Non scrolling header
-                        </div>
-                    </div>
-                    <div className="w-full py-12 mx-auto overflow-auto">
+                        <div className="translate-y-[1px]">Lorem Ipsum</div>
+                    </header>
+                    <main className="w-full py-12 mx-auto overflow-auto">
                         <div className="prose mx-auto">
-                            <h1>{`Sidebar state ${isOpen}`}</h1>
+                            <h1>Linear</h1>
+                            <code>{`Sidebar state: ${isOpen}`}</code>
                             <Content />
                         </div>
-                    </div>
+                    </main>
                 </div>
             </MotionConfig>
         </div>

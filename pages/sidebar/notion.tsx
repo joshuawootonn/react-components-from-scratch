@@ -70,7 +70,7 @@ export default function NotionSidebarPage() {
                     )
                 }}
             >
-                <motion.div
+                <motion.nav
                     className={clsx(
                         'flex flex-col relative h-screen max-h-screen flex-shrink-0',
                         {
@@ -78,7 +78,9 @@ export default function NotionSidebarPage() {
                         },
                     )}
                     initial={false}
-                    animate={{ width: isOpen === Open.Locked ? width : 0 }}
+                    animate={{
+                        width: isOpen === Open.Locked ? width : 0,
+                    }}
                     data-show-unlocked-sidebar
                 >
                     <motion.div
@@ -109,7 +111,10 @@ export default function NotionSidebarPage() {
                             opacity: isOpen === Open.Hidden ? 0 : 1,
                         }}
                     >
-                        <div className="flex flex-col relative z-0 space-y-4">
+                        <div className="flex flex-col space-y-4">
+                            <h2 id="nav-heading" className="text-lg font-bold">
+                                Lorem Ipsum
+                            </h2>
                             <TreeviewArrow.Root
                                 value={selected}
                                 onChange={select}
@@ -138,10 +143,6 @@ export default function NotionSidebarPage() {
                                         function onPointerMove(
                                             e: globalThis.PointerEvent,
                                         ) {
-                                            if (e.clientX < 50)
-                                                setOpen(Open.Hidden)
-                                            else setOpen(Open.Locked)
-
                                             setWidth(
                                                 Math.floor(
                                                     clamp(
@@ -197,10 +198,10 @@ export default function NotionSidebarPage() {
                             </div>
                         </div>
                     </motion.div>
-                </motion.div>
+                </motion.nav>
 
                 <div className="flex flex-col flex-grow max-h-screen">
-                    <div className="flex flex-row w-full items-center space-x-3 p-3 shadow-[rgba(0,0,0,0.04)_0px_-2px_0px_0px_inset]">
+                    <header className="flex flex-row w-full items-center space-x-3 p-3 shadow-[rgba(0,0,0,0.04)_0px_-2px_0px_0px_inset]">
                         <button
                             className="self-end"
                             onClick={() =>
@@ -232,16 +233,15 @@ export default function NotionSidebarPage() {
                             </motion.svg>
                         </button>
 
-                        <div className="translate-y-[1px]">
-                            Non scrolling header
-                        </div>
-                    </div>
-                    <div className="w-full py-12 mx-auto overflow-auto">
+                        <div className="translate-y-[1px]">Lorem Ipsum</div>
+                    </header>
+                    <main className="w-full py-12 mx-auto overflow-auto">
                         <div className="prose mx-auto">
-                            <h1>{`Sidebar state ${isOpen}`}</h1>
+                            <h1>Notion</h1>
+                            <code>{`Sidebar state: ${isOpen}`}</code>
                             <Content />
                         </div>
-                    </div>
+                    </main>
                 </div>
             </div>
         </MotionConfig>

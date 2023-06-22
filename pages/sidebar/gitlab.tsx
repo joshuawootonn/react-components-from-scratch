@@ -23,9 +23,9 @@ export default function GitlabSidebarPage() {
 
     return (
         <div className="flex w-screen justify-start items-start">
-            <div
+            <nav
                 className={clsx(
-                    'fixed top-0 bottom-0 left-0 flex flex-col space-y-2 h-screen max-h-screen flex-shrink-0 py-2 bg-[rgb(251,251,250)] transition-transform ease-[cubic-bezier(0.165,0.84,0.44,1)] duration-300 ',
+                    'fixed top-0 bottom-0 left-0 flex flex-col space-y-2 h-screen max-h-screen flex-shrink-0 p-3 bg-[rgb(251,251,250)] transition-transform ease-[cubic-bezier(0.165,0.84,0.44,1)] duration-300 ',
                     {
                         ['cursor-col-resize']: isDragging,
                     },
@@ -36,11 +36,12 @@ export default function GitlabSidebarPage() {
                         ? 'translate-x-0'
                         : '-translate-x-full',
                 )}
+                aria-labelledby="nav-heading"
                 style={{ width }}
             >
-                <div className="flex justify-between items-center p-2">
-                    <div>Non scrolling header</div>
-                </div>
+                <h2 id="nav-heading" className="text-lg font-bold">
+                    Lorem Ipsum
+                </h2>
                 <button
                     className="absolute bg-white p-1 border-y-2 border-r-2 border-[rgba(0,0,0,0.08)] text-slate-600 -right-[34px]"
                     onClick={() =>
@@ -68,18 +69,17 @@ export default function GitlabSidebarPage() {
                     </svg>
                 </button>
 
-                <div className="flex flex-col relative z-0 space-y-4">
+                <div className={'flex flex-col relative z-0 space-y-4'}>
                     <TreeviewArrow.Root
                         value={selected}
                         onChange={select}
-                        className={clsx('not-prose')}
+                        className={'not-prose'}
                         label="File Explorer"
                     >
                         {initialValue.map(node => (
                             <TreeviewArrow.Node node={node} key={node.id} />
                         ))}
                     </TreeviewArrow.Root>
-                  
                 </div>
 
                 <div className="absolute z-10 right-0 w-0 flex-grow-0 top-0 bottom-0">
@@ -135,9 +135,9 @@ export default function GitlabSidebarPage() {
                         )}
                     />
                 </div>
-            </div>
+            </nav>
 
-            <div
+            <main
                 style={{ paddingLeft: isOpen === Open.Locked ? width : 0 }}
                 className={clsx(
                     'flex flex-grow max-h-screen',
@@ -149,11 +149,12 @@ export default function GitlabSidebarPage() {
                 <div className="w-10"></div>
                 <div className="flex flex-col py-12 flex-grow overflow-auto">
                     <div className="prose mx-auto">
-                        <h1>{`Sidebar state ${isOpen}`}</h1>
+                        <h1>Gitlab</h1>
+                        <code>{`Sidebar state: ${isOpen}`}</code>
                         <Content />
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     )
 }

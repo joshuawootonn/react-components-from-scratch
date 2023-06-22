@@ -27,9 +27,9 @@ export default function MakeswiftSidebarPage() {
             transition={{ ease: [0.165, 0.84, 0.44, 1], duration: 0.3 }}
         >
             <div className="flex w-screen justify-start items-start">
-                <motion.div
+                <motion.nav
                     className={clsx(
-                        'relative h-screen max-h-screen py-2 bg-[rgb(251,251,250)]',
+                        'relative h-screen max-h-screen  bg-[rgb(251,251,250)]',
                         {
                             ['cursor-col-resize']: isDragging,
                         },
@@ -41,8 +41,10 @@ export default function MakeswiftSidebarPage() {
                     animate={{
                         width: isOpen === Open.Locked ? width : 0,
                     }}
+                    aria-labelledby="nav-heading"
                 >
                     <motion.div
+                        className="p-3"
                         animate={isOpen}
                         variants={{
                             [Open.Locked]: {
@@ -60,9 +62,9 @@ export default function MakeswiftSidebarPage() {
                             },
                         }}
                     >
-                        <div className="flex justify-between items-center p-2">
-                            <div>Non scrolling header</div>
-                        </div>
+                        <h2 id="nav-heading" className="text-lg font-bold">
+                            Lorem Ipsum
+                        </h2>
 
                         <div className="flex flex-col relative z-0 space-y-4">
                             <TreeviewArrow.Root
@@ -96,12 +98,17 @@ export default function MakeswiftSidebarPage() {
                             viewBox="0 0 24 24"
                             strokeWidth={1.5}
                             stroke="currentColor"
-                            className="w-6 h-6"
+                            className={clsx(
+                                'w-6 h-6 transition-transform ease-[cubic-bezier(0.165,0.84,0.44,1)] duration-300',
+                                isOpen === Open.Locked
+                                    ? 'rotate-180'
+                                    : 'rotate-0',
+                            )}
                         >
                             <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                d="M12 4.5v15m7.5-7.5h-15"
+                                d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
                             />
                         </svg>
                     </button>
@@ -170,17 +177,18 @@ export default function MakeswiftSidebarPage() {
                             )}
                         />
                     </div>
-                </motion.div>
+                </motion.nav>
 
-                <div className="flex flex-grow max-h-screen">
+                <main className="flex flex-grow max-h-screen">
                     <div className="w-10"></div>
                     <div className="flex flex-col py-12 flex-grow overflow-auto">
                         <div className="prose mx-auto">
-                            <h1>{`Sidebar state ${isOpen}`}</h1>
+                            <h1>Initial</h1>
+                            <code>{`Sidebar state: ${isOpen}`}</code>
                             <Content />
                         </div>
                     </div>
-                </div>
+                </main>
             </div>
         </MotionConfig>
     )
