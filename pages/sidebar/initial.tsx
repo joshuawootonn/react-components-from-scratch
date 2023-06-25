@@ -4,6 +4,7 @@ import clamp from 'lodash.clamp'
 import { PointerEvent as ReactPointerEvent, useRef, useState } from 'react'
 
 import { Content } from 'components/sidebar/content'
+import { MakeswiftDemo } from 'components/sidebar/makeswift-demo'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
 import { initialValue } from 'lib/treeview'
 
@@ -185,6 +186,7 @@ export default function MakeswiftSidebarPage() {
                         <div className="prose mx-auto">
                             <h1>Initial</h1>
                             <code>{`Sidebar state: ${isOpen}`}</code>
+                            <MakeswiftDemo />
                             <Content />
                         </div>
                     </div>

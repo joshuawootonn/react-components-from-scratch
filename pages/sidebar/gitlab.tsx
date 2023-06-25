@@ -3,6 +3,7 @@ import clamp from 'lodash.clamp'
 import { PointerEvent as ReactPointerEvent, useRef, useState } from 'react'
 
 import { Content } from 'components/sidebar/content'
+import { GitlabDemo } from 'components/sidebar/gitlab-demo'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
 import { initialValue } from 'lib/treeview'
 
@@ -151,6 +152,7 @@ export default function GitlabSidebarPage() {
                     <div className="prose mx-auto">
                         <h1>Gitlab</h1>
                         <code>{`Sidebar state: ${isOpen}`}</code>
+                        <GitlabDemo />
                         <Content />
                     </div>
                 </div>
