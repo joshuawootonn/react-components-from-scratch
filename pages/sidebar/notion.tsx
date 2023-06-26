@@ -9,6 +9,7 @@ import {
 } from 'react'
 
 import { Content } from 'components/sidebar/content'
+import { NotionDemo } from 'components/sidebar/notion-demo'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
 import { initialValue } from 'lib/treeview'
 
@@ -239,6 +240,7 @@ export default function NotionSidebarPage() {
                         <div className="prose mx-auto">
                             <h1>Notion</h1>
                             <code>{`Sidebar state: ${isOpen}`}</code>
+                            <NotionDemo />
                             <Content />
                         </div>
                     </main>

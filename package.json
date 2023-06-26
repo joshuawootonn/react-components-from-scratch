@@ -18,7 +18,7 @@
         "eslint": "8.31.0",
         "eslint-config-next": "13.1.1",
         "fathom-client": "^3.5.0",
-        "framer-motion": "^10.12.16",
+        "framer-motion": "^10.12.17",
         "is-hotkey": "^0.2.0",
         "lodash.clamp": "^4.0.3",
         "next": "^13.4.7",

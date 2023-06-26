@@ -1,103 +1,99 @@
-import { useAnimate, DOMKeyframesDefinition, Transition } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import {
+    useAnimate,
+    DOMKeyframesDefinition,
+    AnimationOptionsWithValueOverrides,
+} from 'framer-motion'
+import { useState, useEffect, useCallback } from 'react'
 
 export function MakeswiftDemo() {
     const [isOpen, setIsOpen] = useState(true)
     const [ref, animate] = useAnimate()
     const [sidebarCode, setSidebarCode] = useState('')
-    const [contentCode, setContentCode] = useState('')
+
+    /**
+     * Created this wrapper on the animate call because the types are wrong for
+     * the second param. It doesn't include attrX/attrY.
+     * Also because I wanted to specify the transition once, and MotionConfig would have to be
+     * outside of this component _if_ `useAnimate` even listens to it.
+     */
+    const animateSVG = useCallback(
+        async (
+            selector: string,
+            values: DOMKeyframesDefinition & {
+                attrX?: number
+                attrY?: number
+            },
+            options?: AnimationOptionsWithValueOverrides,
+        ) => {
+            await animate(selector, values, {
+                ...options,
+                ease: [0.165, 0.84, 0.44, 1],
+                duration: 0.3,
+            })
+        },
+        [animate],
+    )
 
     useEffect(() => {
         async function open() {
-            await animate(
-                '[data-content]',
-                {
-                    attrX: 41.5,
-                    width: 116.5,
-                } as DOMKeyframesDefinition,
-                {
-                    ease: [0.165, 0.84, 0.44, 1],
-                    duration: 0.3,
-                },
-            )
-            await animate(
+            await animateSVG('[data-content]', {
+                attrX: 41.5,
+                width: 116.5,
+            })
+            await animateSVG(
                 '[data-sidebar]',
-                { width: 39.5, opacity: 1 } as DOMKeyframesDefinition,
+                { width: 39.5, opacity: 1 },
                 {
                     onPlay: () =>
                         setSidebarCode(`width: auto; 
 opacity: 1;`),
-                    ease: [0.165, 0.84, 0.44, 1],
-                    duration: 0.3,
                 },
             )
         }
         async function close() {
-            await animate(
+            await animateSVG(
                 '[data-sidebar]',
                 {
                     width: 0,
                     opacity: 0,
-                } as DOMKeyframesDefinition,
+                },
                 {
                     onPlay: () =>
                         setSidebarCode(`width: 0px;
 opacity: 0;`),
-                    ease: [0.165, 0.84, 0.44, 1],
-                    duration: 0.3,
                 },
             )
-            await animate(
-                '[data-content]',
-                {
-                    attrX: 2,
-                    width: 156,
-                } as DOMKeyframesDefinition,
-                {
-                    ease: [0.165, 0.84, 0.44, 1],
-                    duration: 0.3,
-                },
-            )
+            await animateSVG('[data-content]', {
+                attrX: 2,
+                width: 156,
+            })
         }
+
         isOpen ? open() : close()
-    }, [animate, isOpen])
+    }, [animate, animateSVG, isOpen])
 
     return (
-        <div className="prose-pre:rounded-none prose-pre:bg-black prose-pre:mt-0">
+        <div className="prose-pre:rounded-none prose-pre:bg-black prose-pre:m-0">
             <svg
                 ref={ref}
                 className="w-full aspect-[3/2]"
                 viewBox="0 0 160 100"
             >
                 <defs>
-                    {/* <pattern
+                    <pattern
                         id="pattern"
                         patternUnits="userSpaceOnUse"
                         width="7.5"
                         height="7.5"
-                        // patternTransform="rotate(45)"
+                        patternTransform="rotate(45)"
                     >
-                       <line
+                        <line
                             x1="0"
                             y="0"
                             x2="0"
                             y2="7.5"
-                            stroke="#000000"
+                            className="stroke-slate-200"
                             stroke-width="2"
-                        />
-                    
-                    </pattern> */}
-                    <pattern
-                        id="pattern"
-                        patternUnits="userSpaceOnUse"
-                        width="5"
-                        height="5"
-                    >
-                        <circle
-                            className="fill-slate-200"
-                            cx="3.75"
-                            cy="3.75"
-                            r=".75"
                         />
                     </pattern>
                 </defs>
@@ -162,9 +158,15 @@ opacity: 0;`),
                     </div>
                 </foreignObject>
             </svg>
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <button
+                    className="sm:col-span-2 text-lg font-bold border-4 border-black px-3 py-0.5"
+                    onClick={() => setIsOpen(prev => !prev)}
+                >
+                    {isOpen ? 'close' : 'open'} sidebar
+                </button>
                 <div>
-                    <div className="text-black translate-y-1 font-bold text-lg border-black border-4 p-1">
+                    <div className="text-black font-bold text-lg border-black border-4 p-1">
                         sidebar
                     </div>
                     <pre className="relative">
@@ -180,7 +182,7 @@ opacity: 0;`),
                 </div>
 
                 <div>
-                    <div className="text-black translate-y-1 font-bold text-lg border-black border-4 p-1">
+                    <div className="text-black font-bold text-lg border-black border-4 p-1">
                         page
                     </div>
                     <pre>
@@ -190,12 +192,6 @@ opacity: 0;`),
                     </pre>
                 </div>
             </div>
-            <button
-                className="border-2 border-black px-3 py-1"
-                onClick={() => setIsOpen(prev => !prev)}
-            >
-                toggle
-            </button>
         </div>
     )
 }

@@ -9,6 +9,7 @@ import {
 } from 'react'
 
 import { Content } from 'components/sidebar/content'
+import { LinearDemo } from 'components/sidebar/linear-demo'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
 import { initialValue } from 'lib/treeview'
 
@@ -238,6 +239,7 @@ export default function LinearSidebarPage() {
                         <div className="prose mx-auto">
                             <h1>Linear</h1>
                             <code>{`Sidebar state: ${isOpen}`}</code>
+                            <LinearDemo />
                             <Content />
                         </div>
                     </main>

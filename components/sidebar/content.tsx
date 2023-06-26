@@ -12,7 +12,7 @@ function Truck() {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth={1.5}
+            strokeWidth={2}
             stroke="currentColor"
             className="absolute w-6 h-6 -z-10"
             data-truck
@@ -77,7 +77,7 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
         <div ref={ref} {...props} className={clsx('relative', props.className)}>
             {rect &&
                 new Array(number).fill('').map((_, i) => <Truck key={i} />)}
-            <div className="flex w-min mx-auto border-gray-100 border-2 rounded-md p-2 translate-y-1/4 justify-center items-center bg-white">
+            <div className="relative flex w-min mx-auto border-black border-4 p-2 translate-y-1/4 justify-center items-center bg-white">
                 <button
                     onClick={() => setNumber(prev => clamp(prev + 5, 0, 5000))}
                 >
@@ -85,19 +85,29 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        strokeWidth={2.5}
+                        strokeWidth={3.5}
                         stroke="currentColor"
-                        className="w-6 h-6"
+                        className="w-8 h-8"
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M12 4.5v15m7.5-7.5h-15"
-                        />
+                        <path d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                 </button>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={3.5}
+                    stroke="currentColor"
+                    className="absolute -top-10 text-center animate-bounce ease-in-out mx-auto w-8 h-8"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
+                    />
+                </svg>
                 <input
-                    className="w-20 text-3xl text-center"
+                    className="w-20 font-semibold text-3xl text-center"
                     value={number}
                     onChange={e => {
                         const num = parseInt(e.currentTarget.value)
@@ -113,15 +123,11 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        strokeWidth={2.5}
+                        strokeWidth={3.5}
                         stroke="currentColor"
-                        className="w-6 h-6"
+                        className="w-8 h-8"
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M19.5 12h-15"
-                        />
+                        <path d="M19.5 12h-15" />
                     </svg>
                 </button>
             </div>
@@ -142,20 +148,6 @@ export function Content() {
             <h2 className="">
                 Increase this value to intentionally bottle neck the main thread
             </h2>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2.5}
-                stroke="currentColor"
-                className="text-center animate-bounce ease-in-out mx-auto w-6 h-6"
-            >
-                <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
-                />
-            </svg>
 
             <PerfSlayer className="h-96 w-full mb-12" />
 

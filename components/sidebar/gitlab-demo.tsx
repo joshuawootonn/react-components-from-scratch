@@ -1,5 +1,9 @@
-import { useAnimate, DOMKeyframesDefinition, Transition } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import {
+    useAnimate,
+    DOMKeyframesDefinition,
+    AnimationOptionsWithValueOverrides,
+} from 'framer-motion'
+import { useState, useEffect, useCallback } from 'react'
 
 export function GitlabDemo() {
     const [isOpen, setIsOpen] = useState(false)
@@ -7,107 +11,117 @@ export function GitlabDemo() {
     const [sidebarCode, setSidebarCode] = useState('')
     const [contentCode, setContentCode] = useState('')
 
+    /**
+     * Created this wrapper on the animate call because the types are wrong for
+     * the second param. It doesn't include attrX/attrY.
+     * Also because I wanted to specify the transition once, and MotionConfig would have to be
+     * outside of this component _if_ `useAnimate` even listens to it.
+     */
+    const animateSVG = useCallback(
+        async (
+            selector: string,
+            values: DOMKeyframesDefinition & {
+                attrX?: number
+                attrY?: number
+            },
+            options?: AnimationOptionsWithValueOverrides,
+        ) => {
+            await animate(selector, values, {
+                ...options,
+                ease: [0.165, 0.84, 0.44, 1],
+                duration: 0.3,
+            })
+        },
+        [animate],
+    )
+
     useEffect(() => {
         async function open() {
-            await animate(
+            await animateSVG(
                 '[data-content]',
                 {
                     attrX: 81,
                     width: 76.5,
-                } as DOMKeyframesDefinition,
+                },
                 {
-                    ease: [0.165, 0.84, 0.44, 1],
-                    duration: 0.3,
                     onPlay: () => setContentCode(`padding-left: 160px;`),
                 },
             )
-            await animate(
+            await animateSVG(
                 '[data-sidebar]',
-                { attrX: 41.5 } as DOMKeyframesDefinition,
+                { attrX: 41.5 },
                 {
                     onPlay: () => setSidebarCode(`transform: translateX(0%);`),
-                    ease: [0.165, 0.84, 0.44, 1],
-                    duration: 0.3,
                 },
             )
         }
         async function close() {
-            await animate(
+            await animateSVG(
                 '[data-sidebar]',
                 {
                     attrX: 2,
-                } as DOMKeyframesDefinition,
+                },
                 {
                     onPlay: () =>
                         setSidebarCode(`transform: translateX(-100%);`),
-                    ease: [0.165, 0.84, 0.44, 1],
-                    duration: 0.3,
                 },
             )
-            await animate(
+            await animateSVG(
                 '[data-content]',
                 {
                     attrX: 41.5,
                     width: 116.5,
-                } as DOMKeyframesDefinition,
+                },
                 {
                     onPlay: () => setContentCode(`padding-left: 0px;`),
-                    ease: [0.165, 0.84, 0.44, 1],
-                    duration: 0.3,
                 },
             )
         }
         isOpen ? open() : close()
-    }, [animate, isOpen])
+    }, [animate, animateSVG, isOpen])
 
     return (
-        <div className="prose-pre:rounded-none prose-pre:bg-black prose-pre:mt-0">
+        <div className="prose-pre:rounded-none prose-pre:bg-black prose-pre:m-0">
             <svg
                 ref={ref}
                 className="w-full aspect-[3/2]"
                 viewBox="0 0 160 100"
             >
                 <defs>
-                    {/* <pattern
+                    <pattern
                         id="pattern"
                         patternUnits="userSpaceOnUse"
-                        width="7.5"
-                        height="7.5"
-                        // patternTransform="rotate(45)"
+                        width="4.5"
+                        height="4.5"
+                        patternTransform="rotate(-25)"
                     >
-                       <line
+                        <line
                             x1="0"
                             y="0"
                             x2="0"
                             y2="7.5"
-                            stroke="#000000"
+                            className="stroke-slate-200"
                             stroke-width="2"
                         />
-                    
-                    </pattern> */}
-                    <pattern
-                        id="pattern"
-                        patternUnits="userSpaceOnUse"
-                        width="5"
-                        height="5"
-                    >
-                        <circle
-                            className="fill-slate-200"
-                            cx="3.75"
-                            cy="3.75"
-                            r=".75"
+                        <line
+                            x1="0"
+                            y="0"
+                            x2="7.5"
+                            y2="0"
+                            className="stroke-slate-200"
+                            stroke-width="2"
                         />
                     </pattern>
                 </defs>
                 <rect
                     className="stroke-slate-200"
                     fill="url(#pattern)"
-                    x={1}
-                    width={158}
+                    x={40.5}
+                    width={118}
                     y={1}
                     height={98}
                 ></rect>
-                <foreignObject x={1.5} y={1.5} width="40" height="40">
+                <foreignObject x={41} y={1.5} width="40" height="40">
                     <div className="absolute top-0 leading-none text-[5px] p-[1px] font-bold text-slate-200 border-slate-200 bg-white border-r-[1px] border-b-[1px]">
                         page
                     </div>
@@ -159,9 +173,15 @@ export function GitlabDemo() {
                     </div>
                 </foreignObject>
             </svg>
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <button
+                    className="sm:col-span-2 text-lg font-bold border-4 border-black px-3 py-0.5"
+                    onClick={() => setIsOpen(prev => !prev)}
+                >
+                    {isOpen ? 'close' : 'open'} sidebar
+                </button>
                 <div>
-                    <div className="text-black translate-y-1 font-bold text-lg border-black border-4 p-1">
+                    <div className="text-black font-bold text-lg border-black border-4 p-1">
                         sidebar
                     </div>
                     <pre>
@@ -176,7 +196,7 @@ export function GitlabDemo() {
                     </pre>
                 </div>
                 <div>
-                    <div className="text-black translate-y-1 font-bold text-lg border-black border-4 p-1">
+                    <div className="text-black font-bold text-lg border-black border-4 p-1">
                         content
                     </div>
                     <pre>
@@ -186,13 +206,6 @@ export function GitlabDemo() {
                     </pre>
                 </div>
             </div>
-
-            <button
-                className="border-2 border-black px-3 py-1"
-                onClick={() => setIsOpen(prev => !prev)}
-            >
-                toggle
-            </button>
         </div>
     )
 }
