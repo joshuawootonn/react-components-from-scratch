@@ -4,13 +4,12 @@ import clamp from 'lodash.clamp'
 import { PointerEvent as ReactPointerEvent, useRef, useState } from 'react'
 
 import { Content } from 'components/sidebar/content'
-import { MakeswiftDemo } from 'components/sidebar/makeswift-demo'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
 import { initialValue } from 'lib/treeview'
 
 const Open = {
-    Locked: 'locked',
-    Hidden: 'hidden',
+    Open: 'open',
+    Closed: 'closed',
 } as const
 
 type Open = typeof Open[keyof typeof Open]
@@ -21,7 +20,7 @@ export default function MakeswiftSidebarPage() {
     const originalWidth = useRef(width)
     const originalClientX = useRef(width)
     const [isDragging, setDragging] = useState(false)
-    const [isOpen, setOpen] = useState<Open>(Open.Locked)
+    const [isOpen, setOpen] = useState<Open>(Open.Open)
 
     return (
         <MotionConfig
@@ -40,22 +39,22 @@ export default function MakeswiftSidebarPage() {
                     )}
                     initial={false}
                     animate={{
-                        width: isOpen === Open.Locked ? width : 0,
+                        width: isOpen === Open.Open ? width : 0,
                     }}
                     aria-labelledby="nav-heading"
                 >
                     <motion.div
-                        className="p-3"
+                        className="flex flex-col space-y-2 p-3 h-full overflow-auto"
                         animate={isOpen}
                         variants={{
-                            [Open.Locked]: {
+                            [Open.Open]: {
                                 opacity: 1,
                                 transition: {
                                     duration: 0.15,
                                     delay: 0.2,
                                 },
                             },
-                            [Open.Hidden]: {
+                            [Open.Closed]: {
                                 opacity: 0,
                                 transition: {
                                     duration: 0.15,
@@ -67,29 +66,26 @@ export default function MakeswiftSidebarPage() {
                             Lorem Ipsum
                         </h2>
 
-                        <div className="flex flex-col relative z-0 space-y-4">
-                            <TreeviewArrow.Root
-                                value={selected}
-                                onChange={select}
-                                className={clsx('not-prose')}
-                                label="File Explorer"
-                            >
-                                {initialValue.map(node => (
-                                    <TreeviewArrow.Node
-                                        node={node}
-                                        key={node.id}
-                                    />
-                                ))}
-                            </TreeviewArrow.Root>
-                        </div>
+                        <TreeviewArrow.Root
+                            value={selected}
+                            onChange={select}
+                            className={clsx('not-prose h-full')}
+                            label="File Explorer"
+                        >
+                            {initialValue.map(node => (
+                                <TreeviewArrow.Node node={node} key={node.id} />
+                            ))}
+                        </TreeviewArrow.Root>
+
+                        <span className="text-base font-bold">Lorem Ipsum</span>
                     </motion.div>
                     <button
                         className="absolute bg-white p-1 border-y-2 border-r-2 border-[rgba(0,0,0,0.08)] top-3 -right-[34px]"
                         onClick={() =>
                             setOpen(isOpen =>
-                                isOpen === Open.Hidden
-                                    ? Open.Locked
-                                    : Open.Hidden,
+                                isOpen === Open.Closed
+                                    ? Open.Open
+                                    : Open.Closed,
                             )
                         }
                     >
@@ -101,7 +97,7 @@ export default function MakeswiftSidebarPage() {
                             stroke="currentColor"
                             className={clsx(
                                 'w-6 h-6 transition-transform ease-[cubic-bezier(0.165,0.84,0.44,1)] duration-300',
-                                isOpen === Open.Locked
+                                isOpen === Open.Open
                                     ? 'rotate-180'
                                     : 'rotate-0',
                             )}
@@ -125,8 +121,8 @@ export default function MakeswiftSidebarPage() {
                                 setDragging(true)
 
                                 function onPointerMove(e: PointerEvent) {
-                                    if (e.clientX < 50) setOpen(Open.Hidden)
-                                    else setOpen(Open.Locked)
+                                    if (e.clientX < 50) setOpen(Open.Closed)
+                                    else setOpen(Open.Open)
 
                                     setWidth(
                                         Math.floor(
@@ -154,9 +150,9 @@ export default function MakeswiftSidebarPage() {
                                         ) < 6
                                     ) {
                                         setOpen(value =>
-                                            value !== Open.Locked
-                                                ? Open.Locked
-                                                : Open.Hidden,
+                                            value !== Open.Open
+                                                ? Open.Open
+                                                : Open.Closed,
                                         )
                                     }
                                 }
@@ -186,7 +182,6 @@ export default function MakeswiftSidebarPage() {
                         <div className="prose mx-auto">
                             <h1>Initial</h1>
                             <code>{`Sidebar state: ${isOpen}`}</code>
-                            <MakeswiftDemo />
                             <Content />
                         </div>
                     </div>

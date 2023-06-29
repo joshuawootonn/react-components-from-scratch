@@ -1,7 +1,6 @@
 import {
     useAnimate,
     DOMKeyframesDefinition,
-    ElementOrSelector,
     AnimationOptionsWithValueOverrides,
 } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
@@ -93,14 +92,10 @@ max-height: calc(100vh - 120px);`),
             )
         }
         async function openLocked() {
-            animateSVG(
-                '[data-content]',
-                {
-                    attrX: 81,
-                    width: 76.5,
-                },
-                {},
-            )
+            animateSVG('[data-content]', {
+                attrX: 81,
+                width: 76.5,
+            })
             await animateSVG(
                 '[data-container]',
                 { attrX: 41.5, width: 39.5 },
@@ -138,14 +133,10 @@ max-height: 100%;`),
 max-height: 100%;`),
                 },
             )
-            animateSVG(
-                '[data-content]',
-                {
-                    attrX: 41.5,
-                    width: 116.5,
-                },
-                {},
-            )
+            animateSVG('[data-content]', {
+                attrX: 41.5,
+                width: 116.5,
+            })
             await animateSVG(
                 '[data-container]',
                 { attrX: 41.5, width: 1 },

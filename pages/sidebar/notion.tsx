@@ -9,7 +9,6 @@ import {
 } from 'react'
 
 import { Content } from 'components/sidebar/content'
-import { NotionDemo } from 'components/sidebar/notion-demo'
 import { TreeviewArrow } from 'components/treeview/article/part-3/animatedTreeview'
 import { initialValue } from 'lib/treeview'
 
@@ -86,7 +85,7 @@ export default function NotionSidebarPage() {
                 >
                     <motion.div
                         className={clsx(
-                            `p-3 absolute top-0 left-0 bottom-0 bg-[rgb(251,251,250)]`,
+                            `absolute top-0 left-0 bottom-0 bg-[rgb(251,251,250)]`,
                             isOpen === Open.Locked
                                 ? 'h-screen'
                                 : `h-[calc(100vh-120px)]`,
@@ -112,14 +111,14 @@ export default function NotionSidebarPage() {
                             opacity: isOpen === Open.Hidden ? 0 : 1,
                         }}
                     >
-                        <div className="flex flex-col space-y-4">
+                        <div className="flex flex-col space-y-2 p-3 h-full overflow-auto">
                             <h2 id="nav-heading" className="text-lg font-bold">
                                 Lorem Ipsum
                             </h2>
                             <TreeviewArrow.Root
                                 value={selected}
                                 onChange={select}
-                                className={clsx('not-prose')}
+                                className={clsx('not-prose h-full')}
                                 label="File Explorer"
                             >
                                 {initialValue.map(node => (
@@ -129,6 +128,9 @@ export default function NotionSidebarPage() {
                                     />
                                 ))}
                             </TreeviewArrow.Root>
+                            <span className="text-base font-bold">
+                                Lorem Ipsum
+                            </span>
                             <div className="absolute z-10 right-0 w-0 flex-grow-0 top-0 bottom-0">
                                 <div
                                     onPointerDown={(e: ReactPointerEvent) => {
@@ -240,7 +242,6 @@ export default function NotionSidebarPage() {
                         <div className="prose mx-auto">
                             <h1>Notion</h1>
                             <code>{`Sidebar state: ${isOpen}`}</code>
-                            <NotionDemo />
                             <Content />
                         </div>
                     </main>
