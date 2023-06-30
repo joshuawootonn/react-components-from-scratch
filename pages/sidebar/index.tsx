@@ -47,15 +47,15 @@ export default function Page() {
             <div className="w-[600px]">
                 <MakeswiftDemo />
             </div>
-            <h3>Notion's sidebar</h3>
+            <h3>Notion&apos;s sidebar</h3>
             <div className="w-[600px]">
                 <NotionDemo />
             </div>
-            <h3>Linear's sidebar</h3>
+            <h3>Linear&apos;s sidebar</h3>
             <div className="w-[600px]">
                 <LinearDemo />
             </div>
-            <h3>Gitlab's sidebar</h3>
+            <h3>Gitlab&apos;s sidebar</h3>
             <div className="w-[600px]">
                 <GitlabDemo />
             </div>
