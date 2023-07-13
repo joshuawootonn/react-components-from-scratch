@@ -113,6 +113,7 @@ export default function LinearSidebarPage() {
                                 : -width - 10,
                         bottom: locked === Locked.Locked ? 0 : 5,
                         transition: {
+                            ease: [0.165, 0.84, 0.44, 1],
                             width: {
                                 ease: [0.165, 0.84, 0.44, 1],
                                 duration: isDragging ? 0 : 0.3,

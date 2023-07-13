@@ -36,7 +36,7 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
     useEffect(() => {
         const animate = () => {
             offset.current = offset.current + 1
-            if (ref.current == null) return
+            if (number === 0 || ref.current == null) return
 
             const rect = ref.current.getBoundingClientRect()
 
@@ -67,13 +67,14 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
         }
         requestRef.current = requestAnimationFrame(animate)
         return () => cancelAnimationFrame(requestRef.current)
-    }, [])
+    }, [number])
 
     return (
-        <div ref={ref} {...props} className={clsx('relative', props.className)}>
+        <div {...props} className={clsx('relative p-4', props.className)}>
             {new Array(number).fill('').map((_, i) => (
                 <Truck key={i} />
             ))}
+
             <div className="relative flex w-min mx-auto border-black border-4 p-2 translate-y-1/4 justify-center items-center bg-white">
                 <button
                     onClick={() => setNumber(prev => clamp(prev + 5, 0, 5000))}
@@ -128,6 +129,7 @@ export function PerfSlayer(props: ComponentPropsWithoutRef<'div'>) {
                     </svg>
                 </button>
             </div>
+            <div ref={ref} className="h-full w-full"></div>
         </div>
     )
 }

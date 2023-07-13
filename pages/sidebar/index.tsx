@@ -11,7 +11,7 @@ import * as Step7 from 'components/roving-tabindex/article/step7 - valueId'
 import * as Step8 from 'components/roving-tabindex/article/step8 - selectors'
 import { GitlabDemo } from 'components/sidebar/gitlab-demo'
 import { LinearDemo } from 'components/sidebar/linear-demo'
-import { MakeswiftDemo } from 'components/sidebar/makeswift-demo'
+import { InitialDemo } from 'components/sidebar/initial-demo'
 import { NotionDemo } from 'components/sidebar/notion-demo'
 
 //className="border-2 border-black px-2 pt-0.5 focus:outline-dashed focus:outline-offset-4 focus:outline-2"
@@ -45,7 +45,7 @@ export default function Page() {
             </p>
             <h3>Initial sidebar</h3>
             <div className="w-[600px]">
-                <MakeswiftDemo />
+                <InitialDemo />
             </div>
             <h3>Notion&apos;s sidebar</h3>
             <div className="w-[600px]">

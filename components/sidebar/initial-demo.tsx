@@ -5,7 +5,7 @@ import {
 } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
 
-export function MakeswiftDemo() {
+export function InitialDemo() {
     const [isOpen, setIsOpen] = useState(true)
     const [ref, animate] = useAnimate()
     const [sidebarCode, setSidebarCode] = useState('')

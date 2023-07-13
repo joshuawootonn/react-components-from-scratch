@@ -21,6 +21,7 @@
         "framer-motion": "^10.12.17",
         "is-hotkey": "^0.2.0",
         "lodash.clamp": "^4.0.3",
+        "motion": "^10.16.2",
         "next": "^13.4.7",
         "react": "18.2.0",
         "react-dom": "18.2.0",

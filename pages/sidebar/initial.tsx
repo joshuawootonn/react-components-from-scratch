@@ -14,7 +14,7 @@ const Open = {
 
 type Open = typeof Open[keyof typeof Open]
 
-export default function MakeswiftSidebarPage() {
+export default function InitialSidebarPage() {
     const [selected, select] = useState<string | null>(null)
     const [width, setWidth] = useState(250)
     const originalWidth = useRef(width)
@@ -24,7 +24,10 @@ export default function MakeswiftSidebarPage() {
 
     return (
         <MotionConfig
-            transition={{ ease: [0.165, 0.84, 0.44, 1], duration: 0.3 }}
+            transition={{
+                ease: [0.165, 0.84, 0.44, 1],
+                duration: isDragging ? 0 : 0.3,
+            }}
         >
             <div className="flex w-screen justify-start items-start">
                 <motion.nav
