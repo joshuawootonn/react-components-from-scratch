@@ -1,9 +1,12 @@
+import clsx from 'clsx'
 import {
     useAnimate,
     DOMKeyframesDefinition,
     AnimationOptionsWithValueOverrides,
 } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
+
+import IS_SAFARI from './IsSafari'
 
 export function NotionDemo() {
     const [isOpen, setIsOpen] = useState(true)
@@ -55,7 +58,7 @@ max-height: calc(100vh - 120px);`,
             )
             animateSVG('[data-content]', {
                 attrX: 41.5,
-                width: 116.5,
+                width: 116,
             })
             await animateSVG(
                 '[data-container]',
@@ -81,7 +84,7 @@ max-height: calc(100vh - 120px);`),
             )
             animateSVG('[data-content]', {
                 attrX: 41.5,
-                width: 116.5,
+                width: 116,
             })
             await animateSVG(
                 '[data-container]',
@@ -135,7 +138,7 @@ max-height: 100%;`),
             )
             animateSVG('[data-content]', {
                 attrX: 41.5,
-                width: 116.5,
+                width: 116,
             })
             await animateSVG(
                 '[data-container]',
@@ -155,7 +158,12 @@ max-height: 100%;`),
     }, [animate, animateSVG, isLocked, isOpen])
 
     return (
-        <div className="prose-pre:rounded-none prose-pre:bg-black prose-pre:m-0">
+        <div
+            className={clsx(
+                `prose-pre:rounded-none prose-pre:bg-black prose-pre:mt-0`,
+                IS_SAFARI && '[&_foreignObject]:hidden',
+            )}
+        >
             <svg
                 ref={ref}
                 className="w-full aspect-[3/2]"
@@ -219,11 +227,11 @@ max-height: 100%;`),
                 <foreignObject
                     data-content
                     x={81}
-                    y="2"
+                    y={1.5}
                     width="100"
                     height="20"
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[1px] pl-0.5 pt-0.5 font-bold text-black border-black border-b-[1px] border-r-[1px]">
+                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-black border-b-[1px] border-r-[1px]">
                         content
                     </div>
                 </foreignObject>
@@ -240,11 +248,11 @@ max-height: 100%;`),
                 <foreignObject
                     data-container
                     x={41.5}
-                    y={2}
+                    y={1.5}
                     width="100"
                     height={96}
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[1px] pl-0.5 pt-0.5 font-bold text-black border-black border-b-[1px] border-r-[1px] ">
+                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-black border-b-[1px] border-r-[1px] ">
                         container
                     </div>
                 </foreignObject>
@@ -276,7 +284,7 @@ max-height: 100%;`),
                     y={12.5}
                     height={83.5}
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[1px] pl-0.5 pt-0.5 font-bold text-black border-dashed border-black border-b-[1px] border-r-[1px]">
+                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-dashed border-black border-b-[1px] border-r-[1px]">
                         sidebar
                     </div>
                 </foreignObject>

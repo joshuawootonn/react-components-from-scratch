@@ -1,9 +1,12 @@
+import clsx from 'clsx'
 import {
     useAnimate,
     DOMKeyframesDefinition,
     AnimationOptionsWithValueOverrides,
 } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
+
+import IS_SAFARI from './IsSafari'
 
 export function InitialDemo() {
     const [isOpen, setIsOpen] = useState(true)
@@ -73,7 +76,12 @@ opacity: 0;`),
     }, [animate, animateSVG, isOpen])
 
     return (
-        <div className="prose-pre:rounded-none prose-pre:bg-black prose-pre:m-0">
+        <div
+            className={clsx(
+                `prose-pre:rounded-none prose-pre:bg-black prose-pre:mt-0`,
+                IS_SAFARI && '[&_foreignObject]:hidden',
+            )}
+        >
             <svg
                 ref={ref}
                 className="w-full aspect-[3/2]"
@@ -130,8 +138,14 @@ opacity: 0;`),
                     y={2}
                     height={96}
                 />
-                <foreignObject data-sidebar x={2} y="2" width="100" height="20">
-                    <div className="absolute top-0 leading-none text-[5px] p-[1px] pl-0.5 pt-0.5 font-bold text-black border-dashed border-black border-b-[1px] border-r-[1px]">
+                <foreignObject
+                    data-sidebar
+                    x={2}
+                    y={1.5}
+                    width="100"
+                    height="20"
+                >
+                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-dashed border-black border-b-[1px] border-r-[1px]">
                         sidebar
                     </div>
                 </foreignObject>
@@ -141,7 +155,7 @@ opacity: 0;`),
                     stroke="black"
                     fill="white"
                     x={41.5}
-                    width={116.5}
+                    width={116}
                     y={2}
                     height={96}
                 />
@@ -149,11 +163,11 @@ opacity: 0;`),
                 <foreignObject
                     data-content
                     x={41.5}
-                    y="2"
+                    y={1.5}
                     width="100"
                     height="20"
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[1px] pl-0.5 pt-0.5 font-bold text-black border-black border-b-[1px] border-r-[1px]">
+                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-black border-b-[1px] border-r-[1px]">
                         content
                     </div>
                 </foreignObject>
