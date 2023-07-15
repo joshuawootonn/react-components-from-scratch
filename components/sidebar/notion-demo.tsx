@@ -185,7 +185,7 @@ max-height: 100%;`),
                     
                     </pattern> */}
                     <pattern
-                        id="pattern"
+                        id="erty"
                         patternUnits="userSpaceOnUse"
                         width="5"
                         height="5"
@@ -200,7 +200,7 @@ max-height: 100%;`),
                 </defs>
                 <rect
                     className="stroke-slate-200"
-                    fill="url(#pattern)"
+                    fill="url(#erty)"
                     x={40.5}
                     width={118}
                     y={1}

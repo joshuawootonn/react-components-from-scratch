@@ -94,7 +94,7 @@ export function GitlabDemo() {
             >
                 <defs>
                     <pattern
-                        id="pattern"
+                        id="qwer"
                         patternUnits="userSpaceOnUse"
                         width="4.5"
                         height="4.5"
@@ -120,7 +120,7 @@ export function GitlabDemo() {
                 </defs>
                 <rect
                     className="stroke-slate-200"
-                    fill="url(#pattern)"
+                    fill="url(#qwer)"
                     x={40.5}
                     width={118}
                     y={1}

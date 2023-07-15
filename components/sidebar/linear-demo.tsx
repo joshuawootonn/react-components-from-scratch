@@ -193,7 +193,7 @@ left: -160px;`),
             >
                 <defs>
                     <pattern
-                        id="pattern"
+                        id="zxcv"
                         patternUnits="userSpaceOnUse"
                         width="5"
                         height="5"
@@ -209,7 +209,7 @@ left: -160px;`),
                 </defs>
                 <rect
                     className="stroke-slate-200"
-                    fill="url(#pattern)"
+                    fill="url(#zxcv)"
                     x={40.5}
                     width={118}
                     y={1}

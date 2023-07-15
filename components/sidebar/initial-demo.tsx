@@ -86,7 +86,7 @@ opacity: 0;`),
             >
                 <defs>
                     <pattern
-                        id="pattern"
+                        id="asdf"
                         patternUnits="userSpaceOnUse"
                         width="7.5"
                         height="7.5"
@@ -104,7 +104,7 @@ opacity: 0;`),
                 </defs>
                 <rect
                     className="stroke-slate-200"
-                    fill="url(#pattern)"
+                    fill="url(#asdf)"
                     x={1}
                     width={158}
                     y={1}
