@@ -6,8 +6,6 @@ import {
 } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
 
-import IS_SAFARI from './IsSafari'
-
 export function GitlabDemo() {
     const [isOpen, setIsOpen] = useState(false)
     const [ref, animate] = useAnimate()
@@ -87,7 +85,6 @@ export function GitlabDemo() {
         <div
             className={clsx(
                 `prose-pre:rounded-none prose-pre:bg-black prose-pre:mt-0`,
-                IS_SAFARI && '[&_foreignObject]:hidden',
             )}
         >
             <svg
@@ -109,7 +106,7 @@ export function GitlabDemo() {
                             x2="0"
                             y2="7.5"
                             className="stroke-slate-200"
-                            stroke-width="2"
+                            strokeWidth="2"
                         />
                         <line
                             x1="0"
@@ -117,7 +114,7 @@ export function GitlabDemo() {
                             x2="7.5"
                             y2="0"
                             className="stroke-slate-200"
-                            stroke-width="2"
+                            strokeWidth="2"
                         />
                     </pattern>
                 </defs>
@@ -129,11 +126,24 @@ export function GitlabDemo() {
                     y={1}
                     height={98}
                 ></rect>
-                <foreignObject x={41} y={1.5} width="40" height="40">
-                    <div className="absolute top-0 leading-none text-[5px] p-[1px] font-bold text-slate-200 border-slate-200 bg-white border-r-[1px] border-b-[1px]">
-                        page
-                    </div>
-                </foreignObject>
+                <rect
+                    x={40.5}
+                    fill="white"
+                    y={1}
+                    width="16.5"
+                    height="9"
+                    className="stroke-slate-200"
+                />
+                <text
+                    x={41}
+                    y={1.5}
+                    width="40"
+                    height="40"
+                    className="absolute translate-x-[2px] translate-y-[5px] top-0 leading-none text-[5px] p-[1px] font-bold fill-slate-200"
+                >
+                    page
+                </text>
+
                 <rect
                     data-sidebar
                     stroke="white"
@@ -154,17 +164,16 @@ export function GitlabDemo() {
                     height={96}
                 />
 
-                <foreignObject
+                <text
                     data-sidebar
                     x={2}
                     y={1.5}
                     width="100"
                     height="20"
+                    className="absolute translate-x-[2px] translate-y-[6px] top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-dashed border-black border-b-[1px] border-r-[1px]"
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-dashed border-black border-b-[1px] border-r-[1px]">
-                        sidebar
-                    </div>
-                </foreignObject>
+                    sidebar
+                </text>
 
                 <rect
                     data-content
@@ -175,17 +184,16 @@ export function GitlabDemo() {
                     y={2}
                     height={96}
                 />
-                <foreignObject
+                <text
                     data-content
                     x={41.5}
                     y={1.5}
                     width="100"
                     height="20"
+                    className="absolute translate-x-[2px] translate-y-[6px] top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-black border-b-[1px] border-r-[1px]"
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-black border-b-[1px] border-r-[1px]">
-                        content
-                    </div>
-                </foreignObject>
+                    content
+                </text>
             </svg>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <button

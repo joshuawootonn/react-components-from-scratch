@@ -6,8 +6,6 @@ import {
 } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
 
-import IS_SAFARI from './IsSafari'
-
 export function InitialDemo() {
     const [isOpen, setIsOpen] = useState(true)
     const [ref, animate] = useAnimate()
@@ -79,7 +77,6 @@ opacity: 0;`),
         <div
             className={clsx(
                 `prose-pre:rounded-none prose-pre:bg-black prose-pre:mt-0`,
-                IS_SAFARI && '[&_foreignObject]:hidden',
             )}
         >
             <svg
@@ -101,7 +98,7 @@ opacity: 0;`),
                             x2="0"
                             y2="7.5"
                             className="stroke-slate-200"
-                            stroke-width="2"
+                            strokeWidth="2"
                         />
                     </pattern>
                 </defs>
@@ -113,64 +110,88 @@ opacity: 0;`),
                     y={1}
                     height={98}
                 ></rect>
-                <foreignObject x={1.5} y={1.5} width="40" height="40">
-                    <div className="absolute top-0 leading-none text-[5px] p-[1px] font-bold text-slate-200 border-slate-200 bg-white border-r-[1px] border-b-[1px]">
-                        page
-                    </div>
-                </foreignObject>
-
                 <rect
-                    data-sidebar
-                    stroke="white"
-                    fill="transparent"
-                    x={2}
-                    width={39.5}
-                    y={2}
-                    height={96}
-                />
-                <rect
-                    data-sidebar
-                    stroke="black"
-                    strokeDasharray={'3 2'}
+                    x={1}
                     fill="white"
-                    x={2}
-                    width={39.5}
-                    y={2}
-                    height={96}
+                    y={1}
+                    width="17.5"
+                    height="9"
+                    className="stroke-slate-200"
                 />
-                <foreignObject
-                    data-sidebar
-                    x={2}
+                <text
+                    x={1.5}
                     y={1.5}
-                    width="100"
-                    height="20"
+                    width="40"
+                    height="40"
+                    className="absolute translate-x-[2px] translate-y-[5px] top-0 leading-none text-[5px] p-[1px] font-bold text-slate-200 fill-current"
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-dashed border-black border-b-[1px] border-r-[1px]">
+                    page
+                </text>
+
+                <g>
+                    <rect
+                        data-sidebar
+                        stroke="white"
+                        fill="transparent"
+                        x={2}
+                        y={2}
+                        width={39.5}
+                        height={96}
+                    />
+                    <rect
+                        data-sidebar
+                        stroke="black"
+                        strokeDasharray={'3 2'}
+                        fill="white"
+                        width={39.5}
+                        x={2}
+                        y={2}
+                        height={96}
+                    />
+                    {/* <rect
+                        data-sidebar
+                        x={2}
+                        y={2}
+                        fill="white"
+                        stroke="black"
+                        width="22"
+                        height="9"
+                        className=""
+                    /> */}
+                    <text
+                        data-sidebar
+                        x={2}
+                        y={1.5}
+                        width={39.5}
+                        height="20"
+                        className="absolute translate-x-[2px] translate-y-[6px]  top-0 leading-none text-[5px] font-bold text-black"
+                    >
                         sidebar
-                    </div>
-                </foreignObject>
+                    </text>
+                </g>
 
-                <rect
-                    data-content
-                    stroke="black"
-                    fill="white"
-                    x={41.5}
-                    width={116}
-                    y={2}
-                    height={96}
-                />
+                <g>
+                    <rect
+                        data-content
+                        stroke="black"
+                        fill="white"
+                        x={41.5}
+                        width={116}
+                        y={2}
+                        height={96}
+                    />
 
-                <foreignObject
-                    data-content
-                    x={41.5}
-                    y={1.5}
-                    width="100"
-                    height="20"
-                >
-                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-black border-b-[1px] border-r-[1px]">
+                    <text
+                        data-content
+                        x={41.5}
+                        y={1.5}
+                        width="100"
+                        height="20"
+                        className="absolute translate-x-[2px] translate-y-[6px]  top-0 leading-none text-[5px] font-bold text-black"
+                    >
                         content
-                    </div>
-                </foreignObject>
+                    </text>
+                </g>
             </svg>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <button

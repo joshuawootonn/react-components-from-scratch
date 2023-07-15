@@ -6,8 +6,6 @@ import {
 } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
 
-import IS_SAFARI from './IsSafari'
-
 export function LinearDemo() {
     const [isOpen, setIsOpen] = useState(true)
     const [isLocked, setIsLocked] = useState(true)
@@ -63,6 +61,7 @@ left: 0px;`),
                 },
                 {},
             )
+            animateSVG('[data-spacer-text]', { width: 1, opacity: 0 })
             await animateSVG(
                 '[data-spacer]',
                 { width: 1 },
@@ -90,6 +89,7 @@ left: -160px;`),
                 attrX: 41.5,
                 width: 116,
             })
+            animateSVG('[data-spacer-text]', { width: 1, opacity: 0 })
             await animateSVG(
                 '[data-spacer]',
                 { width: 1 },
@@ -103,6 +103,7 @@ left: -160px;`),
                 attrX: 81,
                 width: 76.5,
             })
+            animateSVG('[data-spacer-text]', { width: 39.5, opacity: 1 })
             await animateSVG(
                 '[data-spacer]',
                 { width: 39.5 },
@@ -151,6 +152,15 @@ left: -160px;`),
                     duration: 0.3,
                 },
             )
+            animateSVG(
+                '[data-spacer-text]',
+                { width: 1, opacity: 0 },
+                {
+                    onPlay: () => setSpacerCode(`width: 0px;`),
+                    ease: [0.165, 0.84, 0.44, 1],
+                    duration: 0.3,
+                },
+            )
             await animateSVG(
                 '[data-spacer]',
                 { width: 1 },
@@ -174,7 +184,6 @@ left: -160px;`),
         <div
             className={clsx(
                 `prose-pre:rounded-none prose-pre:bg-black prose-pre:mt-0`,
-                IS_SAFARI && '[&_foreignObject]:hidden',
             )}
         >
             <svg
@@ -206,11 +215,23 @@ left: -160px;`),
                     y={1}
                     height={98}
                 ></rect>
-                <foreignObject x={41} y={1.5} width="40" height="40">
-                    <div className="absolute top-0 leading-none text-[5px] p-[1px] font-bold text-slate-200 border-slate-200 bg-white border-r-[1px] border-b-[1px]">
-                        page
-                    </div>
-                </foreignObject>
+                <rect
+                    x={40.5}
+                    fill="white"
+                    y={1}
+                    width="16.5"
+                    height="9"
+                    className="stroke-slate-200"
+                />
+                <text
+                    x={40.5}
+                    y={1.5}
+                    width="40"
+                    height="40"
+                    className="absolute translate-x-[2px] translate-y-[5px]  top-0 leading-none text-[5px] font-bold text-slate-200 border-slate-200 bg-white fill-current"
+                >
+                    page
+                </text>
 
                 <rect
                     data-content
@@ -221,17 +242,16 @@ left: -160px;`),
                     y={2}
                     height={96}
                 />
-                <foreignObject
+                <text
                     data-content
                     x={81}
                     y={1.5}
                     width="100"
                     height="20"
+                    className="absolute translate-x-[2px] translate-y-[6px] top-0 leading-none text-[5px] fill-current font-bold text-black"
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-black border-b-[1px] border-r-[1px]">
-                        content
-                    </div>
-                </foreignObject>
+                    content
+                </text>
 
                 <rect
                     data-sidebar
@@ -253,18 +273,16 @@ left: -160px;`),
                     height={96}
                 />
 
-                <foreignObject
+                <text
                     data-sidebar
                     x={41.5}
                     y={1.5}
                     width="100"
                     height="20"
+                    className="absolute translate-x-[2px] translate-y-[6px] top-0 leading-none text-[5px] font-bold text-black"
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-dashed border-black border-b-[1px] border-r-[1px]">
-                        sidebar
-                    </div>
-                </foreignObject>
-
+                    sidebar
+                </text>
                 <rect
                     data-spacer
                     stroke="black"
@@ -274,17 +292,16 @@ left: -160px;`),
                     y={45}
                     height={8.5}
                 />
-                <foreignObject
-                    data-spacer
+                <text
+                    data-spacer-text
                     x={41.5}
                     y={45}
                     width="100"
                     height="20"
+                    className="absolute translate-x-[2px] translate-y-[5.5px] top-0 leading-none text-[5px] font-bold text-black"
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[1px] pl-[1.5px] pt-[1.5px] font-bold text-black ">
-                        spacer
-                    </div>
-                </foreignObject>
+                    spacer
+                </text>
             </svg>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <button

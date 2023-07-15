@@ -6,8 +6,6 @@ import {
 } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
 
-import IS_SAFARI from './IsSafari'
-
 export function NotionDemo() {
     const [isOpen, setIsOpen] = useState(true)
     const [isLocked, setIsLocked] = useState(true)
@@ -161,7 +159,6 @@ max-height: 100%;`),
         <div
             className={clsx(
                 `prose-pre:rounded-none prose-pre:bg-black prose-pre:mt-0`,
-                IS_SAFARI && '[&_foreignObject]:hidden',
             )}
         >
             <svg
@@ -183,7 +180,7 @@ max-height: 100%;`),
                             x2="0"
                             y2="7.5"
                             stroke="#000000"
-                            stroke-width="2"
+                            strokeWidth="2"
                         />
                     
                     </pattern> */}
@@ -209,32 +206,23 @@ max-height: 100%;`),
                     y={1}
                     height={98}
                 ></rect>
-                <foreignObject x={41} y={1.5} width="40" height="40">
-                    <div className="absolute top-0 leading-none text-[5px] p-[1px] font-bold text-slate-200 border-slate-200 bg-white border-r-[1px] border-b-[1px]">
-                        page
-                    </div>
-                </foreignObject>
-
                 <rect
-                    data-content
-                    stroke="black"
+                    x={41}
                     fill="white"
-                    x={81}
-                    width={76.5}
-                    y={2}
-                    height={96}
+                    y={1}
+                    width="17.5"
+                    height="9"
+                    className="stroke-slate-200"
                 />
-                <foreignObject
-                    data-content
-                    x={81}
+                <text
+                    x={41}
                     y={1.5}
-                    width="100"
-                    height="20"
+                    width="40"
+                    height="40"
+                    className="absolute translate-x-[2px] translate-y-[5px] top-0 leading-none text-[5px]  font-bold text-slate-200 fill-current"
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-black border-b-[1px] border-r-[1px]">
-                        content
-                    </div>
-                </foreignObject>
+                    page
+                </text>
 
                 <rect
                     data-container
@@ -245,17 +233,36 @@ max-height: 100%;`),
                     y={2}
                     height={96}
                 />
-                <foreignObject
+                <text
                     data-container
                     x={41.5}
                     y={1.5}
                     width="100"
                     height={96}
+                    className="absolute translate-x-[2px] translate-y-[6px] top-0 leading-none text-[5px]  font-bold text-black"
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-black border-b-[1px] border-r-[1px] ">
-                        container
-                    </div>
-                </foreignObject>
+                    container
+                </text>
+
+                <rect
+                    data-content
+                    stroke="black"
+                    fill="white"
+                    x={81}
+                    width={76.5}
+                    y={2}
+                    height={96}
+                />
+                <text
+                    data-content
+                    x={81}
+                    y={1.5}
+                    width="100"
+                    height="20"
+                    className="absolute translate-x-[2px] translate-y-[6px] top-0 leading-none text-[5px] font-bold text-black"
+                >
+                    content
+                </text>
 
                 <rect
                     data-sidebar
@@ -277,17 +284,16 @@ max-height: 100%;`),
                     height={83.5}
                 />
 
-                <foreignObject
+                <text
                     data-sidebar
                     x={43.5}
                     width={35.5}
                     y={12.5}
                     height={83.5}
+                    className="absolute translate-x-[2px] translate-y-[6px] top-0 leading-none text-[5px]  font-bold text-black"
                 >
-                    <div className="absolute top-0 leading-none text-[5px] p-[2px_1px_1px_1.5px] font-bold text-black border-dashed border-black border-b-[1px] border-r-[1px]">
-                        sidebar
-                    </div>
-                </foreignObject>
+                    sidebar
+                </text>
             </svg>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-5">
                 <button
