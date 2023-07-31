@@ -32,7 +32,7 @@ export default function Home() {
                 <h2>Components I have created so far:</h2>
                 <ol>
                     <li>
-                        <Link href="https://react-slider-component.vercel.app/">
+                        <Link href="/slider">
                             Slider &#x2197;
                         </Link>
                     </li>
