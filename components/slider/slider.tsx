@@ -22,7 +22,7 @@ export function Slider({ className, stops, value, onChange }: Props) {
       container.current.getBoundingClientRect()
     const segmentWidth = containerWidth / (stops.length - 1)
     setPosition(value * segmentWidth)
-  }, [])
+  }, [stops.length, value])
 
   useEffect(() => {
     window.addEventListener('resize', listener)
@@ -37,7 +37,7 @@ export function Slider({ className, stops, value, onChange }: Props) {
       const segmentWidth = containerWidth / (stops.length - 1)
       setPosition(value * segmentWidth)
     }
-  }, [value])
+  }, [stops.length, value])
 
   useHotkeys(
     'left,down',

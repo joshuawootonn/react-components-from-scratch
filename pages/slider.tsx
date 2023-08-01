@@ -23,12 +23,12 @@ export default function Page() {
       <div className="px-8">
         <Slider
           stops={[
-            <Square className="fill-purple" />,
-            <Circle className="fill-blue" />,
-            <Triangle className="fill-orange" />,
-            <Square className="fill-green" />,
-            <Circle className="fill-yellow" />,
-            <Square className="fill-pink" />,
+            <Square key="1" className="fill-purple" />,
+            <Circle key="2" className="fill-blue" />,
+            <Triangle key="3" className="fill-orange" />,
+            <Square key="4" className="fill-green" />,
+            <Circle key="5" className="fill-yellow" />,
+            <Square key="6" className="fill-pink" />,
           ]}
           value={state}
           onChange={(value: number) => setState(value)}
