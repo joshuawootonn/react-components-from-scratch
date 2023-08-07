@@ -37,8 +37,8 @@ export default function Home() {
                         </Link>
                     </li>
                     <li>
-                        <Link href="https://vercel-tabs-component.vercel.app/">
-                            Tabs &#x2197;
+                        <Link href="/vercel-tabs">
+                            Vercel&apos;s Tab component &#x2197;
                         </Link>
                     </li>
                     <li>
