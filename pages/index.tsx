@@ -16,7 +16,7 @@ export default function Home() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className="max-w-5xl p-4 lg:p-8 mx-auto prose prose-headings:font-700">
+            <div className="max-w-3xl p-4 lg:p-8 mx-auto prose prose-headings:font-700">
                 <h1 className="font-sans">
                     React components from scratch{' '}
                     <span className="inline-block text-blue -translate-y-8 rotate-12 -translate-x-3 text-sm">
