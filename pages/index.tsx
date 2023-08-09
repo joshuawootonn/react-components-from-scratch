@@ -42,7 +42,7 @@ export default function Home() {
                         </Link>
                     </li>
                     <li>
-                        <Link href="https://react-disclosure-component.vercel.app/">
+                        <Link href="/disclosure">
                             Disclosure &#x2197;
                         </Link>
                     </li>
