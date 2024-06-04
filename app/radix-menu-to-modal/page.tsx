@@ -1,21 +1,8 @@
-'use client'
-
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import * as ContextMenu from '@radix-ui/react-context-menu'
-import * as Popover from '@radix-ui/react-popover'
-import { useRef, useState } from 'react'
-import { clsx } from 'clsx'
-import { DropdownMenuTrigger } from 'components/radix-menu-to-dialog/dropdown-trigger'
-import { ContextContent } from 'components/radix-menu-to-dialog/context-content'
-import { DropdownContent } from 'components/radix-menu-to-dialog/dropdown-content'
-import { DropdownContentInteractiveSubContent } from 'components/radix-menu-to-dialog/dropdown-content-with-sub-content'
-import { PopoverContent } from 'components/radix-menu-to-dialog/popover-content'
 import Link from 'next/link'
+import { RadixMenuToDialog } from 'components/radix-menu-to-dialog'
+import { RadixMenuToSubmenu } from 'components/radix-menu-to-dialog'
 
 const App = () => {
-    const buttonRef = useRef<HTMLButtonElement>(null)
-    const [position, setPosition] = useState<DOMRect | null>(null)
-
     return (
         <div className="max-w-2xl p-4 lg:p-8 mx-auto prose prose-headings:font-700 font-sans">
             <div className="flex flex-row justify-between items-start">
@@ -59,127 +46,12 @@ const App = () => {
                 Here is a demo of a menu and dialog composed together for a
                 &quot;interactive menu&quot; experience.
             </p>
-            <Popover.Root>
-                {position && (
-                    <Popover.PopoverAnchor
-                        virtualRef={{
-                            current: {
-                                getBoundingClientRect: () => position,
-                            },
-                        }}
-                    />
-                )}
-                <ContextMenu.Root modal={false}>
-                    <ContextMenu.Trigger
-                        onContextMenu={e => {
-                            setPosition(
-                                new DOMRect(e.clientX + 2, e.clientY, 0, 0),
-                            )
-                        }}
-                    >
-                        <Popover.Root>
-                            <DropdownMenu.Root modal={false}>
-                                <div className="w-52 h-52 border-2 border-black flex justify-end items-start my-3">
-                                    <Popover.PopoverAnchor>
-                                        <DropdownMenuTrigger ref={buttonRef} />
-                                    </Popover.PopoverAnchor>
-                                    <PopoverContent
-                                        sideOffset={5}
-                                        align={'center'}
-                                        className={clsx(
-                                            'p-5 w-52 bg-white border-2 border-black',
-                                        )}
-                                        onCloseAutoFocus={e => {
-                                            e.preventDefault()
-
-                                            const isMenuFocused =
-                                                document.activeElement &&
-                                                document.activeElement instanceof
-                                                    HTMLElement &&
-                                                document.activeElement.dataset
-                                                    .radixMenuContent === ''
-
-                                            if (!isMenuFocused) {
-                                                buttonRef.current?.focus()
-                                            }
-                                        }}
-                                        onContextMenu={e => e.stopPropagation()}
-                                    />
-                                    <DropdownContent
-                                        sideOffset={5}
-                                        className="bg-white border-2 border-black w-28"
-                                    />
-                                </div>
-                            </DropdownMenu.Root>
-                        </Popover.Root>
-                    </ContextMenu.Trigger>
-                    <ContextContent className="w-28 bg-white border-2 border-black" />
-                    <PopoverContent
-                        sideOffset={0}
-                        align={'start'}
-                        className={clsx(
-                            'p-5 w-52 bg-white border-2 border-black',
-                        )}
-                    />
-                </ContextMenu.Root>
-            </Popover.Root>
+            <RadixMenuToDialog />
             <p>
                 Interactive sub dropdown menus don&apos;t work in this case
                 because their shortcuts conflict with text selection.
             </p>
-            <Popover.Root>
-                {position && (
-                    <Popover.PopoverAnchor
-                        virtualRef={{
-                            current: {
-                                getBoundingClientRect: () => position,
-                            },
-                        }}
-                    />
-                )}
-                <ContextMenu.Root modal={false}>
-                    <ContextMenu.Trigger
-                        onContextMenu={e =>
-                            setPosition(
-                                new DOMRect(e.clientX + 2, e.clientY, 0, 0),
-                            )
-                        }
-                    >
-                        <Popover.Root>
-                            <DropdownMenu.Root modal={false}>
-                                <div className="w-52 h-52 border-2 border-black flex justify-end items-start">
-                                    <Popover.PopoverAnchor>
-                                        <DropdownMenuTrigger ref={buttonRef} />
-                                    </Popover.PopoverAnchor>
-                                    <PopoverContent
-                                        sideOffset={5}
-                                        align={'center'}
-                                        className={clsx(
-                                            'p-5 w-52 bg-white border-2 border-black',
-                                        )}
-                                        onCloseAutoFocus={e => {
-                                            e.preventDefault()
-                                            buttonRef.current?.focus()
-                                        }}
-                                    />
-                                    <DropdownContentInteractiveSubContent
-                                        sideOffset={5}
-                                        className="bg-white border-2 border-black w-28"
-                                    />
-                                </div>
-                            </DropdownMenu.Root>
-                        </Popover.Root>
-                    </ContextMenu.Trigger>
-                    <ContextContent className="w-28 bg-white border-2 border-black" />
-                    <PopoverContent
-                        sideOffset={0}
-                        align={'start'}
-                        className={clsx(
-                            'p-5 w-52 bg-white border-2 border-black',
-                        )}
-                    />
-                </ContextMenu.Root>
-            </Popover.Root>
+            <RadixMenuToSubmenu />
             <p>
                 This is a the companion demo to a blog post I have{' '}
                 <a href="https://joshuawootonn.com/radix-interactive-dropdown">
