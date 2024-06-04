@@ -1,4 +1,4 @@
-import { Josefin_Sans } from '@next/font/google'
+import { Josefin_Sans } from 'next/font/google'
 import * as Fathom from 'fathom-client'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
