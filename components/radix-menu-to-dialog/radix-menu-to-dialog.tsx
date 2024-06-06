@@ -41,7 +41,7 @@ export function RadixMenuToDialog() {
                     <Popover.Root>
                         <DropdownMenu.Root modal={false}>
                             <div className="w-52 h-52 border-2 border-black flex justify-end items-start my-3">
-                                <Popover.PopoverAnchor>
+                                <Popover.PopoverAnchor asChild>
                                     <DropdownMenuTrigger ref={buttonRef} />
                                 </Popover.PopoverAnchor>
                                 <PopoverContent
@@ -68,7 +68,7 @@ export function RadixMenuToDialog() {
                 </ContextMenu.Trigger>
                 <ContextContent className="w-28 bg-white border-2 border-black" />
                 <PopoverContent
-                    sideOffset={2}
+                    sideOffset={0}
                     align={'start'}
                     onCloseAutoFocus={e => {
                         if (!isActiveElementARadixMenu()) {

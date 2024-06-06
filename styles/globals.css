@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .svg-outline,
+    .svg-outline-sm {
+        position: relative;
+    }
+
+    .svg-outline:focus,
+    .svg-outline-sm:focus {
+        outline: none;
+    }
+
+    .svg-outline:focus:before,
+    .svg-outline:focus-within:before,
+    .svg-outline-sm:focus:before,
+    .svg-outline-sm:focus-within:before {
+        content: ' ';
+        background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" %3E%3Crect x="0" y="0" width="100%25" height="100%25" stroke-width="4" stroke="black" fill="transparent" stroke-dasharray="6 5" /%3E%3C/svg%3E');
+        position: absolute;
+    }
+
+    .svg-outline:before {
+        inset: -8px;
+    }
+
+    .svg-outline-sm:before {
+        top: -2px;
+        right: -6px;
+        bottom: -2px;
+        left: -6px;
+    }
+
+    .prose .svg-outline-sm:before {
+        top: -2px;
+        right: -3px;
+        bottom: -2px;
+        left: -3px;
+    }
+}
+
