@@ -10,6 +10,14 @@ import { DropdownContent } from 'components/radix-menu-to-dialog/components/drop
 import { PopoverContent } from 'components/radix-menu-to-dialog/components/popover-content'
 import { useRef, useState } from 'react'
 
+function isActiveElementARadixMenu() {
+    return (
+        document.activeElement &&
+        document.activeElement instanceof HTMLElement &&
+        document.activeElement.dataset.radixMenuContent === ''
+    )
+}
+
 export function RadixMenuToDialog() {
     const buttonRef = useRef<HTMLButtonElement>(null)
     const [position, setPosition] = useState<DOMRect | null>(null)
@@ -43,16 +51,8 @@ export function RadixMenuToDialog() {
                                         'p-5 w-52 bg-white border-2 border-black',
                                     )}
                                     onCloseAutoFocus={e => {
-                                        e.preventDefault()
-
-                                        const isMenuFocused =
-                                            document.activeElement &&
-                                            document.activeElement instanceof
-                                                HTMLElement &&
-                                            document.activeElement.dataset
-                                                .radixMenuContent === ''
-
-                                        if (!isMenuFocused) {
+                                        if (!isActiveElementARadixMenu()) {
+                                            e.preventDefault()
                                             buttonRef.current?.focus()
                                         }
                                     }}
@@ -68,8 +68,14 @@ export function RadixMenuToDialog() {
                 </ContextMenu.Trigger>
                 <ContextContent className="w-28 bg-white border-2 border-black" />
                 <PopoverContent
-                    sideOffset={0}
+                    sideOffset={2}
                     align={'start'}
+                    onCloseAutoFocus={e => {
+                        if (!isActiveElementARadixMenu()) {
+                            e.preventDefault()
+                            buttonRef.current?.focus()
+                        }
+                    }}
                     className={clsx('p-5 w-52 bg-white border-2 border-black')}
                 />
             </ContextMenu.Root>
