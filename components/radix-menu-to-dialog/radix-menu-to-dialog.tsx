@@ -10,14 +10,6 @@ import { DropdownContent } from 'components/radix-menu-to-dialog/components/drop
 import { PopoverContent } from 'components/radix-menu-to-dialog/components/popover-content'
 import { useRef, useState } from 'react'
 
-function isActiveElementARadixMenu() {
-    return (
-        document.activeElement &&
-        document.activeElement instanceof HTMLElement &&
-        document.activeElement.dataset.radixMenuContent === ''
-    )
-}
-
 export function RadixMenuToDialog() {
     const buttonRef = useRef<HTMLButtonElement>(null)
     const [position, setPosition] = useState<DOMRect | null>(null)
@@ -32,6 +24,7 @@ export function RadixMenuToDialog() {
                     }}
                 />
             )}
+            <button>test</button>
             <ContextMenu.Root modal={false}>
                 <ContextMenu.Trigger
                     onContextMenu={e => {
@@ -51,7 +44,10 @@ export function RadixMenuToDialog() {
                                         'p-5 w-52 bg-white border-2 border-black',
                                     )}
                                     onCloseAutoFocus={e => {
-                                        if (!isActiveElementARadixMenu()) {
+                                        if (
+                                            document.activeElement ===
+                                            document.body
+                                        ) {
                                             e.preventDefault()
                                             buttonRef.current?.focus()
                                         }
@@ -71,7 +67,7 @@ export function RadixMenuToDialog() {
                     sideOffset={0}
                     align={'start'}
                     onCloseAutoFocus={e => {
-                        if (!isActiveElementARadixMenu()) {
+                        if (document.activeElement === document.body) {
                             e.preventDefault()
                             buttonRef.current?.focus()
                         }
