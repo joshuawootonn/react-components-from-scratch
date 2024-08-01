@@ -66,7 +66,7 @@ export default function Home() {
                         </Link>
                     </li>
                     <li>
-                        <Link href="/radix-menu-to-modal">
+                        <Link href="/radix-menu-to-dialog">
                             Radix menu to modal &#x2197;
                         </Link>
                     </li>
