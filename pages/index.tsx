@@ -70,6 +70,14 @@ export default function Home() {
                             Radix menu to modal &#x2197;
                         </Link>
                     </li>
+                    <li>
+                        <Link href="/drag-to-select">
+                            Drag to select&#x2197;
+                            <span className="inline-block text-blue font-bold -translate-y-3 rotate-[18deg] -translate-x-3 text-sm">
+                                WIP
+                            </span>
+                        </Link>
+                    </li>
                 </ol>
             </div>
         </>
