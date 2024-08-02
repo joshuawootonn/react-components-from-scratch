@@ -42,6 +42,7 @@ export default function Page() {
             <p>
                 This page is the demo for an upcoming blog post. Stay tuned :){' '}
             </p>
+            <DragToSelect />
         </div>
     )
 }
