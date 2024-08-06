@@ -2,27 +2,22 @@
 import clsx from 'clsx'
 import { useRef, useState, PointerEvent } from 'react'
 
-const items = new Array(101).fill(null).map((_, i) => i)
+const items = new Array(1001).fill(null).map((_, i) => i)
 
 function dragDistance(rect: DOMRect) {
     return Math.sqrt(Math.pow(rect.width, 2) + Math.pow(rect.height, 2))
 }
 
 function intersect(rect1: DOMRect, rect2: DOMRect) {
-    if (rect1.right < rect2.left || rect2.right < rect1.left) {
-        return false
-    }
+    if (rect1.right < rect2.left || rect2.right < rect1.left) return false
 
-    if (rect1.bottom < rect2.top || rect2.bottom < rect1.top) {
-        return false
-    }
+    if (rect1.bottom < rect2.top || rect2.bottom < rect1.top) return false
 
     return true
 }
 
 type Point = { x: number; y: number }
 
-// In a utility library:
 function assertIsNode(e: EventTarget | null): asserts e is Node {
     if (!e || !('nodeType' in e)) {
         throw new Error(`Node expected`)
@@ -38,7 +33,6 @@ function shallowEqual(x: Record<string, boolean>, y: Record<string, boolean>) {
 
 export default function DragToSelect() {
     const dragStartPoint = useRef<Point | null>()
-    const [isDragging, setIsDragging] = useState(false)
     const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
     const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>(
         {},
@@ -74,7 +68,7 @@ export default function DragToSelect() {
 
     return (
         <div
-            className="relative z-0 flex flex-wrap gap-4 p-10 select-none"
+            className="border-2 border-black relative z-0 grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 select-none mt-16"
             onPointerDown={function (e) {
                 const containerRect = e.currentTarget.getBoundingClientRect()
                 dragStartPoint.current = {
@@ -128,6 +122,14 @@ export default function DragToSelect() {
                 setSelectRect(null)
             }}
         >
+            <div className="absolute -translate-y-full -translate-x-0.5 top-0 left-0 px-2 border-2 border-black">
+                selectable area
+            </div>
+            {Object.keys(selectedItems).length > 0 && (
+                <div className="absolute -translate-y-full translate-x-0.5 top-0 right-0 px-2 border-2 border-black">
+                    count: {Object.keys(selectedItems).length}
+                </div>
+            )}
             {items.map(item => (
                 <div
                     key={item}

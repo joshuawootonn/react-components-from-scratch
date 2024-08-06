@@ -1,1 +1,1 @@
-export * from './drag-to-select.component'
+export * from './drag-to-select'
