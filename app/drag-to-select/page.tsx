@@ -9,7 +9,7 @@ export default function Page() {
             <div className="flex flex-row justify-between items-start">
                 <h1 className="font-sans">Drag to Select</h1>
                 <div className="flex space-x-4">
-                    <Link href="https://github.com/joshuawootonn/react-components-from-scratch/blob/main/pages/drag-to-select.tsx">
+                    <Link href="https://github.com/joshuawootonn/react-components-from-scratch/blob/main/app/drag-to-select/page.tsx">
                         <svg
                             width="24.5"
                             height="24"
