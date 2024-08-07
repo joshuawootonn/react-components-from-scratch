@@ -1,7 +1,15 @@
 'use client'
 
 import clsx from 'clsx'
-import { useRef, useState, createContext, ReactNode, useContext } from 'react'
+import {
+    useRef,
+    useState,
+    createContext,
+    ReactNode,
+    useContext,
+    use,
+    useEffect,
+} from 'react'
 
 function dragDistance(rect: DOMRect) {
     return Math.sqrt(Math.pow(rect.width, 2) + Math.pow(rect.height, 2))
@@ -41,15 +49,17 @@ export function Root({ children }: { children?: ReactNode }) {
         scrollLeft: number
         scrollTop: number
     } | null>(null)
-    const isDragging = useRef(false)
+    const [isDragging, setIsDragging] = useState(false)
     const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
     const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>(
         {},
     )
+    const containerRef = useRef<HTMLDivElement>(null)
 
     function updateSelectedItems(selectionRect: DOMRect) {
+        if (containerRef.current == null) return
         const next: Record<string, boolean> = {}
-        document.querySelectorAll('[data-item]').forEach(el => {
+        containerRef.current.querySelectorAll('[data-item]').forEach(el => {
             if (!(el instanceof HTMLElement)) return
             if (recentPointerPosition.current == null) return
 
@@ -75,6 +85,70 @@ export function Root({ children }: { children?: ReactNode }) {
         }
     }
 
+    useEffect(() => {
+        if (!isDragging || containerRef.current == null) return
+
+        let handle = requestAnimationFrame(scrollTheLad)
+
+        return () => cancelAnimationFrame(handle)
+
+        function scrollTheLad() {
+            if (
+                recentPointerPosition.current == null ||
+                dragStartPoint.current == null ||
+                containerRef.current == null
+            )
+                return
+
+            const { clientX, clientY, containerRect, scrollTop, scrollLeft } =
+                recentPointerPosition.current
+            const xPosition = clientX - containerRect.x
+            const yPosition = clientY - containerRect.y
+
+            const shouldScrollRight = containerRect.width - xPosition < 20
+            const shouldScrollDown = containerRect.height - yPosition < 20
+            const shouldScrollLeft = xPosition < 20
+            const shouldScrollUp = yPosition < 20
+
+            if (
+                !shouldScrollRight &&
+                !shouldScrollDown &&
+                !shouldScrollLeft &&
+                !shouldScrollUp
+            ) {
+                handle = requestAnimationFrame(scrollTheLad)
+                return
+            }
+
+            if (shouldScrollRight) {
+                containerRef.current.scrollBy({
+                    left: 20 - containerRect.width + xPosition,
+                })
+            } else if (shouldScrollDown) {
+                containerRef.current.scrollBy({
+                    top: 20 - containerRect.height + yPosition,
+                })
+            } else if (shouldScrollLeft) {
+                containerRef.current.scrollBy({ left: -20 + xPosition })
+            } else if (shouldScrollUp) {
+                containerRef.current.scrollBy({ top: -20 + yPosition })
+            }
+
+            const scrollXPosition = clientX - containerRect.x + scrollLeft
+            const scrollYPosition = clientY - containerRect.y + scrollTop
+            const nextSelectionRect = new DOMRect(
+                Math.min(scrollXPosition, dragStartPoint.current.x),
+                Math.min(scrollYPosition, dragStartPoint.current.y),
+                Math.abs(scrollXPosition - dragStartPoint.current.x),
+                Math.abs(scrollYPosition - dragStartPoint.current.y),
+            )
+
+            updateSelectedItems(nextSelectionRect)
+
+            handle = requestAnimationFrame(scrollTheLad)
+        }
+    }, [isDragging, updateSelectedItems])
+
     return (
         <div>
             <div className="flex flex-row justify-between">
@@ -89,6 +163,7 @@ export function Root({ children }: { children?: ReactNode }) {
             </div>
             <div
                 className="relative z-0 border-2 border-black grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 select-none max-h-96 overflow-auto -translate-y-0.5"
+                ref={containerRef}
                 onScroll={function (e) {
                     if (
                         dragStartPoint.current == null ||
@@ -99,21 +174,37 @@ export function Root({ children }: { children?: ReactNode }) {
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 
-                    const xPosition =
+                    const { scrollHeight, scrollWidth, scrollTop, scrollLeft } =
+                        e.currentTarget
+
+                    const scrollXPosition =
                         recentPointerPosition.current.clientX -
                         containerRect.x +
                         recentPointerPosition.current.scrollLeft
-                    const yPosition =
+                    const scrollYPosition =
                         recentPointerPosition.current.clientY -
                         containerRect.y +
                         recentPointerPosition.current.scrollTop
 
                     const nextSelectionRect = new DOMRect(
-                        Math.min(xPosition, dragStartPoint.current.x),
-                        Math.min(yPosition, dragStartPoint.current.y),
-                        Math.abs(xPosition - dragStartPoint.current.x),
-                        Math.abs(yPosition - dragStartPoint.current.y),
+                        Math.min(scrollXPosition, dragStartPoint.current.x),
+                        Math.min(scrollYPosition, dragStartPoint.current.y),
+                        Math.abs(
+                            Math.min(scrollXPosition, scrollWidth) -
+                                dragStartPoint.current.x,
+                        ),
+                        Math.abs(
+                            Math.min(scrollYPosition, scrollHeight) -
+                                dragStartPoint.current.y,
+                        ),
                     )
+
+                    recentPointerPosition.current = {
+                        ...recentPointerPosition.current,
+                        scrollLeft: scrollLeft,
+                        scrollTop: scrollTop,
+                    }
+
                     setSelectRect(nextSelectionRect)
                     updateSelectedItems(nextSelectionRect)
                 }}
@@ -135,18 +226,25 @@ export function Root({ children }: { children?: ReactNode }) {
                 }}
                 onPointerMove={function (e) {
                     if (dragStartPoint.current == null) return
+                    const { scrollWidth, scrollHeight } = e.currentTarget
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 
-                    const xPosition =
+                    const scrollXPosition =
                         e.clientX - containerRect.x + e.currentTarget.scrollLeft
-                    const yPosition =
+                    const scrollYPosition =
                         e.clientY - containerRect.y + e.currentTarget.scrollTop
                     const nextSelectionRect = new DOMRect(
-                        Math.min(xPosition, dragStartPoint.current.x),
-                        Math.min(yPosition, dragStartPoint.current.y),
-                        Math.abs(xPosition - dragStartPoint.current.x),
-                        Math.abs(yPosition - dragStartPoint.current.y),
+                        Math.min(scrollXPosition, dragStartPoint.current.x),
+                        Math.min(scrollYPosition, dragStartPoint.current.y),
+                        Math.abs(
+                            Math.min(scrollXPosition, scrollWidth) -
+                                dragStartPoint.current.x,
+                        ),
+                        Math.abs(
+                            Math.min(scrollYPosition, scrollHeight) -
+                                dragStartPoint.current.y,
+                        ),
                     )
                     const selection = document.getSelection()
                     const elementFromPoint = document.elementFromPoint(
@@ -155,10 +253,7 @@ export function Root({ children }: { children?: ReactNode }) {
                     )
                     assertIsNode(e.target)
 
-                    if (
-                        !isDragging.current &&
-                        dragDistance(nextSelectionRect) < 15
-                    )
+                    if (!isDragging && dragDistance(nextSelectionRect) < 15)
                         return
                     if (
                         !selection?.isCollapsed &&
@@ -167,7 +262,7 @@ export function Root({ children }: { children?: ReactNode }) {
                     )
                         return (dragStartPoint.current = null)
 
-                    isDragging.current = true
+                    setIsDragging(true)
 
                     selection?.removeAllRanges()
 
@@ -182,14 +277,14 @@ export function Root({ children }: { children?: ReactNode }) {
                     setSelectRect(nextSelectionRect)
                     updateSelectedItems(nextSelectionRect)
                 }}
-                onPointerUp={function (e) {
-                    if (!isDragging.current) {
+                onPointerUp={function () {
+                    if (!isDragging) {
                         updateSelectedItems(new DOMRect(0, 0, 0, 0))
                     } else {
                         dragStartPoint.current = null
                         setSelectRect(null)
                         recentPointerPosition.current = null
-                        isDragging.current = false
+                        setIsDragging(false)
                     }
                 }}
             >
