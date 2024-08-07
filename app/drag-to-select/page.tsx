@@ -1,5 +1,7 @@
-import DragToSelect from 'components/drag-to-select/drag-to-select'
+import * as DragToSelect from 'components/drag-to-select'
 import Link from 'next/link'
+
+const items = new Array(1001).fill(null).map((_, i) => i)
 
 export default function Page() {
     return (
@@ -42,7 +44,13 @@ export default function Page() {
             <p>
                 This page is the demo for an upcoming blog post. Stay tuned :){' '}
             </p>
-            <DragToSelect />
+            <DragToSelect.Root>
+                {items.map(item => (
+                    <DragToSelect.Item key={item} id={item + ''}>
+                        {item}
+                    </DragToSelect.Item>
+                ))}
+            </DragToSelect.Root>
         </div>
     )
 }
