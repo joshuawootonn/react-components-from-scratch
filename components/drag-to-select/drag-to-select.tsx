@@ -11,22 +11,16 @@ import {
     useCallback,
 } from 'react'
 
-function dragDistance(rect: DOMRect) {
+function diagonalLength(rect: DOMRect): number {
     return Math.sqrt(Math.pow(rect.width, 2) + Math.pow(rect.height, 2))
 }
 
-function intersect(rect1: DOMRect, rect2: DOMRect) {
+function intersect(rect1: DOMRect, rect2: DOMRect): boolean {
     if (rect1.right < rect2.left || rect2.right < rect1.left) return false
 
     if (rect1.bottom < rect2.top || rect2.bottom < rect1.top) return false
 
     return true
-}
-
-function assertIsNode(e: EventTarget | null): asserts e is Node {
-    if (!e || !('nodeType' in e)) {
-        throw new Error(`Node expected`)
-    }
 }
 
 function shallowEqual(x: Record<string, boolean>, y: Record<string, boolean>) {
@@ -165,7 +159,7 @@ export function Root({ children }: { children?: ReactNode }) {
                 )}
             </div>
             <div
-                className="relative z-0 border-2 border-black grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 select-none max-h-96 overflow-auto -translate-y-0.5"
+                className="relative z-0 border-2 border-black grid grid-cols-8 sm:grid-cols-10 gap-4 p-4  max-h-96 overflow-auto -translate-y-0.5"
                 ref={containerRef}
                 onScroll={function (e) {
                     if (
@@ -254,9 +248,8 @@ export function Root({ children }: { children?: ReactNode }) {
                         e.clientX,
                         e.clientY,
                     )
-                    assertIsNode(e.target)
 
-                    if (!isDragging && dragDistance(nextSelectionRect) < 15)
+                    if (!isDragging && diagonalLength(nextSelectionRect) < 15)
                         return
                     if (
                         !selection?.isCollapsed &&
@@ -316,7 +309,7 @@ export function Item({ children, id }: { id: string; children: ReactNode }) {
         <div
             data-item={id}
             className={clsx(
-                'border-2 size-10 border-black flex justify-center items-center select-text',
+                'border-2 size-10 border-black flex justify-center items-center',
                 selectedItems[`${id}`]
                     ? 'bg-black text-white'
                     : 'bg-white text-black',
