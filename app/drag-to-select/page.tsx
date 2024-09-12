@@ -1,5 +1,9 @@
 import * as DragToSelect from 'components/drag-to-select'
 import Link from 'next/link'
+import { Step0Demo } from 'components/drag-to-select/article/step0-basic-component'
+import { Step1Demo } from 'components/drag-to-select/article/step1-drag-rectangle'
+import { Step2Demo } from 'components/drag-to-select/article/step2-updating-selection'
+import { Step3Demo } from 'components/drag-to-select/article/step3-preventing-text-selection'
 
 const items = new Array(1001).fill(null).map((_, i) => i)
 
@@ -42,7 +46,8 @@ export default function Page() {
                 </div>
             </div>
             <p>
-                This page is the demo for an upcoming blog post. Stay tuned :){' '}
+                This page is the demo for an upcoming blog post. Here is the
+                final version:
             </p>
             <DragToSelect.Root>
                 {items.map(item => (
@@ -51,6 +56,22 @@ export default function Page() {
                     </DragToSelect.Item>
                 ))}
             </DragToSelect.Root>
+
+            <h2>Intro</h2>
+            <p>
+                Here is the basic demo rendering items with numbers in assorting
+                order.
+            </p>
+            <Step0Demo />
+            <h2>Step 1 is drawing a selection rectangle on drag</h2>
+            <Step1Demo />
+            <h2>
+                Step 2 updating state based on intersection of rectangles and
+                the selection rectangle
+            </h2>
+            <Step2Demo />
+            <h2>Step 3 Preventing text selection on drag</h2>
+            <Step3Demo />
         </div>
     )
 }

@@ -7,8 +7,8 @@ import {
     createContext,
     ReactNode,
     useContext,
-    use,
     useEffect,
+    useCallback,
 } from 'react'
 
 function dragDistance(rect: DOMRect) {
@@ -23,8 +23,6 @@ function intersect(rect1: DOMRect, rect2: DOMRect) {
     return true
 }
 
-type Point = { x: number; y: number }
-
 function assertIsNode(e: EventTarget | null): asserts e is Node {
     if (!e || !('nodeType' in e)) {
         throw new Error(`Node expected`)
@@ -37,6 +35,8 @@ function shallowEqual(x: Record<string, boolean>, y: Record<string, boolean>) {
         Object.keys(x).every(key => x[key] === y[key])
     )
 }
+
+type Point = { x: number; y: number }
 
 const SelectedItemContext = createContext<Record<string, boolean>>({})
 
@@ -56,34 +56,37 @@ export function Root({ children }: { children?: ReactNode }) {
     )
     const containerRef = useRef<HTMLDivElement>(null)
 
-    function updateSelectedItems(selectionRect: DOMRect) {
-        if (containerRef.current == null) return
-        const next: Record<string, boolean> = {}
-        containerRef.current.querySelectorAll('[data-item]').forEach(el => {
-            if (!(el instanceof HTMLElement)) return
-            if (recentPointerPosition.current == null) return
+    const updateSelectedItems = useCallback(
+        function updateSelectedItems(selectionRect: DOMRect) {
+            if (containerRef.current == null) return
+            const next: Record<string, boolean> = {}
+            containerRef.current.querySelectorAll('[data-item]').forEach(el => {
+                if (!(el instanceof HTMLElement)) return
+                if (recentPointerPosition.current == null) return
 
-            const itemRect = el.getBoundingClientRect()
-            const translatedItemRect = new DOMRect(
-                itemRect.x -
-                    recentPointerPosition.current.containerRect.x +
-                    recentPointerPosition.current.scrollLeft,
-                itemRect.y -
-                    recentPointerPosition.current.containerRect.y +
-                    recentPointerPosition.current.scrollTop,
-                itemRect.width,
-                itemRect.height,
-            )
-            if (!intersect(selectionRect, translatedItemRect)) return
+                const itemRect = el.getBoundingClientRect()
+                const translatedItemRect = new DOMRect(
+                    itemRect.x -
+                        recentPointerPosition.current.containerRect.x +
+                        recentPointerPosition.current.scrollLeft,
+                    itemRect.y -
+                        recentPointerPosition.current.containerRect.y +
+                        recentPointerPosition.current.scrollTop,
+                    itemRect.width,
+                    itemRect.height,
+                )
+                if (!intersect(selectionRect, translatedItemRect)) return
 
-            if (el.dataset.item && typeof el.dataset.item === 'string') {
-                next[el.dataset.item] = true
+                if (el.dataset.item && typeof el.dataset.item === 'string') {
+                    next[el.dataset.item] = true
+                }
+            })
+            if (!shallowEqual(next, selectedItems)) {
+                setSelectedItems(next)
             }
-        })
-        if (!shallowEqual(next, selectedItems)) {
-            setSelectedItems(next)
-        }
-    }
+        },
+        [selectedItems],
+    )
 
     useEffect(() => {
         if (!isDragging || containerRef.current == null) return
