@@ -249,7 +249,7 @@ export function Root({ children }: { children?: ReactNode }) {
                         e.clientY,
                     )
 
-                    if (!isDragging && diagonalLength(nextSelectionRect) < 15)
+                    if (!isDragging && diagonalLength(nextSelectionRect) < 10)
                         return
                     if (
                         !selection?.isCollapsed &&
@@ -275,12 +275,15 @@ export function Root({ children }: { children?: ReactNode }) {
                 }}
                 onPointerUp={function () {
                     if (!isDragging) {
-                        updateSelectedItems(new DOMRect(0, 0, 0, 0))
-                    } else {
+                        setSelectedItems({})
                         dragStartPoint.current = null
                         setSelectRect(null)
                         recentPointerPosition.current = null
+                    } else {
+                        dragStartPoint.current = null
+                        setSelectRect(null)
                         setIsDragging(false)
+                        recentPointerPosition.current = null
                     }
                 }}
             >

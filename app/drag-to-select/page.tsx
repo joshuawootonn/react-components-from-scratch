@@ -4,6 +4,7 @@ import { Step0Demo } from 'components/drag-to-select/article/step0-basic-compone
 import { Step1Demo } from 'components/drag-to-select/article/step1-drag-rectangle'
 import { Step2Demo } from 'components/drag-to-select/article/step2-updating-selection'
 import { Step3Demo } from 'components/drag-to-select/article/step3-preventing-text-selection'
+import { Step4Demo } from 'components/drag-to-select/article/step4-deselection'
 
 const items = new Array(1001).fill(null).map((_, i) => i)
 
@@ -72,6 +73,8 @@ export default function Page() {
             <Step2Demo />
             <h2>Step 3 Preventing text selection on drag</h2>
             <Step3Demo />
+            <h2>Step 4 Deselection</h2>
+            <Step4Demo />
         </div>
     )
 }

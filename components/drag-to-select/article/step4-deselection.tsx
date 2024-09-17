@@ -25,6 +25,7 @@ function Root() {
         {},
     )
     const containerRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
 
     const updateSelectedItems = useCallback(function updateSelectedItems(
         selectionRect: DOMRect,
@@ -121,17 +122,38 @@ function Root() {
 
                     selection?.removeAllRanges()
                     setIsDragging(true)
+                    inputRef.current?.focus()
 
                     setSelectRect(nextSelectionRect)
                     updateSelectedItems(nextSelectionRect)
                 }}
                 onPointerUp={() => {
-                    dragStartPoint.current = null
-                    setSelectRect(null)
-                    setIsDragging(false)
+                    if (!isDragging) {
+                        setSelectedItems({})
+                        dragStartPoint.current = null
+                        setSelectRect(null)
+                    } else {
+                        dragStartPoint.current = null
+                        setSelectRect(null)
+                        setIsDragging(false)
+                    }
                 }}
                 className="relative z-0 border-2 border-black grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 -translate-y-0.5"
             >
+                <input
+                    className="absolute -z-10 opacity-0"
+                    aria-hidden="true"
+                    tabIndex={-1}
+                    ref={inputRef}
+                    onKeyDown={e => {
+                        if (e.key === 'Escape') {
+                            e.preventDefault()
+                            setSelectedItems({})
+                            dragStartPoint.current = null
+                            setSelectRect(null)
+                        }
+                    }}
+                />
                 {items.map(item => (
                     <div
                         data-item={item}
@@ -162,6 +184,6 @@ function Root() {
     )
 }
 
-export function Step3Demo() {
+export function Step4Demo() {
     return <Root />
 }
