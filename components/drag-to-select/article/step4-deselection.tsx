@@ -146,7 +146,7 @@ function Root() {
                         setSelectRect(null)
                     }
                 }}
-                className="relative z-10 border-2 border-black grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 -translate-y-0.5 focus:outline-none focus:border-dashed"
+                className="relative z-0 grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 border-2 border-black focus:outline-none focus:border-dashed -translate-y-0.5"
             >
                 {items.map(item => (
                     <div

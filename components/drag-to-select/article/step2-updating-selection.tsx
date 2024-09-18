@@ -100,7 +100,7 @@ function Root() {
                     dragStartPoint.current = null
                     setSelectRect(null)
                 }}
-                className="relative z-0 border-2 border-black grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 -translate-y-0.5"
+                className="relative z-0 grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 border-2 border-black -translate-y-0.5"
             >
                 {items.map(item => (
                     <div

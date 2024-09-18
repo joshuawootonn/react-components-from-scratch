@@ -158,10 +158,7 @@ function Root() {
                         setSelectRect(null)
                     }
                 }}
-                className={clsx(
-                    'relative max-h-96 overflow-auto z-0 grid grid-cols-[repeat(20,min-content)] gap-4 p-4',
-                    'border-2 border-black focus:outline-none focus:border-dashed -translate-y-0.5',
-                )}
+                className="relative max-h-96 overflow-auto z-0 grid grid-cols-[repeat(20,min-content)] gap-4 p-4 border-2 border-black focus:outline-none focus:border-dashed -translate-y-0.5"
             >
                 {items.map(item => (
                     <div

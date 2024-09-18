@@ -6,7 +6,7 @@ function Root() {
     return (
         <div>
             <div className="px-2 border-2 border-black">selectable area</div>
-            <div className="relative z-0 border-2 border-black grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 -translate-y-0.5">
+            <div className="relative z-0 grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 border-2 border-black -translate-y-0.5">
                 {items.map(item => (
                     <div
                         className={clsx(
