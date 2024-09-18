@@ -25,7 +25,6 @@ function Root() {
         {},
     )
     const containerRef = useRef<HTMLDivElement>(null)
-    const inputRef = useRef<HTMLInputElement>(null)
 
     const updateSelectedItems = useCallback(function updateSelectedItems(
         selectionRect: DOMRect,
@@ -107,7 +106,7 @@ function Root() {
                         e.clientY,
                     )
 
-                    if (!isDragging && diagonalLength(nextSelectionRect) < 15)
+                    if (!isDragging && diagonalLength(nextSelectionRect) < 5)
                         return
                     if (
                         !selection?.isCollapsed &&
@@ -122,7 +121,7 @@ function Root() {
 
                     selection?.removeAllRanges()
                     setIsDragging(true)
-                    inputRef.current?.focus()
+                    containerRef.current?.focus()
 
                     setSelectRect(nextSelectionRect)
                     updateSelectedItems(nextSelectionRect)
@@ -138,22 +137,17 @@ function Root() {
                         setIsDragging(false)
                     }
                 }}
-                className="relative z-0 border-2 border-black grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 -translate-y-0.5"
+                tabIndex={-1}
+                onKeyDown={e => {
+                    if (e.key === 'Escape') {
+                        e.preventDefault()
+                        setSelectedItems({})
+                        dragStartPoint.current = null
+                        setSelectRect(null)
+                    }
+                }}
+                className="relative z-10 border-2 border-black grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 -translate-y-0.5 focus:outline-none focus:border-dashed"
             >
-                <input
-                    className="absolute -z-10 opacity-0"
-                    aria-hidden="true"
-                    tabIndex={-1}
-                    ref={inputRef}
-                    onKeyDown={e => {
-                        if (e.key === 'Escape') {
-                            e.preventDefault()
-                            setSelectedItems({})
-                            dragStartPoint.current = null
-                            setSelectRect(null)
-                        }
-                    }}
-                />
                 {items.map(item => (
                     <div
                         data-item={item}

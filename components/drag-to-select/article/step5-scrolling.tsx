@@ -121,16 +121,32 @@ function Root() {
 
                     selection?.removeAllRanges()
                     setIsDragging(true)
+                    containerRef.current?.focus()
 
                     setSelectRect(nextSelectionRect)
                     updateSelectedItems(nextSelectionRect)
                 }}
                 onPointerUp={() => {
-                    dragStartPoint.current = null
-                    setSelectRect(null)
-                    setIsDragging(false)
+                    if (!isDragging) {
+                        setSelectedItems({})
+                        dragStartPoint.current = null
+                        setSelectRect(null)
+                    } else {
+                        dragStartPoint.current = null
+                        setSelectRect(null)
+                        setIsDragging(false)
+                    }
                 }}
-                className="relative z-0 border-2 border-black grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 -translate-y-0.5"
+                tabIndex={-1}
+                onKeyDown={e => {
+                    if (e.key === 'Escape') {
+                        e.preventDefault()
+                        setSelectedItems({})
+                        dragStartPoint.current = null
+                        setSelectRect(null)
+                    }
+                }}
+                className="relative z-10 border-2 border-black grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 -translate-y-0.5 focus:outline-none focus:border-dashed"
             >
                 {items.map(item => (
                     <div
@@ -162,6 +178,6 @@ function Root() {
     )
 }
 
-export function Step3Demo() {
+export function Step5Demo() {
     return <Root />
 }
