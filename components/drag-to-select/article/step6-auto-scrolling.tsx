@@ -1,6 +1,6 @@
 'use client'
 import clsx from 'clsx'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const items = new Array(300).fill(null).map((_, i) => i)
 type Point = { x: number; y: number }
@@ -58,6 +58,63 @@ function Root() {
         setSelectedItems(next)
     },
     [])
+
+    useEffect(() => {
+        if (!isDragging || containerRef.current == null) return
+
+        let handle = requestAnimationFrame(scrollTheLad)
+
+        return () => cancelAnimationFrame(handle)
+
+        function scrollTheLad() {
+            if (
+                currentPointer.current == null ||
+                dragStartPoint.current == null ||
+                containerRef.current == null
+            )
+                return
+
+            const { x, y } = currentPointer.current
+            const containerRect = containerRef.current.getBoundingClientRect()
+            const containerX = x - containerRect.x
+            const containerY = y - containerRect.y
+            const buffer = 20
+
+            const shouldScrollRight = containerRect.width - containerX < buffer
+            const shouldScrollDown = containerRect.height - containerY < buffer
+            const shouldScrollLeft = containerX < buffer
+            const shouldScrollUp = containerY < buffer
+
+            if (
+                !shouldScrollRight &&
+                !shouldScrollDown &&
+                !shouldScrollLeft &&
+                !shouldScrollUp
+            ) {
+                handle = requestAnimationFrame(scrollTheLad)
+                return
+            }
+
+            if (shouldScrollRight) {
+                containerRef.current.scrollBy({
+                    left: buffer - containerRect.width + containerX,
+                })
+            }
+            if (shouldScrollDown) {
+                containerRef.current.scrollBy({
+                    top: buffer - containerRect.height + containerY,
+                })
+            }
+            if (shouldScrollLeft) {
+                containerRef.current.scrollBy({ left: -buffer + containerX })
+            }
+            if (shouldScrollUp) {
+                containerRef.current.scrollBy({ top: -buffer + containerY })
+            }
+
+            handle = requestAnimationFrame(scrollTheLad)
+        }
+    }, [isDragging, updateSelectedItems])
 
     return (
         <div>
@@ -233,6 +290,6 @@ function Root() {
     )
 }
 
-export function Step55Demo() {
+export function Step6Demo() {
     return <Root />
 }
