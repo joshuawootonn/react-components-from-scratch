@@ -6,6 +6,7 @@ import { Step2Demo } from 'components/drag-to-select/article/step2-updating-sele
 import { Step3Demo } from 'components/drag-to-select/article/step3-preventing-text-selection'
 import { Step4Demo } from 'components/drag-to-select/article/step4-deselection'
 import { Step5Demo } from 'components/drag-to-select/article/step5-scrolling'
+import { Step55Demo } from 'components/drag-to-select/article/step5.5-scrolling-with-rect-fix'
 
 const items = new Array(1001).fill(null).map((_, i) => i)
 
@@ -78,6 +79,8 @@ export default function Page() {
             <Step4Demo />
             <h2>Step 5 Scrolling</h2>
             <Step5Demo />
+            <h2>Step 5.5 Scrolling (w/ Selection Rect Updating)</h2>
+            <Step55Demo />
         </div>
     )
 }
