@@ -3,7 +3,6 @@ import clsx from 'clsx'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 const items = new Array(300).fill(null).map((_, i) => i)
-type Point = { x: number; y: number }
 
 function diagonalLength(rect: DOMRect): number {
     return Math.sqrt(Math.pow(rect.width, 2) + Math.pow(rect.height, 2))
@@ -18,8 +17,8 @@ function intersect(rect1: DOMRect, rect2: DOMRect) {
 }
 
 function Root() {
-    const dragStartPoint = useRef<Point | null>()
-    const currentPointer = useRef<Point | null>()
+    const dragStartPoint = useRef<DOMPoint | null>()
+    const currentPointer = useRef<DOMPoint | null>()
     const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
     const [isDragging, setIsDragging] = useState(false)
     const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>(
@@ -175,10 +174,7 @@ function Root() {
                     const y =
                         e.clientY - containerRect.y + e.currentTarget.scrollTop
 
-                    dragStartPoint.current = {
-                        x,
-                        y,
-                    }
+                    dragStartPoint.current = new DOMPoint(x, y)
 
                     e.currentTarget.setPointerCapture(e.pointerId)
                 }}
@@ -228,10 +224,7 @@ function Root() {
                     selection?.removeAllRanges()
                     setIsDragging(true)
                     containerRef.current?.focus()
-                    currentPointer.current = {
-                        x: e.clientX,
-                        y: e.clientY,
-                    }
+                    currentPointer.current = new DOMPoint(e.clientX, e.clientY)
 
                     setSelectRect(nextSelectionRect)
                     updateSelectedItems(nextSelectionRect)

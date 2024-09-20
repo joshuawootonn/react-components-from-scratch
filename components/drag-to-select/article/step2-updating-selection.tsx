@@ -3,7 +3,6 @@ import clsx from 'clsx'
 import { useCallback, useRef, useState } from 'react'
 
 const items = new Array(30).fill(null).map((_, i) => i)
-type Point = { x: number; y: number }
 
 function intersect(rect1: DOMRect, rect2: DOMRect) {
     if (rect1.right < rect2.left || rect2.right < rect1.left) return false
@@ -14,7 +13,7 @@ function intersect(rect1: DOMRect, rect2: DOMRect) {
 }
 
 function Root() {
-    const dragStartPoint = useRef<Point | null>()
+    const dragStartPoint = useRef<DOMPoint | null>()
     const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
     const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>(
         {},
@@ -72,10 +71,7 @@ function Root() {
                     const x = e.clientX - containerRect.x
                     const y = e.clientY - containerRect.y
 
-                    dragStartPoint.current = {
-                        x,
-                        y,
-                    }
+                    dragStartPoint.current = new DOMPoint(x, y)
                 }}
                 onPointerMove={e => {
                     if (dragStartPoint.current == null) return

@@ -3,10 +3,9 @@ import clsx from 'clsx'
 import { useRef, useState } from 'react'
 
 const items = new Array(30).fill(null).map((_, i) => i)
-type Point = { x: number; y: number }
 
 function Root() {
-    const dragStartPoint = useRef<Point | null>()
+    const dragStartPoint = useRef<DOMPoint | null>()
     const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
 
     return (
@@ -20,10 +19,7 @@ function Root() {
                     const x = e.clientX - containerRect.x
                     const y = e.clientY - containerRect.y
 
-                    dragStartPoint.current = {
-                        x,
-                        y,
-                    }
+                    dragStartPoint.current = new DOMPoint(x, y)
                 }}
                 onPointerMove={e => {
                     if (dragStartPoint.current == null) return

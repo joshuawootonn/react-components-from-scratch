@@ -30,13 +30,11 @@ function shallowEqual(x: Record<string, boolean>, y: Record<string, boolean>) {
     )
 }
 
-type Point = { x: number; y: number }
-
 const SelectedItemContext = createContext<Record<string, boolean>>({})
 
 export function Root({ children }: { children?: ReactNode }) {
-    const dragStartPoint = useRef<Point | null>()
-    const currentPointer = useRef<Point | null>(null)
+    const dragStartPoint = useRef<DOMPoint | null>()
+    const currentPointer = useRef<DOMPoint | null>(null)
     const [isDragging, setIsDragging] = useState(false)
     const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
     const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>(
@@ -183,16 +181,12 @@ export function Root({ children }: { children?: ReactNode }) {
                 onPointerDown={function (e) {
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
-                    dragStartPoint.current = {
-                        x:
-                            e.clientX -
+                    dragStartPoint.current = new DOMPoint(
+                        e.clientX -
                             containerRect.x +
                             e.currentTarget.scrollLeft,
-                        y:
-                            e.clientY -
-                            containerRect.y +
-                            e.currentTarget.scrollTop,
-                    }
+                        e.clientY - containerRect.y + e.currentTarget.scrollTop,
+                    )
 
                     e.currentTarget.setPointerCapture(e.pointerId)
                 }}
@@ -237,10 +231,7 @@ export function Root({ children }: { children?: ReactNode }) {
 
                     selection?.removeAllRanges()
 
-                    currentPointer.current = {
-                        x: e.clientX,
-                        y: e.clientY,
-                    }
+                    currentPointer.current = new DOMPoint(e.clientX, e.clientY)
 
                     setSelectRect(nextSelectionRect)
                     updateSelectedItems(nextSelectionRect)
