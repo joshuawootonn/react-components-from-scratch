@@ -11,8 +11,55 @@ import {
     useCallback,
 } from 'react'
 
-function diagonalLength(rect: DOMRect): number {
-    return Math.sqrt(Math.pow(rect.width, 2) + Math.pow(rect.height, 2))
+class DOMVector {
+    x: number
+    y: number
+    magnitudeX: number
+    magnitudeY: number
+
+    constructor(x: number, y: number, magnitudeX: number, magnitudeY: number) {
+        this.x = x
+        this.y = y
+        this.magnitudeX = magnitudeX
+        this.magnitudeY = magnitudeY
+    }
+
+    getDiagonalLength(): number {
+        return Math.sqrt(
+            Math.pow(this.magnitudeX, 2) + Math.pow(this.magnitudeY, 2),
+        )
+    }
+
+    toDOMRect() {
+        return new DOMRect(
+            Math.min(this.x, this.x + this.magnitudeX),
+            Math.min(this.y, this.y + this.magnitudeY),
+            Math.abs(this.magnitudeX),
+            Math.abs(this.magnitudeY),
+        )
+    }
+
+    toTerminalPoint(): DOMPoint {
+        return new DOMPoint(this.x + this.magnitudeX, this.y + this.magnitudeY)
+    }
+
+    add(vector: DOMVector): DOMVector {
+        return new DOMVector(
+            this.x + vector.x,
+            this.y + vector.y,
+            this.magnitudeX + vector.magnitudeX,
+            this.magnitudeY + vector.magnitudeY,
+        )
+    }
+
+    clamp(vector: DOMRect): DOMVector {
+        return new DOMVector(
+            this.x,
+            this.y,
+            Math.min(vector.width - this.x, this.magnitudeX),
+            Math.min(vector.height - this.y, this.magnitudeY),
+        )
+    }
 }
 
 function intersect(rect1: DOMRect, rect2: DOMRect): boolean {
@@ -33,17 +80,20 @@ function shallowEqual(x: Record<string, boolean>, y: Record<string, boolean>) {
 const SelectedItemContext = createContext<Record<string, boolean>>({})
 
 export function Root({ children }: { children?: ReactNode }) {
-    const dragStartPoint = useRef<DOMPoint | null>()
-    const currentPointer = useRef<DOMPoint | null>(null)
     const [isDragging, setIsDragging] = useState(false)
-    const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
+
+    const [dragVector, setDragVector] = useState<DOMVector | null>(null)
+    const [scrollVector, setScrollVector] = useState<DOMVector | null>(null)
     const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>(
         {},
     )
     const containerRef = useRef<HTMLDivElement>(null)
 
     const updateSelectedItems = useCallback(
-        function updateSelectedItems(selectionRect: DOMRect) {
+        function updateSelectedItems(
+            dragVector: DOMVector,
+            scrollVector: DOMVector,
+        ) {
             if (containerRef.current == null) return
             const next: Record<string, boolean> = {}
             const containerRect = containerRef.current.getBoundingClientRect()
@@ -63,7 +113,13 @@ export function Root({ children }: { children?: ReactNode }) {
                     itemRect.height,
                 )
 
-                if (!intersect(selectionRect, translatedItemRect)) return
+                if (
+                    !intersect(
+                        dragVector.add(scrollVector).toDOMRect(),
+                        translatedItemRect,
+                    )
+                )
+                    return
 
                 if (el.dataset.item && typeof el.dataset.item === 'string') {
                     next[el.dataset.item] = true
@@ -83,134 +139,130 @@ export function Root({ children }: { children?: ReactNode }) {
 
         return () => cancelAnimationFrame(handle)
 
+        function clamp(num: number, min: number, max: number) {
+            return Math.min(Math.max(num, min), max)
+        }
+
         function scrollTheLad() {
-            if (
-                currentPointer.current == null ||
-                dragStartPoint.current == null ||
-                containerRef.current == null
-            )
-                return
+            if (containerRef.current == null || dragVector == null) return
 
-            const { x, y } = currentPointer.current
+            const currentPointer = dragVector.toTerminalPoint()
             const containerRect = containerRef.current.getBoundingClientRect()
-            const xPosition = x - containerRect.x
-            const yPosition = y - containerRect.y
 
-            const shouldScrollRight = containerRect.width - xPosition < 20
-            const shouldScrollDown = containerRect.height - yPosition < 20
-            const shouldScrollLeft = xPosition < 20
-            const shouldScrollUp = yPosition < 20
+            const shouldScrollRight =
+                containerRect.width - currentPointer.x < 20
+            const shouldScrollLeft = currentPointer.x < 20
+            const shouldScrollDown =
+                containerRect.height - currentPointer.y < 20
+            const shouldScrollUp = currentPointer.y < 20
 
-            if (
-                !shouldScrollRight &&
-                !shouldScrollDown &&
-                !shouldScrollLeft &&
-                !shouldScrollUp
-            ) {
+            const left = shouldScrollRight
+                ? clamp(20 - containerRect.width + currentPointer.x, 0, 20)
+                : shouldScrollLeft
+                ? -1 * clamp(20 - currentPointer.x, 0, 20)
+                : undefined
+
+            const top = shouldScrollDown
+                ? clamp(20 - containerRect.height + currentPointer.y, 0, 20)
+                : shouldScrollUp
+                ? -1 * clamp(20 - currentPointer.y, 0, 20)
+                : undefined
+
+            if (top === undefined && left === undefined) {
                 handle = requestAnimationFrame(scrollTheLad)
                 return
             }
 
-            if (shouldScrollRight) {
-                containerRef.current.scrollBy({
-                    left: 20 - containerRect.width + xPosition,
-                })
-            } else if (shouldScrollDown) {
-                containerRef.current.scrollBy({
-                    top: 20 - containerRect.height + yPosition,
-                })
-            } else if (shouldScrollLeft) {
-                containerRef.current.scrollBy({ left: -20 + xPosition })
-            } else if (shouldScrollUp) {
-                containerRef.current.scrollBy({ top: -20 + yPosition })
-            }
+            containerRef.current.scrollBy({
+                left,
+                top,
+            })
 
             handle = requestAnimationFrame(scrollTheLad)
         }
-    }, [isDragging, updateSelectedItems])
+    }, [isDragging, dragVector, updateSelectedItems])
+
+    const selectionRect =
+        dragVector && scrollVector && containerRef.current
+            ? dragVector
+                  .add(scrollVector)
+                  .clamp(
+                      new DOMRect(
+                          0,
+                          0,
+                          containerRef.current.scrollWidth,
+                          containerRef.current.scrollHeight,
+                      ),
+                  )
+                  .toDOMRect()
+            : null
 
     return (
         <div>
-            <div className="flex flex-row justify-between">
-                <div className="px-2 border-2 border-black">
+            <div className="relative z-10 flex flex-row justify-between">
+                <div className="px-2 border-2 border-black bg-white">
                     selectable area
                 </div>
                 {Object.keys(selectedItems).length > 0 && (
-                    <div className="px-2 border-2 border-black">
+                    <div className="px-2 border-2 border-black bg-white">
                         count: {Object.keys(selectedItems).length}
                     </div>
                 )}
             </div>
             <div
-                className="relative z-0 border-2 border-black grid grid-cols-[repeat(20,min-content)] gap-4 p-4  max-h-96 overflow-auto -translate-y-0.5"
+                className="relative z-0 border-2 border-black grid grid-cols-[repeat(20,min-content)] gap-4 p-4 max-h-96 overflow-auto focus:outline-none focus:border-dashed -translate-y-0.5"
                 ref={containerRef}
                 onScroll={function (e) {
-                    if (
-                        dragStartPoint.current == null ||
-                        currentPointer.current == null ||
-                        selectionRect == null
-                    )
-                        return
-                    const containerRect =
-                        e.currentTarget.getBoundingClientRect()
+                    if (dragVector == null || scrollVector == null) return
 
-                    const { scrollHeight, scrollWidth, scrollTop, scrollLeft } =
-                        e.currentTarget
+                    const { scrollLeft, scrollTop } = e.currentTarget
 
-                    const scrollXPosition =
-                        currentPointer.current.x - containerRect.x + scrollLeft
-                    const scrollYPosition =
-                        currentPointer.current.y - containerRect.y + scrollTop
-
-                    const nextSelectionRect = new DOMRect(
-                        Math.min(scrollXPosition, dragStartPoint.current.x),
-                        Math.min(scrollYPosition, dragStartPoint.current.y),
-                        Math.abs(
-                            Math.min(scrollXPosition, scrollWidth) -
-                                dragStartPoint.current.x,
-                        ),
-                        Math.abs(
-                            Math.min(scrollYPosition, scrollHeight) -
-                                dragStartPoint.current.y,
-                        ),
+                    const nextScrollVector = new DOMVector(
+                        scrollVector.x,
+                        scrollVector.y,
+                        scrollLeft - scrollVector.x,
+                        scrollTop - scrollVector.y,
                     )
 
-                    setSelectRect(nextSelectionRect)
-                    updateSelectedItems(nextSelectionRect)
+                    setScrollVector(nextScrollVector)
+                    updateSelectedItems(dragVector, nextScrollVector)
                 }}
                 onPointerDown={function (e) {
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
-                    dragStartPoint.current = new DOMPoint(
-                        e.clientX -
-                            containerRect.x +
+                    setDragVector(
+                        new DOMVector(
+                            e.clientX - containerRect.x,
+                            e.clientY - containerRect.y,
+                            0,
+                            0,
+                        ),
+                    )
+                    setScrollVector(
+                        new DOMVector(
                             e.currentTarget.scrollLeft,
-                        e.clientY - containerRect.y + e.currentTarget.scrollTop,
+                            e.currentTarget.scrollTop,
+                            0,
+                            0,
+                        ),
                     )
 
                     e.currentTarget.setPointerCapture(e.pointerId)
                 }}
                 onPointerMove={function (e) {
-                    if (dragStartPoint.current == null) return
-                    const { scrollWidth, scrollHeight } = e.currentTarget
+                    if (dragVector == null || scrollVector == null) return
+
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 
-                    const scrollXPosition =
-                        e.clientX - containerRect.x + e.currentTarget.scrollLeft
-                    const scrollYPosition =
-                        e.clientY - containerRect.y + e.currentTarget.scrollTop
-                    const nextSelectionRect = new DOMRect(
-                        Math.min(scrollXPosition, dragStartPoint.current.x),
-                        Math.min(scrollYPosition, dragStartPoint.current.y),
-                        Math.abs(
-                            Math.min(scrollXPosition, scrollWidth) -
-                                dragStartPoint.current.x,
-                        ),
-                        Math.abs(
-                            Math.min(scrollYPosition, scrollHeight) -
-                                dragStartPoint.current.y,
-                        ),
+                    const x = e.clientX - containerRect.x
+                    const y = e.clientY - containerRect.y
+
+                    const nextDragVector = new DOMVector(
+                        dragVector.x,
+                        dragVector.y,
+                        x - dragVector.x,
+                        y - dragVector.y,
                     )
                     const selection = document.getSelection()
                     const elementFromPoint = document.elementFromPoint(
@@ -218,42 +270,50 @@ export function Root({ children }: { children?: ReactNode }) {
                         e.clientY,
                     )
 
-                    if (!isDragging && diagonalLength(nextSelectionRect) < 10)
+                    if (!isDragging && nextDragVector.getDiagonalLength() < 10)
                         return
                     if (
                         !selection?.isCollapsed &&
                         selection?.focusNode?.textContent ===
                             elementFromPoint?.textContent
-                    )
-                        return (dragStartPoint.current = null)
+                    ) {
+                        setDragVector(null)
+                        return
+                    }
 
                     setIsDragging(true)
 
                     selection?.removeAllRanges()
 
-                    currentPointer.current = new DOMPoint(e.clientX, e.clientY)
-
-                    setSelectRect(nextSelectionRect)
-                    updateSelectedItems(nextSelectionRect)
+                    setDragVector(nextDragVector)
+                    updateSelectedItems(nextDragVector, scrollVector)
                 }}
                 onPointerUp={function () {
                     if (!isDragging) {
                         setSelectedItems({})
-                        dragStartPoint.current = null
-                        setSelectRect(null)
-                        currentPointer.current = null
+                        setDragVector(null)
+                        setScrollVector(null)
                     } else {
-                        dragStartPoint.current = null
-                        setSelectRect(null)
+                        setDragVector(null)
+                        setScrollVector(null)
                         setIsDragging(false)
-                        currentPointer.current = null
+                    }
+                }}
+                tabIndex={-1}
+                onKeyDown={e => {
+                    if (e.key === 'Escape') {
+                        e.preventDefault()
+                        setSelectedItems({})
+                        setDragVector(null)
+                        setScrollVector(null)
+                        setIsDragging(false)
                     }
                 }}
             >
                 <SelectedItemContext.Provider value={selectedItems}>
                     {children}
                 </SelectedItemContext.Provider>
-                {selectionRect && (
+                {selectionRect && isDragging && (
                     <div
                         className="absolute border-black border-2 bg-black/30"
                         style={{
