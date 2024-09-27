@@ -4,8 +4,42 @@ import { useCallback, useRef, useState } from 'react'
 
 const items = new Array(300).fill(null).map((_, i) => i)
 
-function diagonalLength(rect: DOMRect): number {
-    return Math.sqrt(Math.pow(rect.width, 2) + Math.pow(rect.height, 2))
+class DOMVector {
+    constructor(
+        readonly x: number,
+        readonly y: number,
+        readonly magnitudeX: number,
+        readonly magnitudeY: number,
+    ) {
+        this.x = x
+        this.y = y
+        this.magnitudeX = magnitudeX
+        this.magnitudeY = magnitudeY
+    }
+
+    getDiagonalLength(): number {
+        return Math.sqrt(
+            Math.pow(this.magnitudeX, 2) + Math.pow(this.magnitudeY, 2),
+        )
+    }
+
+    toDOMRect(): DOMRect {
+        return new DOMRect(
+            Math.min(this.x, this.x + this.magnitudeX),
+            Math.min(this.y, this.y + this.magnitudeY),
+            Math.abs(this.magnitudeX),
+            Math.abs(this.magnitudeY),
+        )
+    }
+
+    add(vector: DOMVector): DOMVector {
+        return new DOMVector(
+            this.x + vector.x,
+            this.y + vector.y,
+            this.magnitudeX + vector.magnitudeX,
+            this.magnitudeY + vector.magnitudeY,
+        )
+    }
 }
 
 function intersect(rect1: DOMRect, rect2: DOMRect) {
@@ -17,8 +51,8 @@ function intersect(rect1: DOMRect, rect2: DOMRect) {
 }
 
 function Root() {
-    const dragStartPoint = useRef<DOMPoint | null>()
-    const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
+    const [dragVector, setDragVector] = useState<DOMVector | null>(null)
+    const [scrollVector, setScrollVector] = useState<DOMVector | null>(null)
     const [isDragging, setIsDragging] = useState(false)
     const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>(
         {},
@@ -26,7 +60,8 @@ function Root() {
     const containerRef = useRef<HTMLDivElement>(null)
 
     const updateSelectedItems = useCallback(function updateSelectedItems(
-        selectionRect: DOMRect,
+        dragVector: DOMVector,
+        scrollVector: DOMVector,
     ) {
         if (containerRef.current == null) return
         const next: Record<string, boolean> = {}
@@ -46,7 +81,13 @@ function Root() {
                 itemRect.width,
                 itemRect.height,
             )
-            if (!intersect(selectionRect, translatedItemRect)) return
+            if (
+                !intersect(
+                    dragVector.add(scrollVector).toDOMRect(),
+                    translatedItemRect,
+                )
+            )
+                return
 
             if (el.dataset.item && typeof el.dataset.item === 'string') {
                 next[el.dataset.item] = true
@@ -57,55 +98,74 @@ function Root() {
     },
     [])
 
+    const selectionRect =
+        dragVector && scrollVector && isDragging
+            ? dragVector.add(scrollVector).toDOMRect()
+            : null
+
     return (
         <div>
-            <div className="flex flex-row justify-between">
-                <div className="px-2 border-2 border-black">
+            <div className="relative z-10 flex flex-row justify-between">
+                <div className="px-2 border-2 border-black bg-white">
                     selectable area
                 </div>
                 {Object.keys(selectedItems).length > 0 && (
-                    <div className="px-2 border-2 border-black">
+                    <div className="px-2 border-2 border-black bg-white">
                         count: {Object.keys(selectedItems).length}
                     </div>
                 )}
             </div>
             <div
                 ref={containerRef}
+                onScroll={e => {
+                    if (dragVector == null || scrollVector == null) return
+
+                    const { scrollLeft, scrollTop } = e.currentTarget
+
+                    const nextScrollVector = new DOMVector(
+                        scrollVector.x,
+                        scrollVector.y,
+                        scrollLeft - scrollVector.x,
+                        scrollTop - scrollVector.y,
+                    )
+
+                    setScrollVector(nextScrollVector)
+                    updateSelectedItems(dragVector, nextScrollVector)
+                }}
                 onPointerDown={e => {
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 
-                    const x =
-                        e.clientX - containerRect.x + e.currentTarget.scrollLeft
-                    const y =
-                        e.clientY - containerRect.y + e.currentTarget.scrollTop
-
-                    dragStartPoint.current = new DOMPoint(x, y)
+                    setDragVector(
+                        new DOMVector(
+                            e.clientX - containerRect.x,
+                            e.clientY - containerRect.y,
+                            0,
+                            0,
+                        ),
+                    )
+                    setScrollVector(
+                        new DOMVector(
+                            e.currentTarget.scrollLeft,
+                            e.currentTarget.scrollTop,
+                            0,
+                            0,
+                        ),
+                    )
 
                     e.currentTarget.setPointerCapture(e.pointerId)
                 }}
                 onPointerMove={e => {
-                    if (dragStartPoint.current == null) return
+                    if (dragVector == null || scrollVector == null) return
 
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 
-                    const x =
-                        e.clientX - containerRect.x + e.currentTarget.scrollLeft
-                    const y =
-                        e.clientY - containerRect.y + e.currentTarget.scrollTop
-
-                    const nextSelectionRect = new DOMRect(
-                        Math.min(x, dragStartPoint.current.x),
-                        Math.min(y, dragStartPoint.current.y),
-                        Math.abs(
-                            Math.min(x, e.currentTarget.scrollWidth) -
-                                dragStartPoint.current.x,
-                        ),
-                        Math.abs(
-                            Math.min(y, e.currentTarget.scrollHeight) -
-                                dragStartPoint.current.y,
-                        ),
+                    const nextDragVector = new DOMVector(
+                        dragVector.x,
+                        dragVector.y,
+                        e.clientX - containerRect.x - dragVector.x,
+                        e.clientY - containerRect.y - dragVector.y,
                     )
 
                     const selection = document.getSelection()
@@ -114,34 +174,30 @@ function Root() {
                         e.clientY,
                     )
 
-                    if (!isDragging && diagonalLength(nextSelectionRect) < 5)
+                    if (!isDragging && nextDragVector.getDiagonalLength() < 10)
                         return
                     if (
                         !selection?.isCollapsed &&
                         selection?.focusNode?.textContent ===
                             elementFromPoint?.textContent
                     ) {
-                        setIsDragging(false)
-                        setSelectRect(null)
-                        dragStartPoint.current = null
+                        setDragVector(null)
                         return
                     }
 
-                    selection?.removeAllRanges()
                     setIsDragging(true)
-                    containerRef.current?.focus()
 
-                    setSelectRect(nextSelectionRect)
-                    updateSelectedItems(nextSelectionRect)
+                    selection?.removeAllRanges()
+
+                    setDragVector(nextDragVector)
+                    updateSelectedItems(nextDragVector, scrollVector)
                 }}
                 onPointerUp={() => {
                     if (!isDragging) {
                         setSelectedItems({})
-                        dragStartPoint.current = null
-                        setSelectRect(null)
+                        setDragVector(null)
                     } else {
-                        dragStartPoint.current = null
-                        setSelectRect(null)
+                        setDragVector(null)
                         setIsDragging(false)
                     }
                 }}
@@ -150,8 +206,7 @@ function Root() {
                     if (e.key === 'Escape') {
                         e.preventDefault()
                         setSelectedItems({})
-                        dragStartPoint.current = null
-                        setSelectRect(null)
+                        setDragVector(null)
                     }
                 }}
                 className={clsx(

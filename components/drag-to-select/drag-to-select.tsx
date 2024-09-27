@@ -12,12 +12,12 @@ import {
 } from 'react'
 
 class DOMVector {
-    x: number
-    y: number
-    magnitudeX: number
-    magnitudeY: number
-
-    constructor(x: number, y: number, magnitudeX: number, magnitudeY: number) {
+    constructor(
+        readonly x: number,
+        readonly y: number,
+        readonly magnitudeX: number,
+        readonly magnitudeY: number,
+    ) {
         this.x = x
         this.y = y
         this.magnitudeX = magnitudeX
@@ -30,7 +30,7 @@ class DOMVector {
         )
     }
 
-    toDOMRect() {
+    toDOMRect(): DOMRect {
         return new DOMRect(
             Math.min(this.x, this.x + this.magnitudeX),
             Math.min(this.y, this.y + this.magnitudeY),
@@ -255,14 +255,11 @@ export function Root({ children }: { children?: ReactNode }) {
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 
-                    const x = e.clientX - containerRect.x
-                    const y = e.clientY - containerRect.y
-
                     const nextDragVector = new DOMVector(
                         dragVector.x,
                         dragVector.y,
-                        x - dragVector.x,
-                        y - dragVector.y,
+                        e.clientX - containerRect.x - dragVector.x,
+                        e.clientY - containerRect.y - dragVector.y,
                     )
                     const selection = document.getSelection()
                     const elementFromPoint = document.elementFromPoint(

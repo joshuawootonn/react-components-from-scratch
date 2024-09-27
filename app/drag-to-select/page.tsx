@@ -2,11 +2,12 @@ import * as DragToSelect from 'components/drag-to-select'
 import Link from 'next/link'
 import { Step0Demo } from 'components/drag-to-select/article/step0-basic-component'
 import { Step1Demo } from 'components/drag-to-select/article/step1-drag-rectangle'
+import { Step15Demo } from 'components/drag-to-select/article/step1.5-drag-rectangle-with-vector'
 import { Step2Demo } from 'components/drag-to-select/article/step2-updating-selection'
 import { Step3Demo } from 'components/drag-to-select/article/step3-preventing-text-selection'
 import { Step4Demo } from 'components/drag-to-select/article/step4-deselection'
 import { Step5Demo } from 'components/drag-to-select/article/step5-scrolling'
-import { Step55Demo } from 'components/drag-to-select/article/step5.5-scrolling-with-rect-fix'
+import { Step55Demo } from 'components/drag-to-select/article/step5.5-scrolling-with-clamp'
 import { Step6Demo } from 'components/drag-to-select/article/step6-auto-scrolling'
 
 const items = new Array(1001).fill(null).map((_, i) => i)
@@ -69,6 +70,10 @@ export default function Page() {
             <Step0Demo />
             <h2>Step 1 is drawing a selection rectangle on drag</h2>
             <Step1Demo />
+            <h2>
+                Step 1.5 is drawing a selection rectangle on drag with a vector
+            </h2>
+            <Step15Demo />
             <h2>
                 Step 2 updating state based on intersection of rectangles and
                 the selection rectangle

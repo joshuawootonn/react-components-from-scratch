@@ -1,11 +1,10 @@
 'use client'
 import clsx from 'clsx'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 const items = new Array(30).fill(null).map((_, i) => i)
 
 function Root() {
-    const dragStartPoint = useRef<DOMPoint | null>()
     const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
 
     return (
@@ -19,10 +18,11 @@ function Root() {
                     const x = e.clientX - containerRect.x
                     const y = e.clientY - containerRect.y
 
-                    dragStartPoint.current = new DOMPoint(x, y)
+                    const nextSelectionRect = new DOMRect(x, y, 0, 0)
+                    setSelectRect(nextSelectionRect)
                 }}
                 onPointerMove={e => {
-                    if (dragStartPoint.current == null) return
+                    if (selectionRect == null) return
 
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
@@ -31,16 +31,15 @@ function Root() {
                     const y = e.clientY - containerRect.y
 
                     const nextSelectionRect = new DOMRect(
-                        Math.min(x, dragStartPoint.current.x),
-                        Math.min(y, dragStartPoint.current.y),
-                        Math.abs(x - dragStartPoint.current.x),
-                        Math.abs(y - dragStartPoint.current.y),
+                        Math.min(x, selectionRect.x),
+                        Math.min(y, selectionRect.y),
+                        Math.abs(x - selectionRect.x),
+                        Math.abs(y - selectionRect.y),
                     )
 
                     setSelectRect(nextSelectionRect)
                 }}
                 onPointerUp={() => {
-                    dragStartPoint.current = null
                     setSelectRect(null)
                 }}
                 className="relative z-0 grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 border-2 border-black -translate-y-0.5"

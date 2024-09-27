@@ -4,8 +4,33 @@ import { useCallback, useRef, useState } from 'react'
 
 const items = new Array(30).fill(null).map((_, i) => i)
 
-function diagonalLength(rect: DOMRect): number {
-    return Math.sqrt(Math.pow(rect.width, 2) + Math.pow(rect.height, 2))
+class DOMVector {
+    constructor(
+        readonly x: number,
+        readonly y: number,
+        readonly magnitudeX: number,
+        readonly magnitudeY: number,
+    ) {
+        this.x = x
+        this.y = y
+        this.magnitudeX = magnitudeX
+        this.magnitudeY = magnitudeY
+    }
+
+    getDiagonalLength(): number {
+        return Math.sqrt(
+            Math.pow(this.magnitudeX, 2) + Math.pow(this.magnitudeY, 2),
+        )
+    }
+
+    toDOMRect(): DOMRect {
+        return new DOMRect(
+            Math.min(this.x, this.x + this.magnitudeX),
+            Math.min(this.y, this.y + this.magnitudeY),
+            Math.abs(this.magnitudeX),
+            Math.abs(this.magnitudeY),
+        )
+    }
 }
 
 function intersect(rect1: DOMRect, rect2: DOMRect) {
@@ -17,8 +42,7 @@ function intersect(rect1: DOMRect, rect2: DOMRect) {
 }
 
 function Root() {
-    const dragStartPoint = useRef<DOMPoint | null>()
-    const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
+    const [dragVector, setDragVector] = useState<DOMVector | null>(null)
     const [isDragging, setIsDragging] = useState(false)
     const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>(
         {},
@@ -26,7 +50,7 @@ function Root() {
     const containerRef = useRef<HTMLDivElement>(null)
 
     const updateSelectedItems = useCallback(function updateSelectedItems(
-        selectionRect: DOMRect,
+        dragVector: DOMVector,
     ) {
         if (containerRef.current == null) return
         const next: Record<string, boolean> = {}
@@ -44,7 +68,7 @@ function Root() {
                 itemRect.width,
                 itemRect.height,
             )
-            if (!intersect(selectionRect, translatedItemRect)) return
+            if (!intersect(dragVector.toDOMRect(), translatedItemRect)) return
 
             if (el.dataset.item && typeof el.dataset.item === 'string') {
                 next[el.dataset.item] = true
@@ -55,14 +79,17 @@ function Root() {
     },
     [])
 
+    const selectionRect =
+        dragVector && isDragging ? dragVector.toDOMRect() : null
+
     return (
         <div>
-            <div className="flex flex-row justify-between">
-                <div className="px-2 border-2 border-black">
+            <div className="relative z-10 flex flex-row justify-between">
+                <div className="px-2 border-2 border-black bg-white">
                     selectable area
                 </div>
                 {Object.keys(selectedItems).length > 0 && (
-                    <div className="px-2 border-2 border-black">
+                    <div className="px-2 border-2 border-black bg-white">
                         count: {Object.keys(selectedItems).length}
                     </div>
                 )}
@@ -73,27 +100,28 @@ function Root() {
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 
-                    const x = e.clientX - containerRect.x
-                    const y = e.clientY - containerRect.y
-
-                    dragStartPoint.current = new DOMPoint(x, y)
+                    setDragVector(
+                        new DOMVector(
+                            e.clientX - containerRect.x,
+                            e.clientY - containerRect.y,
+                            0,
+                            0,
+                        ),
+                    )
 
                     e.currentTarget.setPointerCapture(e.pointerId)
                 }}
                 onPointerMove={e => {
-                    if (dragStartPoint.current == null) return
+                    if (dragVector == null) return
 
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 
-                    const x = e.clientX - containerRect.x
-                    const y = e.clientY - containerRect.y
-
-                    const nextSelectionRect = new DOMRect(
-                        Math.min(x, dragStartPoint.current.x),
-                        Math.min(y, dragStartPoint.current.y),
-                        Math.abs(x - dragStartPoint.current.x),
-                        Math.abs(y - dragStartPoint.current.y),
+                    const nextDragVector = new DOMVector(
+                        dragVector.x,
+                        dragVector.y,
+                        e.clientX - containerRect.x - dragVector.x,
+                        e.clientY - containerRect.y - dragVector.y,
                     )
 
                     const selection = document.getSelection()
@@ -102,28 +130,26 @@ function Root() {
                         e.clientY,
                     )
 
-                    if (!isDragging && diagonalLength(nextSelectionRect) < 5)
+                    if (!isDragging && nextDragVector.getDiagonalLength() < 10)
                         return
                     if (
                         !selection?.isCollapsed &&
                         selection?.focusNode?.textContent ===
                             elementFromPoint?.textContent
                     ) {
-                        setIsDragging(false)
-                        setSelectRect(null)
-                        dragStartPoint.current = null
+                        setDragVector(null)
                         return
                     }
 
-                    selection?.removeAllRanges()
                     setIsDragging(true)
 
-                    setSelectRect(nextSelectionRect)
-                    updateSelectedItems(nextSelectionRect)
+                    selection?.removeAllRanges()
+
+                    setDragVector(nextDragVector)
+                    updateSelectedItems(nextDragVector)
                 }}
                 onPointerUp={() => {
-                    dragStartPoint.current = null
-                    setSelectRect(null)
+                    setDragVector(null)
                     setIsDragging(false)
                 }}
                 className="relative z-0 grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 border-2 border-black -translate-y-0.5"

@@ -4,6 +4,29 @@ import { useCallback, useRef, useState } from 'react'
 
 const items = new Array(30).fill(null).map((_, i) => i)
 
+class DOMVector {
+    constructor(
+        readonly x: number,
+        readonly y: number,
+        readonly magnitudeX: number,
+        readonly magnitudeY: number,
+    ) {
+        this.x = x
+        this.y = y
+        this.magnitudeX = magnitudeX
+        this.magnitudeY = magnitudeY
+    }
+
+    toDOMRect(): DOMRect {
+        return new DOMRect(
+            Math.min(this.x, this.x + this.magnitudeX),
+            Math.min(this.y, this.y + this.magnitudeY),
+            Math.abs(this.magnitudeX),
+            Math.abs(this.magnitudeY),
+        )
+    }
+}
+
 function intersect(rect1: DOMRect, rect2: DOMRect) {
     if (rect1.right < rect2.left || rect2.right < rect1.left) return false
 
@@ -13,15 +36,15 @@ function intersect(rect1: DOMRect, rect2: DOMRect) {
 }
 
 function Root() {
-    const dragStartPoint = useRef<DOMPoint | null>()
-    const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
+    const [dragVector, setDragVector] = useState<DOMVector | null>(null)
+
     const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>(
         {},
     )
     const containerRef = useRef<HTMLDivElement>(null)
 
     const updateSelectedItems = useCallback(function updateSelectedItems(
-        selectionRect: DOMRect,
+        dragVector: DOMVector,
     ) {
         if (containerRef.current == null) return
         const next: Record<string, boolean> = {}
@@ -39,7 +62,7 @@ function Root() {
                 itemRect.width,
                 itemRect.height,
             )
-            if (!intersect(selectionRect, translatedItemRect)) return
+            if (!intersect(dragVector.toDOMRect(), translatedItemRect)) return
 
             if (el.dataset.item && typeof el.dataset.item === 'string') {
                 next[el.dataset.item] = true
@@ -49,6 +72,8 @@ function Root() {
         setSelectedItems(next)
     },
     [])
+
+    const selectionRect = dragVector ? dragVector.toDOMRect() : null
 
     return (
         <div>
@@ -68,33 +93,33 @@ function Root() {
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 
-                    const x = e.clientX - containerRect.x
-                    const y = e.clientY - containerRect.y
-
-                    dragStartPoint.current = new DOMPoint(x, y)
+                    setDragVector(
+                        new DOMVector(
+                            e.clientX - containerRect.x,
+                            e.clientY - containerRect.y,
+                            0,
+                            0,
+                        ),
+                    )
                 }}
                 onPointerMove={e => {
-                    if (dragStartPoint.current == null) return
+                    if (dragVector == null) return
 
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 
-                    const x = e.clientX - containerRect.x
-                    const y = e.clientY - containerRect.y
-
-                    const nextSelectionRect = new DOMRect(
-                        Math.min(x, dragStartPoint.current.x),
-                        Math.min(y, dragStartPoint.current.y),
-                        Math.abs(x - dragStartPoint.current.x),
-                        Math.abs(y - dragStartPoint.current.y),
+                    const nextDragVector = new DOMVector(
+                        dragVector.x,
+                        dragVector.y,
+                        e.clientX - containerRect.x - dragVector.x,
+                        e.clientY - containerRect.y - dragVector.y,
                     )
 
-                    setSelectRect(nextSelectionRect)
-                    updateSelectedItems(nextSelectionRect)
+                    setDragVector(nextDragVector)
+                    updateSelectedItems(nextDragVector)
                 }}
                 onPointerUp={() => {
-                    dragStartPoint.current = null
-                    setSelectRect(null)
+                    setDragVector(null)
                 }}
                 className="relative z-0 grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 border-2 border-black -translate-y-0.5"
             >
