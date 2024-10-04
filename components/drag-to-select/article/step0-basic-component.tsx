@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 
-const items = new Array(30).fill(null).map((_, i) => i)
+const items = new Array(30).fill(null).map((_, i) => i + '')
 
 function Root() {
     return (

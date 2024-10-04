@@ -10,7 +10,7 @@ import { Step5Demo } from 'components/drag-to-select/article/step5-scrolling'
 import { Step55Demo } from 'components/drag-to-select/article/step5.5-scrolling-with-clamp'
 import { Step6Demo } from 'components/drag-to-select/article/step6-auto-scrolling'
 
-const items = new Array(1001).fill(null).map((_, i) => i)
+const items = new Array(1001).fill(null).map((_, i) => `${i}`)
 
 export default function Page() {
     return (
@@ -56,7 +56,7 @@ export default function Page() {
             </p>
             <DragToSelect.Root>
                 {items.map(item => (
-                    <DragToSelect.Item key={item} id={item + ''}>
+                    <DragToSelect.Item key={item} id={item}>
                         {item}
                     </DragToSelect.Item>
                 ))}
@@ -85,7 +85,7 @@ export default function Page() {
             <Step4Demo />
             <h2>Step 5 Scrolling</h2>
             <Step5Demo />
-            <h2>Step 5.5 Scrolling (w/ Selection Rect Updating)</h2>
+            <h2>Step 5.5 Scrolling (w/ Clamping overflow)</h2>
             <Step55Demo />
             <h2>Step 6 Auto Scrolling</h2>
             <Step6Demo />

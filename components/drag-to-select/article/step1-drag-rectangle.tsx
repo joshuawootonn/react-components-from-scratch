@@ -2,10 +2,10 @@
 import clsx from 'clsx'
 import { useState } from 'react'
 
-const items = new Array(30).fill(null).map((_, i) => i)
+const items = new Array(30).fill(null).map((_, i) => i + '')
 
 function Root() {
-    const [selectionRect, setSelectRect] = useState<DOMRect | null>(null)
+    const [selectionRect, setSelectionRect] = useState<DOMRect | null>(null)
 
     return (
         <div>
@@ -19,7 +19,7 @@ function Root() {
                     const y = e.clientY - containerRect.y
 
                     const nextSelectionRect = new DOMRect(x, y, 0, 0)
-                    setSelectRect(nextSelectionRect)
+                    setSelectionRect(nextSelectionRect)
                 }}
                 onPointerMove={e => {
                     if (selectionRect == null) return
@@ -37,10 +37,10 @@ function Root() {
                         Math.abs(y - selectionRect.y),
                     )
 
-                    setSelectRect(nextSelectionRect)
+                    setSelectionRect(nextSelectionRect)
                 }}
                 onPointerUp={() => {
-                    setSelectRect(null)
+                    setSelectionRect(null)
                 }}
                 className="relative z-0 grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 border-2 border-black -translate-y-0.5"
             >

@@ -333,7 +333,7 @@ export function Item({ children, id }: { id: string; children: ReactNode }) {
             data-item={id}
             className={clsx(
                 'border-2 size-10 border-black flex justify-center items-center',
-                selectedItems[`${id}`]
+                selectedItems[id]
                     ? 'bg-black text-white'
                     : 'bg-white text-black',
             )}

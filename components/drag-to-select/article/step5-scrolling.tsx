@@ -2,7 +2,7 @@
 import clsx from 'clsx'
 import { useCallback, useRef, useState } from 'react'
 
-const items = new Array(300).fill(null).map((_, i) => i)
+const items = new Array(300).fill(null).map((_, i) => i + '')
 
 class DOMVector {
     constructor(
@@ -196,8 +196,10 @@ function Root() {
                     if (!isDragging) {
                         setSelectedItems({})
                         setDragVector(null)
+                        setScrollVector(null)
                     } else {
                         setDragVector(null)
+                        setScrollVector(null)
                         setIsDragging(false)
                     }
                 }}
@@ -207,6 +209,7 @@ function Root() {
                         e.preventDefault()
                         setSelectedItems({})
                         setDragVector(null)
+                        setScrollVector(null)
                     }
                 }}
                 className={clsx(
@@ -219,7 +222,7 @@ function Root() {
                         data-item={item}
                         className={clsx(
                             'border-2 size-10 border-black flex justify-center items-center',
-                            selectedItems[`${item}`]
+                            selectedItems[item]
                                 ? 'bg-black text-white'
                                 : 'bg-white text-black',
                         )}

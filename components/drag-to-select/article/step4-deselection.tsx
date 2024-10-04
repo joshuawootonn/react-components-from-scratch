@@ -2,7 +2,7 @@
 import clsx from 'clsx'
 import { useCallback, useRef, useState } from 'react'
 
-const items = new Array(30).fill(null).map((_, i) => i)
+const items = new Array(30).fill(null).map((_, i) => i + '')
 
 class DOMVector {
     constructor(
