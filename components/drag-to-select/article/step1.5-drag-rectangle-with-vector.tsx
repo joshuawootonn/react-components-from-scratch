@@ -37,6 +37,8 @@ function Root() {
             <div className="px-2 border-2 border-black">selectable area</div>
             <div
                 onPointerDown={e => {
+                    if (e.button !== 0) return
+
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 

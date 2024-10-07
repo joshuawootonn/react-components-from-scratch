@@ -97,6 +97,8 @@ function Root() {
             <div
                 ref={containerRef}
                 onPointerDown={e => {
+                    if (e.button !== 0) return
+
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 

@@ -206,6 +206,8 @@ function Root() {
                     updateSelectedItems(dragVector, nextScrollVector)
                 }}
                 onPointerDown={e => {
+                    if (e.button !== 0) return
+
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
 

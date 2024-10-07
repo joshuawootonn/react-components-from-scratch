@@ -228,6 +228,8 @@ export function Root({ children }: { children?: ReactNode }) {
                     updateSelectedItems(dragVector, nextScrollVector)
                 }}
                 onPointerDown={function (e) {
+                    if (e.button !== 0) return
+
                     const containerRect =
                         e.currentTarget.getBoundingClientRect()
                     setDragVector(
