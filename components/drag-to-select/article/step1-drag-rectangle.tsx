@@ -1,5 +1,4 @@
 'use client'
-import clsx from 'clsx'
 import { useState } from 'react'
 
 const items = new Array(30).fill(null).map((_, i) => i + '')
@@ -46,9 +45,7 @@ function Root() {
             >
                 {items.map(item => (
                     <div
-                        className={clsx(
-                            'border-2 size-10 border-black flex justify-center items-center',
-                        )}
+                        className="border-2 size-10 border-black flex justify-center items-center"
                         key={item}
                     >
                         {item}
