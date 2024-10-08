@@ -174,7 +174,7 @@ function Root() {
                         data-item={item}
                         className={clsx(
                             'border-2 size-10 border-black flex justify-center items-center',
-                            selectedItems[`${item}`]
+                            selectedItems[item]
                                 ? 'bg-black text-white'
                                 : 'bg-white text-black',
                         )}
