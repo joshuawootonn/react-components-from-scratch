@@ -136,15 +136,15 @@ function Root() {
             const shouldScrollUp = currentPointer.y < 20
 
             const left = shouldScrollRight
-                ? clamp(20 - containerRect.width + currentPointer.x, 0, 20)
+                ? clamp(20 - containerRect.width + currentPointer.x, 0, 15)
                 : shouldScrollLeft
-                ? -1 * clamp(20 - currentPointer.x, 0, 20)
+                ? -1 * clamp(20 - currentPointer.x, 0, 15)
                 : undefined
 
             const top = shouldScrollDown
-                ? clamp(20 - containerRect.height + currentPointer.y, 0, 20)
+                ? clamp(20 - containerRect.height + currentPointer.y, 0, 15)
                 : shouldScrollUp
-                ? -1 * clamp(20 - currentPointer.y, 0, 20)
+                ? -1 * clamp(20 - currentPointer.y, 0, 15)
                 : undefined
 
             if (top === undefined && left === undefined) {
