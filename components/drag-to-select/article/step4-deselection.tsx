@@ -2,7 +2,7 @@
 import clsx from 'clsx'
 import { useCallback, useRef, useState } from 'react'
 
-const items = new Array(30).fill(null).map((_, i) => i + '')
+const items = Array.from({ length: 30 }, (_, i) => i + '')
 
 class DOMVector {
     constructor(
@@ -167,7 +167,10 @@ function Root() {
                         setDragVector(null)
                     }
                 }}
-                className="relative z-0 grid grid-cols-8 sm:grid-cols-10 gap-4 p-4 border-2 border-black focus:outline-none focus:border-dashed -translate-y-0.5"
+                className={clsx(
+                    'relative z-0 grid grid-cols-6 sm:grid-cols-10 gap-4 p-4 border-2 border-black focus:outline-none focus:border-dashed -translate-y-0.5',
+                    isDragging && 'select-none',
+                )}
             >
                 {items.map(item => (
                     <div

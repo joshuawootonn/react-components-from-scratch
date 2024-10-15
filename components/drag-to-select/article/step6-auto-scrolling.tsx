@@ -2,7 +2,7 @@
 import clsx from 'clsx'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-const items = new Array(300).fill(null).map((_, i) => i + '')
+const items = Array.from({ length: 300 }, (_, i) => i + '')
 
 class DOMVector {
     constructor(
@@ -290,6 +290,7 @@ function Root() {
                 className={clsx(
                     'relative max-h-96 overflow-auto z-0 grid grid-cols-[repeat(20,min-content)] gap-4 p-4',
                     'border-2 border-black focus:outline-none focus:border-dashed -translate-y-0.5',
+                    isDragging && 'select-none',
                 )}
             >
                 {items.map(item => (
