@@ -126,26 +126,10 @@ function Root() {
                         e.clientY - containerRect.y - dragVector.y,
                     )
 
-                    const selection = document.getSelection()
-                    const elementFromPoint = document.elementFromPoint(
-                        e.clientX,
-                        e.clientY,
-                    )
-
                     if (!isDragging && nextDragVector.getDiagonalLength() < 10)
                         return
-                    if (
-                        !selection?.isCollapsed &&
-                        selection?.focusNode?.textContent ===
-                            elementFromPoint?.textContent
-                    ) {
-                        setDragVector(null)
-                        return
-                    }
 
                     setIsDragging(true)
-
-                    selection?.removeAllRanges()
 
                     setDragVector(nextDragVector)
                     updateSelectedItems(nextDragVector)
@@ -154,10 +138,7 @@ function Root() {
                     setDragVector(null)
                     setIsDragging(false)
                 }}
-                className={clsx(
-                    'relative z-0 grid grid-cols-6 sm:grid-cols-10 gap-4 p-4 border-2 border-black -translate-y-0.5',
-                    isDragging && 'select-none',
-                )}
+                className="relative z-0 grid grid-cols-6 sm:grid-cols-10 gap-4 p-4 border-2 border-black select-none -translate-y-0.5"
             >
                 {items.map(item => (
                     <div

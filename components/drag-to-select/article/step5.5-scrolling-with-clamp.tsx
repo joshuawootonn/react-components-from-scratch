@@ -189,26 +189,10 @@ function Root() {
                         e.clientY - containerRect.y - dragVector.y,
                     )
 
-                    const selection = document.getSelection()
-                    const elementFromPoint = document.elementFromPoint(
-                        e.clientX,
-                        e.clientY,
-                    )
-
                     if (!isDragging && nextDragVector.getDiagonalLength() < 10)
                         return
-                    if (
-                        !selection?.isCollapsed &&
-                        selection?.focusNode?.textContent ===
-                            elementFromPoint?.textContent
-                    ) {
-                        setDragVector(null)
-                        return
-                    }
 
                     setIsDragging(true)
-
-                    selection?.removeAllRanges()
 
                     setDragVector(nextDragVector)
                     updateSelectedItems(nextDragVector, scrollVector)
@@ -235,8 +219,7 @@ function Root() {
                 }}
                 className={clsx(
                     'relative max-h-96 overflow-auto z-0 grid grid-cols-[repeat(20,min-content)] gap-4 p-4',
-                    'border-2 border-black focus:outline-none focus:border-dashed -translate-y-0.5',
-                    isDragging && 'select-none',
+                    'border-2 border-black select-none focus:outline-none focus:border-dashed -translate-y-0.5',
                 )}
             >
                 {items.map(item => (
